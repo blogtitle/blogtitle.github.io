@@ -6,9 +6,55 @@
     <description>Recent content in Tags on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Sun, 06 May 2018 08:09:31 -0700</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Css</title>
+      <link>https://blogtitle.github.io/tags/css/</link>
+      <pubDate>Sun, 06 May 2018 08:09:31 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/css/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Golang</title>
+      <link>https://blogtitle.github.io/tags/golang/</link>
+      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Html</title>
+      <link>https://blogtitle.github.io/tags/html/</link>
+      <pubDate>Thu, 03 May 2018 17:34:04 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/html/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Javascript</title>
+      <link>https://blogtitle.github.io/tags/javascript/</link>
+      <pubDate>Thu, 03 May 2018 17:34:04 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/javascript/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>https://blogtitle.github.io/tags/python/</link>
+      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/python/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

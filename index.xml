@@ -6,8 +6,67 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Sun, 06 May 2018 08:09:31 -0700</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Fourth</title>
+      <link>https://blogtitle.github.io/fourth/</link>
+      <pubDate>Sun, 06 May 2018 08:09:31 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/fourth/</guid>
+      <description>Hey, this is public!</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Last</title>
+      <link>https://blogtitle.github.io/last/</link>
+      <pubDate>Thu, 03 May 2018 17:34:04 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/last/</guid>
+      <description>Just a sentence with some code</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>First</title>
+      <link>https://blogtitle.github.io/first/</link>
+      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/first/</guid>
+      <description>Just a sentence with some code</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Second</title>
+      <link>https://blogtitle.github.io/second/</link>
+      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/second/</guid>
+      <description>Just a sentence with some code
+print &amp;#34;Hello!</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Third</title>
+      <link>https://blogtitle.github.io/third/</link>
+      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/third/</guid>
+      <description>Just a try in a bold post</description>
+    </item>
+    
+    
     
     
   </channel>
