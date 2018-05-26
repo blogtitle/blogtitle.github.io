@@ -29,14 +29,5 @@
       <description>Just a sentence with some code</description>
     </item>
     
-    <item>
-      <title>Third</title>
-      <link>https://blogtitle.github.io/third/</link>
-      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/third/</guid>
-      <description>Just a try in a bold post</description>
-    </item>
-    
   </channel>
 </rss>

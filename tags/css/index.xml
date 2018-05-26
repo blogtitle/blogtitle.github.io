@@ -20,24 +20,5 @@
       <description>Hey, this is public!</description>
     </item>
     
-    <item>
-      <title>First</title>
-      <link>https://blogtitle.github.io/first/</link>
-      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/first/</guid>
-      <description>Just a sentence with some code</description>
-    </item>
-    
-    <item>
-      <title>Second</title>
-      <link>https://blogtitle.github.io/second/</link>
-      <pubDate>Thu, 03 May 2018 17:33:54 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/second/</guid>
-      <description>Just a sentence with some code
-print &amp;#34;Hello!</description>
-    </item>
-    
   </channel>
 </rss>
