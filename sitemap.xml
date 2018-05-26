@@ -3,16 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://blogtitle.github.io/fourth/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/last/</loc>
-    <lastmod>2018-05-03T17:34:04-07:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/about/</loc>
     <lastmod>2018-05-03T17:33:02-07:00</lastmod>
   </url>
@@ -24,30 +14,12 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
+    <lastmod>2018-05-03T17:33:02-07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/css/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/html/</loc>
-    <lastmod>2018-05-03T17:34:04-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/javascript/</loc>
-    <lastmod>2018-05-03T17:34:04-07:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -58,26 +30,7 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/authors/roberto/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/tags/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/theme-trials/</loc>
-    <lastmod>2018-05-06T08:09:31-07:00</lastmod>
     <priority>0</priority>
   </url>
   
