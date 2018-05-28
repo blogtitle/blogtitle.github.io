@@ -6,27 +6,19 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 May 2018 08:09:31 -0700</lastBuildDate>
+    <lastBuildDate>Fri, 25 May 2018 21:35:39 -0700</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Fourth</title>
-      <link>https://blogtitle.github.io/fourth/</link>
-      <pubDate>Sun, 06 May 2018 08:09:31 -0700</pubDate>
+      <title>Kauai</title>
+      <link>https://blogtitle.github.io/kauai/</link>
+      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
       
-      <guid>https://blogtitle.github.io/fourth/</guid>
-      <description>Hey, this is public!</description>
-    </item>
-    
-    <item>
-      <title>Last</title>
-      <link>https://blogtitle.github.io/last/</link>
-      <pubDate>Thu, 03 May 2018 17:34:04 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/last/</guid>
-      <description>Just a sentence with some code</description>
+      <guid>https://blogtitle.github.io/kauai/</guid>
+      <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
+The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
     </item>
     
   </channel>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Anna on Blog Title</title>
-    <link>https://blogtitle.github.io/authors/anna/</link>
-    <description>Recent content in Anna on Blog Title</description>
+    <title>Travels on Blog Title</title>
+    <link>https://blogtitle.github.io/categories/travels/</link>
+    <description>Recent content in Travels on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 25 May 2018 21:35:39 -0700</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/authors/anna/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/categories/travels/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
