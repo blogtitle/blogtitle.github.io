@@ -6,9 +6,21 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 25 May 2018 21:35:39 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 30 May 2018 16:35:28 -0700</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Unmarshaling JSON in Golang</title>
+      <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
+      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/unmarshaling-json-in-golang/</guid>
+      <description>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the internal documentation states, it is possible to unmarshal JSON into an empty interface.
+An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
+    </item>
     
     
     
