@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Golang on Blog Title</title>
-    <link>https://blogtitle.github.io/tags/golang/</link>
-    <description>Recent content in Golang on Blog Title</description>
+    <title>Rob on Blog Title</title>
+    <link>https://blogtitle.github.io/authors/rob/</link>
+    <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 11 Aug 2018 12:34:41 +0200</lastBuildDate>
     
-        <atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
     
     

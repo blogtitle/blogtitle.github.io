@@ -6,46 +6,24 @@
     <description>Recent content in Tags on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 25 May 2018 21:35:39 -0700</lastBuildDate>
+    <lastBuildDate>Sat, 11 Aug 2018 12:34:41 +0200</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://blogtitle.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title>Islands</title>
-      <link>https://blogtitle.github.io/tags/islands/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/islands/</guid>
-      <description></description>
-    </item>
     
-    <item>
-      <title>JSON</title>
-      <link>https://blogtitle.github.io/tags/json/</link>
-      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/json/</guid>
-      <description></description>
-    </item>
     
-    <item>
-      <title>Parsing</title>
-      <link>https://blogtitle.github.io/tags/parsing/</link>
-      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/parsing/</guid>
-      <description></description>
-    </item>
     
-    <item>
-      <title>Scuba</title>
-      <link>https://blogtitle.github.io/tags/scuba/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/scuba/</guid>
-      <description></description>
-    </item>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   </channel>
 </rss>
