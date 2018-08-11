@@ -6,19 +6,14 @@
     <description>Recent content in Authors on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 25 May 2018 21:35:39 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 30 May 2018 16:35:28 -0700</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/authors/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://blogtitle.github.io/authors/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title>Anna</title>
-      <link>https://blogtitle.github.io/authors/anna/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/authors/anna/</guid>
-      <description></description>
-    </item>
+    
+    
+    
     
   </channel>
 </rss>

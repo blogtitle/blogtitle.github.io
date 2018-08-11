@@ -23,14 +23,18 @@ h6 {
 
 pre,
 code {
+  font-family: 'FiraCode Medium', monospace;
+  font-size: 13px;
   font-family: 'Roboto Mono', monospace;
-  font-size: 15px;
+  font-size: 12px;
+  background: #fffee1;
 }
 
 code {
+  font-family: 'FiraCode Medium', monospace;
   border-radius: 3px;
   padding: 1px 3px;
-  background: #f0f0f0;
+  background: #e6e8ea;
   -webkit-hyphens: none;
   hyphens: none;
 }
@@ -168,8 +172,10 @@ blockquote {
 
 .article-content a {
   text-decoration: none;
-  color: inherit;
-  border-bottom: medium solid #f0f0f0;
+  color: #375EAB;
+  border-bottom: 1px dotted #375EAB;
+  /*color: inherit;*/
+  /*border-bottom: medium solid #4040ff;*/
   transition: border-color 600ms;
 }
 
@@ -500,7 +506,7 @@ blockquote {
 
   pre,
   code {
-    font-size: 17px;
+    font-size: 14px;
   }
 
   .header {
@@ -516,7 +522,7 @@ blockquote {
   }
 
   .nav-links {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .nav-links li {
@@ -524,34 +530,34 @@ blockquote {
   }
 
   .content {
-    font-size: 19px;
+    font-size: 16px;
     line-height: 1.8;
     margin: 50px auto auto;
   }
 
   .article-title {
-    font-size: 42px;
+    font-size: 40px;
   }
 
   .article-taxonomy {
-    font-size: 17px;
+    font-size: 14px;
   }
 
   .list-title,
   .category-title,
 		.author-title,
   .tag-cloud-title {
-    font-size: 38px;
+    font-size: 36px;
   }
 
   .list-item-post {
     padding: 5px 0;
-    font-size: 21px;
+    font-size: 19px;
   }
 
   .list-item-date {
     padding: 5px 0;
-    font-size: 17px;
+    font-size: 14px;
     text-align: right;
     float: right;
   }
@@ -561,7 +567,7 @@ blockquote {
   }
 
   .author-item a {
-     font-size: 21px;
+     font-size: 19px;
   }
 
   .category-item {
@@ -569,7 +575,7 @@ blockquote {
   }
 
   .category-item a {
-     font-size: 21px;
+     font-size: 19px;
   }
 
   .footer-links {
@@ -581,7 +587,7 @@ blockquote {
   }
 
   .page-links {
-    font-size: 19px;
+    font-size: 16px;
   }
 
   .error-page-title {

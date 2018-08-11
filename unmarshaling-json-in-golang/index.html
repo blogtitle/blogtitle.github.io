@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.26" />
+
+
+<title>Unmarshaling JSON in Golang - Blog Title</title>
+<meta property="og:title" content="Unmarshaling JSON in Golang - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/clorine.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Unmarshaling JSON in Golang</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2018-05-30</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/anna">Anna
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      <p>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the <a href="https://golang.org/pkg/encoding/json/#Unmarshal">internal documentation</a> states, it is possible to unmarshal JSON into an empty interface.</p>
+
+<p>An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods. At run time the value stored in the empty interface variable may change type, but will always satisfy the interface.</p>
+
+<p>The following post will provide a series of examples on how to unmarshal a JSON blob without specifying its entire structure in Golang.</p>
+
+<p>Let&rsquo;s start with an easy example: unmarshaling a list of JSON with a predefined struct.</p>
+<div class="highlight"><pre><code class="language-JSON" data-lang="JSON"><span></span>    <span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span>    <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}]</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span>	<span class="kd">type</span> <span class="nx">Users</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&quot;Name&quot;`</span>
+		<span class="nx">Role</span> <span class="kt">string</span> <span class="s">`json:&quot;Role&quot;`</span>
+	<span class="p">}</span>
+	<span class="kd">var</span> <span class="nx">users</span> <span class="p">[]</span><span class="nx">Users</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">jsonBlob</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">users</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s is an %s\n&quot;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Role</span><span class="p">)</span>
+	<span class="p">}</span>
+</code></pre></div>
+
+<p><em><a href="https://play.golang.org/p/8lPmI6lmtQo">See this code in the playground.</a></em></p>
+
+<p>If you don&rsquo;t want to specify the entire JSON structure in your code, it is possible to unmarshal it into a map from string to an empty interface and then cast its value later on. This can be useful if you can&rsquo;t rely on the JSON structure or if it is too long to create your own.</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span>	<span class="kd">var</span> <span class="nx">users</span> <span class="p">[]</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">jsonBlob</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">users</span> <span class="p">{</span>
+		<span class="nx">username</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;Value couldn&#39;t be cast as a string&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="nx">userrole</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">[</span><span class="s">&quot;role&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;Value conldn&#39;t be cast as a string&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s is an %s\n&quot;</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">userrole</span><span class="p">)</span>
+	<span class="p">}</span>
+</code></pre></div>
+
+<p><em><a href="https://play.golang.org/p/A9jOJq0ddwP">See this code in the playground.</a></em></p>
+
+<p>So far so good. But what if things start getting more complicated?
+In order to unmarshal a list of JSON that are inside a JSON field, you can always create the struct manually, or you can unmarshal the list into an empty map. More specifically, it is necessary to have a structure that maps the value of the field to a map of a string to an empty interface.</p>
+<div class="highlight"><pre><code class="language-JSON" data-lang="JSON"><span></span>    <span class="p">{</span><span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+	<span class="nt">&quot;users&quot;</span><span class="p">:[</span>
+		<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span>
+		<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}</span>
+    <span class="p">]}</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span>	<span class="kd">type</span> <span class="nx">jsonUsers</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Ok</span>    <span class="kt">bool</span> <span class="s">`json:&quot;ok&quot;`</span>
+		<span class="nx">Users</span> <span class="p">[]</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="s">`json:&quot;users&quot;`</span>
+	<span class="p">}</span>
+
+	<span class="kd">var</span> <span class="nx">objmap</span> <span class="nx">jsonUsers</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">jsonBlob</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">objmap</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">elem</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span> <span class="p">{</span>
+		<span class="nx">username</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">elem</span><span class="p">][</span><span class="s">&quot;name&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;Value couldn&#39;t be cast as a string&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="nx">userrole</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">elem</span><span class="p">][</span><span class="s">&quot;role&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;Value conldn&#39;t be cast as a string&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s is an %s\n&quot;</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">userrole</span><span class="p">)</span>
+	<span class="p">}</span>
+</code></pre></div>
+
+<p><em><a href="https://play.golang.org/p/yUPl0EAfT-y">See this code in the playground.</a></em></p>
+
+<p>Another interesting feature is the possibility to nest data structures and use those to unmarshal the JSON blob. For example if you have a list of JSON inside another JSON, you may want to create a slice of the structure that unmarshals the inner JSON.</p>
+<div class="highlight"><pre><code class="language-JSON" data-lang="JSON"><span></span>    <span class="p">{</span><span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;users&quot;</span><span class="p">:[</span>
+		<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="s2">&quot;Charlie&quot;</span><span class="p">],</span> <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span>
+    	<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span><span class="s2">&quot;Denise&quot;</span><span class="p">],</span>    <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}</span>
+    <span class="p">]}</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span>	<span class="kd">type</span> <span class="nx">dataUsers</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Name</span> <span class="p">[]</span><span class="kt">string</span> <span class="s">`json:&quot;name&quot;`</span>
+		<span class="nx">Role</span> <span class="kt">string</span>   <span class="s">`json:&quot;role&quot;`</span>
+	<span class="p">}</span>
+
+	<span class="kd">type</span> <span class="nx">jsonUsers</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Ok</span>    <span class="kt">bool</span>        <span class="s">`json:&quot;ok&quot;`</span>
+		<span class="nx">Users</span> <span class="p">[]</span><span class="nx">dataUsers</span> <span class="s">`json:&quot;users&quot;`</span>
+	<span class="p">}</span>
+
+	<span class="kd">var</span> <span class="nx">objmap</span> <span class="nx">jsonUsers</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">jsonBlob</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">objmap</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">username</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">Name</span> <span class="p">{</span>
+			<span class="nx">userrole</span> <span class="o">:=</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">Role</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s is an %s\n&quot;</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">userrole</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+</code></pre></div>
+
+<p><em><a href="https://play.golang.org/p/SdGfyaNId6V">See this code in the playground.</a></em></p>
+
+<p>The example above works only if all the elements in the name list are strings. If the list has mixed types, it is possible to unmarshal it in an empty interface and then extract its values through reflection. If you are interested in knowing more about reflection, <em><a href="https://blog.golang.org/laws-of-reflection">The Laws of Reflection</a></em> explains how they work in Go.</p>
+<div class="highlight"><pre><code class="language-JSON" data-lang="JSON"><span></span>    <span class="p">{</span><span class="nt">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;users&quot;</span><span class="p">:[</span>
+		<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span>
+    	<span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Charlie&quot;</span><span class="p">,</span> <span class="s2">&quot;Denise&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>    <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}</span>
+    <span class="p">]}</span>
+</code></pre></div>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span>	<span class="kd">type</span> <span class="nx">jsonUsers</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Ok</span>    <span class="kt">bool</span>
+		<span class="nx">Users</span> <span class="p">[]</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="s">`json:&quot;users&quot;`</span>
+	<span class="p">}</span>
+
+	<span class="kd">var</span> <span class="nx">objmap</span> <span class="nx">jsonUsers</span>
+
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">jsonBlob</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">objmap</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">elem</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span> <span class="p">{</span>
+		<span class="nx">usernames</span> <span class="o">:=</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">elem</span><span class="p">][</span><span class="s">&quot;name&quot;</span><span class="p">]</span>
+		<span class="nx">name</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">ValueOf</span><span class="p">(</span><span class="nx">usernames</span><span class="p">)</span>
+
+		<span class="nx">userrole</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">objmap</span><span class="p">.</span><span class="nx">Users</span><span class="p">[</span><span class="nx">elem</span><span class="p">][</span><span class="s">&quot;role&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;Value conldn&#39;t be cast as a string&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">name</span><span class="p">.</span><span class="nx">Len</span><span class="p">();</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%v is an %s\n&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">.</span><span class="nx">Index</span><span class="p">(</span><span class="nx">i</span><span class="p">),</span> <span class="nx">userrole</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+</code></pre></div>
+
+<p><em><a href="https://play.golang.org/p/UT8HyEaa01q">See this code in the playground.</a></em></p>
+
+<p>These are some examples I stumbled upon while using Go. The solution to not using a fixed struct to unmarshal a JSON is not always obvious, but in the end it can save up time and patience if the JSON you are receving changes over time.</p>
+
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/golang">Golang</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/parsing">Parsing</a><a href="/tags/json">JSON</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119970190-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>
+
