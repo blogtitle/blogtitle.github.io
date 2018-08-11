@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/splitting-pipelines/</loc>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/considerations-on-error-handling/</loc>
     <lastmod>2018-08-11T12:34:41+02:00</lastmod>
   </url>
@@ -35,8 +40,14 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/bash/</loc>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -95,13 +106,19 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/scripting/</loc>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -125,7 +142,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-11T21:08:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   

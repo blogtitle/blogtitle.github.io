@@ -8,8 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Wed, 30 May 2018 16:35:28 -0700</lastBuildDate>
     
-        <atom:link href="https://blogtitle.github.io/authors/anna/index.xml" rel="self" type="application/rss+xml" />
-    
+	<atom:link href="https://blogtitle.github.io/authors/anna/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,8 +21,6 @@
 An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
     </item>
     
-    
-    
     <item>
       <title>Kauai</title>
       <link>https://blogtitle.github.io/kauai/</link>
@@ -33,7 +30,6 @@ An empty interface represents the empty set of methods and is satisfied by any v
       <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
 The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
     </item>
-    
     
   </channel>
 </rss>

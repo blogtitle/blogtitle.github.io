@@ -7,16 +7,53 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-        <atom:link href="https://blogtitle.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>Funny</title>
+      <link>https://blogtitle.github.io/categories/funny/</link>
+      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/funny/</guid>
+      <description></description>
+    </item>
     
+    <item>
+      <title>Golang</title>
+      <link>https://blogtitle.github.io/categories/golang/</link>
+      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/golang/</guid>
+      <description></description>
+    </item>
     
+    <item>
+      <title>Scripting</title>
+      <link>https://blogtitle.github.io/categories/scripting/</link>
+      <pubDate>Sat, 11 Aug 2018 21:08:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/scripting/</guid>
+      <description></description>
+    </item>
     
+    <item>
+      <title>Software engineering</title>
+      <link>https://blogtitle.github.io/categories/software-engineering/</link>
+      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/software-engineering/</guid>
+      <description></description>
+    </item>
     
-    
-    
-    
+    <item>
+      <title>Travels</title>
+      <link>https://blogtitle.github.io/categories/travels/</link>
+      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/travels/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

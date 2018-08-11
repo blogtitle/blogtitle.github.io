@@ -8,12 +8,26 @@
     <language>en-us</language>
     <lastBuildDate>Wed, 30 May 2018 16:35:28 -0700</lastBuildDate>
     
-        <atom:link href="https://blogtitle.github.io/authors/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/authors/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>Anna</title>
+      <link>https://blogtitle.github.io/authors/anna/</link>
+      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/authors/anna/</guid>
+      <description></description>
+    </item>
     
-    
-    
+    <item>
+      <title>Rob</title>
+      <link>https://blogtitle.github.io/authors/rob/</link>
+      <pubDate>Sat, 11 Aug 2018 21:08:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/authors/rob/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

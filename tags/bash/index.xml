@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Rob on Blog Title</title>
-    <link>https://blogtitle.github.io/authors/rob/</link>
-    <description>Recent content in Rob on Blog Title</description>
+    <title>Bash on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/bash/</link>
+    <description>Recent content in Bash on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 11 Aug 2018 21:08:41 +0200</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/tags/bash/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,16 +20,6 @@
       <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
 # # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
 I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
-    </item>
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
   </channel>

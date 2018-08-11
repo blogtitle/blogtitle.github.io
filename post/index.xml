@@ -6,11 +6,21 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 Aug 2018 12:34:41 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 11 Aug 2018 21:08:41 +0200</lastBuildDate>
     
-        <atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>Splitting Pipelines</title>
+      <link>https://blogtitle.github.io/splitting-pipelines/</link>
+      <pubDate>Sat, 11 Aug 2018 21:08:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/splitting-pipelines/</guid>
+      <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
+# # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
+I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
+    </item>
     
     <item>
       <title>Considerations on error handling</title>
@@ -22,8 +32,6 @@
 This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
-    
-    
     <item>
       <title>Unmarshaling JSON in Golang</title>
       <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
@@ -34,8 +42,6 @@ This is to say that basically up until three years ago I knew one and only one w
 An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
     </item>
     
-    
-    
     <item>
       <title>Kauai</title>
       <link>https://blogtitle.github.io/kauai/</link>
@@ -45,7 +51,6 @@ An empty interface represents the empty set of methods and is satisfied by any v
       <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
 The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
     </item>
-    
     
   </channel>
 </rss>
