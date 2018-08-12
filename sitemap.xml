@@ -3,13 +3,8 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://blogtitle.github.io/lets-talk-about-javascript/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/considerations-on-error-handling/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
   </url>
   
   <url>
@@ -52,7 +47,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -62,26 +57,26 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/categories/funny/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/tags/funny/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/categories/golang/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/categories/funny/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/tags/golang/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/golang/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -94,12 +89,6 @@
   <url>
     <loc>https://blogtitle.github.io/tags/json/</loc>
     <lastmod>2018-05-30T16:35:28-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/javascript/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -117,13 +106,13 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -140,14 +129,14 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/categories/software-engineering/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/tags/software-engineering/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/software-engineering/</loc>
-    <lastmod>2018-08-11T12:34:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/categories/software-engineering/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   

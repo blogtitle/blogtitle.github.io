@@ -6,7 +6,7 @@
     <description>Recent content in Software engineering on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 Aug 2018 12:34:41 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 10 Aug 2018 12:34:41 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/categories/software-engineering/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Considerations on error handling</title>
       <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
+      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
       <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.

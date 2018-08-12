@@ -6,27 +6,15 @@
     <description>Recent content in Funny on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 Aug 2018 19:20:13 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 10 Aug 2018 12:34:41 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/funny/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Let&#39;s talk about JavaScript</title>
-      <link>https://blogtitle.github.io/lets-talk-about-javascript/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/lets-talk-about-javascript/</guid>
-      <description>Short preface: The first version of JavaScript was completed in ten days in order to accommodate the Netscape Navigator 2.0 Beta release schedule.
-Keep in mind that well structured languages usually take a little bit more than that.
-What follows is a small piece of the aftermath of the rushed job.
-NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
-    </item>
-    
-    <item>
       <title>Considerations on error handling</title>
       <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Sat, 11 Aug 2018 12:34:41 +0200</pubDate>
+      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
       <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
