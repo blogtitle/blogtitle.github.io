@@ -131,6 +131,8 @@ Never, for any reasons, use something like this in your code. <strong>PLEASE</st
 
 <p>The detail that should worry you the most is that the previous example is a 4 characters long regexp that is trying to match a <strong>regular language</strong>. Imagine the consequences you could get with a much longer and more complex regexp.</p>
 
+<p>NOTE: the golang builtin regexp engine does not exhibit this kind of explosive behavior, but this is not a good reason to use regexps everywhere.</p>
+
 <h2 id="surprises">Surprises</h2>
 
 <p>Consider the following expression to match some Java v1 keywords (not all are included for brevity):</p>
@@ -167,7 +169,7 @@ float)</pre></div>
 
 <p>That said, let&rsquo;s have some fun. The following regexps are the creation of an afternoon spent with <a href="/authors/anna/">Anna</a> playing a <a href="https://ctftime.org/ctf-wtf/">CTF</a> a couple of years ago.</p>
 
-<p>If anything that follows leaves you puzzled, please visit <a href="https://regex101.com/">regex101</a> that will probably explain better than me what is going on in the regexp. If the regex doesn&rsquo;t run it&rsquo;s probably because I&rsquo;m using some arcane (perl|ruby)-specific syntax, in that case please use <a href="http://rubular.com/">rubular</a>.</p>
+<p>If anything that follows leaves you puzzled, please visit <a href="https://regex101.com/">regex101</a> that will probably explain better than me what is going on in the regexp. If the regexp doesn&rsquo;t run it&rsquo;s probably because I&rsquo;m using some arcane (perl|ruby)-specific syntax, in that case please use <a href="http://rubular.com/">rubular</a>.</p>
 
 <h2 id="fun-part-1-push-down-automata">Fun, part 1: push-down automata</h2>
 
