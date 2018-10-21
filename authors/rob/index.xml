@@ -6,10 +6,19 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 12 Sep 2018 19:57:02 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 19 Oct 2018 15:42:57 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>The Hidden Pri(c|s)e of Research</title>
+      <link>https://blogtitle.github.io/the-hidden-pricse-of-research/</link>
+      <pubDate>Fri, 19 Oct 2018 15:42:57 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/the-hidden-pricse-of-research/</guid>
+      <description>You wake up one Sunday morning and think: &amp;ldquo;how the hell does that thing work?&amp;rdquo;. So you go and google for it and find several blog posts, talks and papers about the topic. During your research you find out some more detailed parts of the topic, so you search the web for it again and find out more. After several hours you find out something very interesting, many layers deeper than where you started, something that you can&amp;rsquo;t really grasp because it is too complex or requires some background knowledge that the speaker/researcher/blogger couldn&amp;rsquo;t possibly fit in the talk/paper/post.</description>
+    </item>
     
     <item>
       <title>Regexp Fun</title>

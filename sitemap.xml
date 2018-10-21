@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/the-hidden-pricse-of-research/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/regexp-fun/</loc>
     <lastmod>2018-09-12T19:57:02+02:00</lastmod>
   </url>
@@ -44,6 +49,12 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/art/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/authors/</loc>
     <lastmod>2018-05-30T16:35:28-07:00</lastmod>
     <priority>0</priority>
@@ -57,18 +68,12 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/funny/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -85,8 +90,8 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/golang/</loc>
-    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/categories/inspirational/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -109,6 +114,12 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/categories/misc/</loc>
+    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/page/</loc>
     <lastmod>2018-05-03T17:33:02-07:00</lastmod>
     <priority>0</priority>
@@ -122,13 +133,19 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/rant/</loc>
+    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -151,14 +168,14 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/software-engineering/</loc>
-    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/tags/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/</loc>
-    <lastmod>2018-07-13T21:08:41+02:00</lastmod>
+    <loc>https://blogtitle.github.io/tags/thoughts/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>
   </url>
   

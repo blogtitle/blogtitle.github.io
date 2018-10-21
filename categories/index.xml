@@ -11,20 +11,29 @@
     
     
     <item>
-      <title>Funny</title>
-      <link>https://blogtitle.github.io/categories/funny/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/funny/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Golang</title>
       <link>https://blogtitle.github.io/categories/golang/</link>
       <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Inspirational</title>
+      <link>https://blogtitle.github.io/categories/inspirational/</link>
+      <pubDate>Fri, 19 Oct 2018 15:42:57 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/inspirational/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Misc</title>
+      <link>https://blogtitle.github.io/categories/misc/</link>
+      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/misc/</guid>
       <description></description>
     </item>
     
