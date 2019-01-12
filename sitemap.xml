@@ -119,6 +119,12 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/golang/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/categories/inspirational/</loc>
     <lastmod>2018-10-19T15:42:57+02:00</lastmod>
     <priority>0</priority>

@@ -138,7 +138,7 @@
 
 <h1 id="the-overkill">The overkill</h1>
 
-<p>In most cases running the benchmark on the author&rsquo;s laptop is enough to decide the constant to use, like <a href="https://github.com/golang/go/issues/25580">Go does  for <code>math/big</code></a> heuristics to choose the right algorithm to perform computation.</p>
+<p>In most cases running the benchmark on the author&rsquo;s laptop is enough to decide the constant to use, like <a href="https://github.com/golang/go/blob/50bd1c4d4eb4fac8ddeb5f063c099daccfb71b26/src/math/big/calibrate_test.go#L18">Go does  for <code>math/big</code></a> heuristics to choose the right algorithm to perform computation. The problem with this approach is that, according to the contributors to math/big, this <a href="https://github.com/golang/go/issues/25580">can cause an error of more than 100%</a>.</p>
 
 <p>Needless to say, I don&rsquo;t like that approach, so I started putting together the tools go offered me. I didn&rsquo;t want to use makefiles or anything external, I didn&rsquo;t want my users to install or run anything exotic on their machines before being able to use my code, so I reasoned about <strong>what was already available to the users compiling my library</strong>.</p>
 
@@ -266,6 +266,20 @@ Most efficient for input of bigger sizes was &#34;Streamed&#34;</pre></div>
 └── generate.go             ← Package main, behind a tag</pre></div>
 <p>So I can now <code>go get</code> or <code>git clone</code> my package, <code>go generate</code> it, and have it run optimized for my machine.</p>
 
+<h1 id="aftermath">Aftermath</h1>
+
+<p>Here are the final benchmarks for the three solutions. For the machine I ran this benchmarks on the tipping point was at 12K. Measurements are in <code>ns/op</code>.</p>
+<div class="highlight"><pre class="chroma">Dim |  Buff  | Adapt  | Stream
+----|--------|--------|-------
+ 1K |  1159  |  1278  |   1965
+ 2K |  1723  |  1868  |   2574
+ 4K |  2842  |  3055  |   4450
+ 8K |  5644 ←|→ 5929  |   7446
+16K | 15359  | 13478 ←|→ 13539
+32K | 29814  | 25430  |  24980
+64K | 58821  | 49078  |  48596</pre></div>
+<p>The adaptive solution pays a little price to measure traffic size so it is never as good as the best of the other ones but it is <strong>almost optimal</strong>. On the other hand, the adaptive solution <strong>is always better than the worse option</strong>.</p>
+
     </div>
  
     <ul class="article-taxonomy">
@@ -278,7 +292,7 @@ Most efficient for input of bigger sizes was &#34;Streamed&#34;</pre></div>
     
       
       <li>
-        <i class="fa fa-tags"></i><a href="/tags/benchmark">Benchmark</a><a href="/tags/go-build-tags">Go build tags</a><a href="/tags/gogenerate">go:generate</a>
+        <i class="fa fa-tags"></i><a href="/tags/benchmark">Benchmark</a><a href="/tags/go-build-tags">Go build tags</a><a href="/tags/gogenerate">go:generate</a><a href="/tags/golang">golang</a>
       </li>
       
   </article>
