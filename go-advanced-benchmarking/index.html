@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.47-DEV" />
+
+
+<title>Go Advanced Benchmarking - Blog Title</title>
+<meta property="og:title" content="Go Advanced Benchmarking - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/dotstar.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Go Advanced Benchmarking</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2019-01-11</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/rob">Rob
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      
+
+<h1 id="the-story">The story</h1>
+
+<p>Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.</p>
+
+<p>One example I faced was to analyse some data flowing in some connections that I was proxying.</p>
+
+<p>There are two main ways to extract some information from traffic: you can either <strong>record the entire traffic</strong> to analyse it as soon as it is done, or you can analyse it <strong>while it flows</strong>(with a buffer window) at the cost of slowing it down.</p>
+
+<p>Memory is relatively cheap compared to processing power, so my first solution to the problem was the buffered one.</p>
+
+<h3 id="first-code-the-buffer">First code: the buffer</h3>
+
+<p>Buffering the connection is fairly easy: just copy everything I read into a <code>bytes.Buffer</code> and when the connection is closed analyse what I read. Simplest way to do it is to wrap the connection with something that makes call to <code>Read</code> go through an <a href="https://golang.org/pkg/io/#TeeReader"><code>io.TeeReader</code></a>.</p>
+
+<p>This was fairly simple to do, and handled pretty well situations with frequent low-traffic, short-lived connections.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">bufferedScanner</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span>
+	<span class="nx">tee</span>    <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span>
+	<span class="nx">buffer</span> <span class="o">*</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">NewBufferedScanner</span><span class="p">(</span><span class="nx">original</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+	<span class="k">return</span> <span class="nx">bufferedScanner</span> <span class="p">{</span>
+		<span class="nx">Conn</span><span class="p">:</span> <span class="nx">original</span><span class="p">,</span>
+		<span class="nx">tee</span><span class="p">:</span> <span class="nx">io</span><span class="p">.</span><span class="nx">TeeReader</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buffer</span><span class="p">),</span>
+		<span class="nx">buffer</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">buffer</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nx">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tee</span><span class="p">.</span><span class="nx">Read</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
+	<span class="nx">analyse</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buffer</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">Conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+<span class="p">}</span></code></pre></div>
+<p>After small optimizations to <a href="https://golang.org/pkg/sync/#example_Pool">efficiently re-use buffers</a> I was happy with this solution, at least for a while.</p>
+
+<h3 id="second-code-the-scanner">Second code: the scanner</h3>
+
+<p>It wasn&rsquo;t long before I realized that long lived connection or bursty ones were handled poorly by this solution, so I wrote some code that would work in a streamed fashion instead of buffering everything.</p>
+
+<p>This solution ended up being more expensive in terms of initial memory (to build scanners and other additional data structures) but it would become more efficient in both memory and computation after some tens of kilobytes sent over the same connection.</p>
+
+<p>A streamed solution turned out to be trickier to implement, but thanks to the <a href="https://golang.org/pkg/bufio/"><code>bufio</code></a> package it was manageable. The code is just a wrapper around a <a href="https://golang.org/pkg/bufio/#Scanner"><code>scanner</code></a> with a custom <a href="https://golang.org/pkg/bufio/#SplitFunc"><code>SplitFunc</code></a>.</p>
+
+<h3 id="the-meta-problem">The meta-problem</h3>
+
+<p>Regardless how good my solutions were, I now had two pieces of code that had pros and cons: for very low-traffic short lived connections the first one was much better, but for more traffic-intensive ones the second was the only one viable.</p>
+
+<p>I had two possibilities: try to optimize the second solution to be viable also for small connections or , based on what I saw at runtime, pick the best implementation.</p>
+
+<p>I went for the second option, which seemed to be the funnier one.</p>
+
+<h1 id="the-solution">The solution</h1>
+
+<p>I created a builder to provision and instance of either implementations. The builder would keep an <a href="https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">exponential weighted moving average</a> of the size of the total per-connection-traffic. This is roughly the same algorithm TCP uses for RTT and Inter-Arrival Time variation estimation.</p>
+
+<p>Funnily enough, it takes less characters to implement it than the characters I used to describe it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">ewma</span> <span class="o">:=</span> <span class="nx">k</span> <span class="o">*</span> <span class="nx">n</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">k</span><span class="p">)</span> <span class="o">*</span> <span class="nx">ewma</span></code></pre></div>
+<p>Here <code>n</code> are the total bytes read from a connection on <code>Close</code>. <code>k</code> is just a constant in the code that makes the heuristic react slower or faster to size changes and I went for ½.</p>
+
+<p>The hard part was to choose the threshold to switch implementation: I ran some benchmarks and found the tipping point where the streaming would start performing better better than the buffering, but I soon found out that the value heavily depended on the computer running the code.</p>
+
+<h1 id="the-overkill">The overkill</h1>
+
+<p>In most cases running the benchmark on the author&rsquo;s laptop is enough to decide the constant to use, like <a href="https://github.com/golang/go/issues/25580">Go does  for <code>math/big</code></a> heuristics to choose the right algorithm to perform computation.</p>
+
+<p>Needless to say, I don&rsquo;t like that approach, so I started putting together the tools go offered me. I didn&rsquo;t want to use makefiles or anything external, I didn&rsquo;t want my users to install or run anything exotic on their machines before being able to use my code, so I reasoned about <strong>what was already available to the users compiling my library</strong>.</p>
+
+<p>Go is cross platform, so I could take nothing for granted, but on the other hand I needed something to get insights on the computational power I had available.</p>
+
+<h3 id="measuring">Measuring</h3>
+
+<p>Benchmarking was relatively easy: go has <a href="https://golang.org/pkg/testing/#hdr-Benchmarks">built-in benchmark standard libraries</a>.</p>
+
+<p>After a couple of minutes dumbly staring at the doc I realized that I could run benchmarks from a non-testing build by calling <a href="https://golang.org/pkg/testing/#Benchmark">testing.Benchmark</a>, that returns a nice <a href="https://golang.org/pkg/testing/#BenchmarkResult">testing.BenchmarkResult</a>.</p>
+
+<p>So I setup some <code>func(b *testing.B)</code> to closure an input value (e.g. the stub connection size), run a benchmark on both analysers and see which one performed better.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ConfigurableBenchmarker</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+	<span class="nx">GetBench</span> <span class="kd">func</span><span class="p">(</span><span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div>
+<p>An example of <code>ConfigurableBenchmarker</code> and how to use it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">ConfigurableBenchmarker</span><span class="p">{</span>
+	<span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Buffered&#34;</span><span class="p">,</span>
+	<span class="nx">GetBench</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">c</span> <span class="o">:=</span> <span class="nx">NewBufferedScanner</span><span class="p">(</span><span class="nx">stubConnection</span><span class="p">{</span>
+					<span class="nx">bytes</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span>
+				<span class="p">})</span>
+				<span class="nx">io</span><span class="p">.</span><span class="nx">Copy</span><span class="p">(</span><span class="nx">ioutil</span><span class="p">.</span><span class="nx">Discard</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1">// doBench runs two ConfigurableBenchmarkers and returns whether the
+</span><span class="c1">// first one took less to execute.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="nx">aaRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nx">Benchmark</span><span class="p">(</span><span class="nx">aa</span><span class="p">.</span><span class="nx">GetBench</span><span class="p">(</span><span class="nx">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
+	<span class="nx">bbRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nx">Benchmark</span><span class="p">(</span><span class="nx">bb</span><span class="p">.</span><span class="nx">GetBench</span><span class="p">(</span><span class="nx">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="nx">aaRes</span><span class="p">.</span><span class="nx">NsPerOp</span><span class="p">()</span> <span class="p">&lt;</span> <span class="nx">bbRes</span><span class="p">.</span><span class="nx">NsPerOp</span><span class="p">()</span>
+<span class="p">}</span></code></pre></div>
+<p>With this building block I was empowered to do a binary search to see the size of the input at which one solution would start becoming better than the other one:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">FindTipping</span><span class="p">(</span><span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">,</span> <span class="nx">lower</span><span class="p">,</span> <span class="nx">upper</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">lowerCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">lower</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+	<span class="nx">upperCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">upper</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">lowerCond</span> <span class="o">==</span> <span class="nx">upperCond</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ErrTippingNotInRange</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Good old binsearch.
+</span><span class="c1"></span>	<span class="nx">tip</span> <span class="p">=</span> <span class="p">(</span><span class="nx">lower</span> <span class="o">+</span> <span class="nx">upper</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+	<span class="k">for</span> <span class="nx">tip</span> <span class="p">&gt;</span> <span class="nx">lower</span> <span class="o">&amp;&amp;</span> <span class="nx">tip</span> <span class="p">&lt;</span> <span class="nx">upper</span> <span class="p">{</span>
+		<span class="nx">tipCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">tip</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">tipCond</span> <span class="o">==</span> <span class="nx">lowerCond</span> <span class="p">{</span>
+			<span class="nx">lower</span> <span class="p">=</span> <span class="nx">tip</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">upper</span> <span class="p">=</span> <span class="nx">tip</span>
+		<span class="p">}</span>
+		<span class="nx">tip</span> <span class="p">=</span> <span class="p">(</span><span class="nx">lower</span> <span class="o">+</span> <span class="nx">upper</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">tip</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></div>
+<p>With this I could automatically detect the tipping point for my code on the current machine. Now I needed to run it. I could have put instructions in the README, but where&rsquo;s the fun in that?</p>
+
+<h3 id="go-generate">Go generate</h3>
+
+<p>The <a href="https://blog.golang.org/generate"><code>go generate</code></a> command allows you to parse comments with a particular syntax and run what&rsquo;s inside them.</p>
+
+<p>The following comment makes go print a salutation when <code>go generate</code> is run.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">//go:generate <span class="nb">echo</span> <span class="s2">&#34;Hello, World!&#34;</span></code></pre></div>
+<p>So when a user <code>go get</code>s a package they can then <code>go generate</code> some code and <code>go build</code> it or link their source against it.</p>
+
+<p>I wrapped the benchmarking code in a <code>generator.go</code> file, which runs benchmarks and writes the constant in a source file. It just formats a string with the number obtained from the benchmarks and writes it to a local file:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="nx">src</span> <span class="p">=</span> <span class="s">`// Code generated; DO NOT EDIT.
+</span><span class="s">
+</span><span class="s">package main
+</span><span class="s">
+</span><span class="s">const streamingThreshold = %d
+</span><span class="s">`</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">tip</span> <span class="o">:=</span> <span class="nx">FindTipping</span><span class="p">(</span><span class="cm">/* params */</span><span class="p">)</span>
+	<span class="c1">// Omitted: open file &#34;constants_generated.go&#34; for writing in `f`
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">tip</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div>
+<p>Then I just needed to add a comment to the rest of the sources:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">//go:generate go run generator.go</code></pre></div>
+<p>The machines I&rsquo;m targeting must have <code>go</code> installed in order to compile my code. This means that I am not asking the user to add any external tool or dependency.</p>
+
+<p>This was nice, but had a major issue: you can&rsquo;t have a package <code>main</code> and a package <code>analyse</code> in the same folder without using external build tools.</p>
+
+<p>This is true unless you (ab)use <a href="https://golang.org/pkg/go/build/#hdr-Build_Constraints">build tags</a>: you can prevent a file from being considered for the build <strong>before the <code>package</code> statement is read</strong>.</p>
+
+<p>So I changed my generator code to start with</p>
+<div class="highlight"><pre class="chroma"><span class="c1">// +build generate
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">main</span></pre></div>
+<p>And the original code&rsquo;s comment to be</p>
+<div class="highlight"><pre class="chroma">//go:generate go run generate.go -tags generate</pre></div>
+<p>Current structure:</p>
+<div class="highlight"><pre class="chroma">analyse
+├── analyse.go              ← Package analyse, with //go:generate directive
+├── analyse_test.go         ← Package analyse, tests
+├── constants_generated.go  ← Package analyse, generated
+└── generate.go             ← Package main, behind a tag</pre></div>
+<p>So I can now <code>go get</code> or <code>git clone</code> my package, <code>go generate</code> it, and have it run optimized for my machine.</p>
+
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/go">Go</a><a href="/categories/optimization">Optimization</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/benchmark">Benchmark</a><a href="/tags/go-build-tags">Go build tags</a><a href="/tags/gogenerate">go:generate</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-119970190-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+  </body>
+</html>
+
