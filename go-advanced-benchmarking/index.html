@@ -199,6 +199,28 @@
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nx">tip</span><span class="p">,</span> <span class="kc">nil</span>
 <span class="p">}</span></code></pre></div>
+<p>Here is some output with <code>lower = 1</code> and <code>upper = 100</code> and some logging sprinkled here and there:</p>
+<div class="highlight"><pre class="chroma">Calculating initial values...
+AnalysingTraffic: [1KB] Buffered 1107 ns/op &lt; 1986 ns/op Streamed
+AnalysingTraffic: [100KB] Buffered 87985 ns/op &gt;= 69509 ns/op Streamed
+Starting search...
+Binsearch: lower: 1, upper: 100
+AnalysingTraffic: [50KB] Buffered 43455 ns/op &gt;= 35242 ns/op Streamed
+Binsearch: lower: 1, upper: 50
+AnalysingTraffic: [25KB] Buffered 22693 ns/op &gt;= 19506 ns/op Streamed
+Binsearch: lower: 1, upper: 25
+AnalysingTraffic: [13KB] Buffered 11355 ns/op &gt;= 10263 ns/op Streamed
+Binsearch: lower: 1, upper: 13
+AnalysingTraffic: [7KB] Buffered 4964 ns/op &lt; 5824 ns/op Streamed
+Binsearch: lower: 7, upper: 13
+AnalysingTraffic: [10KB] Buffered 7415 ns/op &lt; 8140 ns/op Streamed
+Binsearch: lower: 10, upper: 13
+AnalysingTraffic: [11KB] Buffered 8609 ns/op &lt; 8765 ns/op Streamed
+Binsearch: lower: 11, upper: 13
+AnalysingTraffic: [12KB] Buffered 9828 ns/op &lt; 10157 ns/op Streamed
+Tipping point was found at 12
+Most efficient for input of smaller sizes was &#34;Buffered&#34;
+Most efficient for input of bigger sizes was &#34;Streamed&#34;</pre></div>
 <p>With this I could automatically detect the tipping point for my code on the current machine. Now I needed to run it. I could have put instructions in the README, but where&rsquo;s the fun in that?</p>
 
 <h3 id="go-generate">Go generate</h3>
