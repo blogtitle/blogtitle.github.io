@@ -30,11 +30,38 @@
     </item>
     
     <item>
+      <title>Benchmark</title>
+      <link>https://blogtitle.github.io/tags/benchmark/</link>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/benchmark/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Funny</title>
       <link>https://blogtitle.github.io/tags/funny/</link>
       <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/tags/funny/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go build tags</title>
+      <link>https://blogtitle.github.io/tags/go-build-tags/</link>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/go-build-tags/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Golang</title>
+      <link>https://blogtitle.github.io/tags/golang/</link>
+      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/golang/</guid>
       <description></description>
     </item>
     
@@ -71,33 +98,6 @@
       <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
       
       <guid>https://blogtitle.github.io/tags/parsing/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Rant</title>
-      <link>https://blogtitle.github.io/tags/rant/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/rant/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Scuba</title>
-      <link>https://blogtitle.github.io/tags/scuba/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/scuba/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Thoughts</title>
-      <link>https://blogtitle.github.io/tags/thoughts/</link>
-      <pubDate>Fri, 19 Oct 2018 15:42:57 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/thoughts/</guid>
       <description></description>
     </item>
     

@@ -23,16 +23,15 @@ h6 {
 
 pre,
 code {
-  font-family: 'FiraCode Medium', monospace;
-  font-size: 13px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
   background: #fffee1;
 }
 
 code {
-  font-family: 'FiraCode Medium', monospace;
   border-radius: 3px;
   padding: 1px 3px;
-  background: #e6e8ea;
+  background: #fffee1;
   -webkit-hyphens: none;
   hyphens: none;
 }
@@ -170,10 +169,8 @@ blockquote {
 
 .article-content a {
   text-decoration: none;
-  color: #375EAB;
-  border-bottom: 1px dotted #375EAB;
-  /*color: inherit;*/
-  /*border-bottom: medium solid #4040ff;*/
+  color: inherit;
+  border-bottom: medium solid #f0f0f0;
   transition: border-color 600ms;
 }
 

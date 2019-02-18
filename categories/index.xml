@@ -11,9 +11,18 @@
     
     
     <item>
+      <title>Go</title>
+      <link>https://blogtitle.github.io/categories/go/</link>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Golang</title>
       <link>https://blogtitle.github.io/categories/golang/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/categories/golang/</guid>
       <description></description>
@@ -34,6 +43,15 @@
       <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/categories/misc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Optimization</title>
+      <link>https://blogtitle.github.io/categories/optimization/</link>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/optimization/</guid>
       <description></description>
     </item>
     

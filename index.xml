@@ -6,9 +6,22 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 19 Oct 2018 15:42:57 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Go Advanced Benchmarking</title>
+      <link>https://blogtitle.github.io/go-advanced-benchmarking/</link>
+      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-benchmarking/</guid>
+      <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
+One example I faced was to analyse some data flowing in some connections that I was proxying.
+There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
+    </item>
     
     
     

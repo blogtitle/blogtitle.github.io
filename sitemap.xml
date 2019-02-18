@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/go-advanced-benchmarking/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/the-hidden-pricse-of-research/</loc>
     <lastmod>2018-10-19T15:42:57+02:00</lastmod>
   </url>
@@ -67,8 +72,14 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/benchmark/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -84,8 +95,26 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/categories/golang/</loc>
+    <loc>https://blogtitle.github.io/categories/go/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/go-build-tags/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/golang/</loc>
     <lastmod>2018-08-10T12:34:41+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/golang/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -120,6 +149,12 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/categories/optimization/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/page/</loc>
     <lastmod>2018-05-03T17:33:02-07:00</lastmod>
     <priority>0</priority>
@@ -133,7 +168,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -145,7 +180,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -182,6 +217,18 @@
   <url>
     <loc>https://blogtitle.github.io/categories/travels/</loc>
     <lastmod>2018-05-25T21:35:39-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/gogenerate/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/golang/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
     <priority>0</priority>
   </url>
   
