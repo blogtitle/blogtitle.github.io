@@ -22,8 +22,6 @@ One example I faced was to analyse some data flowing in some connections that I 
 There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
     </item>
     
-<<<<<<< HEAD
-=======
     <item>
       <title>Considerations on error handling</title>
       <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
@@ -44,6 +42,5 @@ This is to say that basically up until three years ago I knew one and only one w
 An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
     </item>
     
->>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
   </channel>
 </rss>

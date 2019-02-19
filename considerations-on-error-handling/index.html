@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.53" />
+<meta name="generator" content="Hugo 0.47-DEV" />
 
 
 <title>Considerations on error handling - Blog Title</title>
@@ -19,6 +19,7 @@
 
 
 <link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
 <link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
 
   </head>
@@ -87,7 +88,7 @@
 <p>That is one of the reasons I started trying Go. And the impact was <em>awful</em>.</p>
 
 <p>I loved the concurrency patterns and the <code>go</code> statement. But I stumbles on the lack of features, the lack of good UI libraries, the lack of constructors, the lack of proper package management. But what really pissed me off was the error handling:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">doStuff</span><span class="p">()</span>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">doStuff</span><span class="p">()</span>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 	<span class="c1">// handleProblems
 </span><span class="c1"></span><span class="p">}</span></code></pre></div>
@@ -97,21 +98,21 @@
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MyErr</span> <span class="kt">string</span>
 
 <span class="c1">// Implement error
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">MyErr</span><span class="p">)</span> <span class="nf">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">MyErr</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="o">*</span><span class="nx">m</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
 	<span class="c1">// This is a nil pointer
 </span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">myerr</span> <span class="o">*</span><span class="nx">MyErr</span>
 	<span class="nx">err</span> <span class="p">=</span> <span class="nx">myerr</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="c1">// But not a nil interface, because it has a type
-</span><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">)</span>
+</span><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">)</span>
 		<span class="k">return</span>
 	<span class="p">}</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;not err&#34;</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;not err&#34;</span><span class="p">)</span>
 <span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma">out: &#34;err&#34;</pre></div>
 <p>To which my reaction was just a long list of swear words.</p>
 
@@ -138,17 +139,17 @@ That made me realize how much easier it is to read Go code than Java-like code: 
 
 <p>The point is that Go doesn&rsquo;t like strong contracts: functions should accept interfaces whenever they can, packages should export interfaces to prevent users from using the <code>structs</code> wherever it makes sense to do so. And that is also true for errors: a package that exposes granularity for errors might become harder to maintain (potential breakages if errors are added/changed or the underlying system is updated) and more complex to use.
 This made it so that some packages export helper functions to check errors, like the <code>os</code> package for <a href="https://golang.org/pkg/os/#IsPermission">permissions</a>, or even export the error values like <a href="https://golang.org/pkg/io/#pkg-variables">io.EOF</a>. A nice perk on checking errors with boolean operators instead of using a <code>catch</code> block is that error handling code can fallthroug from a more specific handler to a less specific one:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">file</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;foo.txt&#34;</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">file</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&#34;foo.txt&#34;</span><span class="p">)</span>
 <span class="k">switch</span> <span class="p">{</span>
-	<span class="k">case</span> <span class="nx">os</span><span class="p">.</span><span class="nf">IsPermission</span><span class="p">(</span><span class="nx">err</span><span class="p">):</span>
-		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">accessErrorMessage</span><span class="p">)</span>
+	<span class="k">case</span> <span class="nx">os</span><span class="p">.</span><span class="nx">IsPermission</span><span class="p">(</span><span class="nx">err</span><span class="p">):</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">accessErrorMessage</span><span class="p">)</span>
 		<span class="c1">// Explicit fallthroug
 </span><span class="c1"></span>		<span class="k">fallthrough</span>
 	<span class="k">case</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">:</span>
 		<span class="k">return</span> <span class="nx">err</span>
 <span class="p">}</span>
 <span class="c1">// The powerful defer statement, way better/different than a `finally` block
-</span><span class="c1"></span><span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span></code></pre></div>
+</span><span class="c1"></span><span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span></code></pre></div>
 <p>After some time spent coding Go, that starts to feel natural and if a package does not expose an error, you get used to the fact that it means <em>that package cannot guarantee forward compatiblity on that error</em> and that&rsquo;s it, because in Go people try to do their best not to break other people&rsquo;s code. Panics are handled inside the package and updates do not break APIs, this requires weaker contracts in some cases.</p>
 
 <h2 id="the-comeback">The comeback</h2>
@@ -214,15 +215,15 @@ anyways:
 	// and DO NOT continue execution
 	// but don&#39;t stop other errors that are bubbling up</pre></div>
 <p>which in Go exists as</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">defer</span> <span class="nf">cleanup</span><span class="p">()</span>
-<span class="nx">err</span> <span class="o">:=</span> <span class="nf">something</span><span class="p">()</span>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">defer</span> <span class="nx">cleanup</span><span class="p">()</span>
+<span class="nx">err</span> <span class="o">:=</span> <span class="nx">something</span><span class="p">()</span>
 <span class="nx">swtich</span> <span class="p">{</span>
 	<span class="k">case</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">myErr</span><span class="p">:</span>
-		<span class="nf">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="nx">handle</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="k">case</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">:</span>
 		<span class="k">return</span> <span class="nx">err</span>
 <span class="p">}</span>
-<span class="nf">somethingElse</span><span class="p">()</span></code></pre></div>
+<span class="nx">somethingElse</span><span class="p">()</span></code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 
 <p>Go error handling is not perfect. The fact that external packages have been written to provide more is a giveaway of this. It is, although, a change. It is something different that tries to demistify errors, and that is leading somewhere more where code is more readable and less confusing.</p>

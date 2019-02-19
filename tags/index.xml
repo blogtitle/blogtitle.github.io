@@ -33,8 +33,6 @@
       <title>Benchmark</title>
       <link>https://blogtitle.github.io/tags/benchmark/</link>
       <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
-<<<<<<< HEAD
-=======
       
       <guid>https://blogtitle.github.io/tags/benchmark/</guid>
       <description></description>
@@ -44,40 +42,6 @@
       <title>Funny</title>
       <link>https://blogtitle.github.io/tags/funny/</link>
       <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
->>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
-      
-      <guid>https://blogtitle.github.io/tags/benchmark/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-<<<<<<< HEAD
-      <title>Funny</title>
-      <link>https://blogtitle.github.io/tags/funny/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-=======
-      <title>Go build tags</title>
-      <link>https://blogtitle.github.io/tags/go-build-tags/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/go-build-tags/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Golang</title>
-      <link>https://blogtitle.github.io/tags/golang/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Islands</title>
-      <link>https://blogtitle.github.io/tags/islands/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
->>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
       
       <guid>https://blogtitle.github.io/tags/funny/</guid>
       <description></description>
@@ -104,13 +68,21 @@
     <item>
       <title>Golang</title>
       <link>https://blogtitle.github.io/tags/golang/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/tags/golang/</guid>
       <description></description>
     </item>
     
-<<<<<<< HEAD
+    <item>
+      <title>Golang</title>
+      <link>https://blogtitle.github.io/tags/golang/</link>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Islands</title>
       <link>https://blogtitle.github.io/tags/islands/</link>
@@ -129,16 +101,5 @@
       <description></description>
     </item>
     
-    <item>
-      <title>JavaScript</title>
-      <link>https://blogtitle.github.io/tags/javascript/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/javascript/</guid>
-      <description></description>
-    </item>
-    
-=======
->>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
   </channel>
 </rss>

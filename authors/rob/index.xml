@@ -6,10 +6,21 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 19 Feb 2019 08:37:12 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Some useful patterns</title>
+      <link>https://blogtitle.github.io/some-useful-patterns/</link>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/some-useful-patterns/</guid>
+      <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
+Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
+Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
+    </item>
     
     <item>
       <title>Go Advanced Benchmarking</title>
