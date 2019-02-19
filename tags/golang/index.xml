@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Golang on Blog Title</title>
+    <title>golang on Blog Title</title>
     <link>https://blogtitle.github.io/tags/golang/</link>
-    <description>Recent content in Golang on Blog Title</description>
+    <description>Recent content in golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
@@ -20,6 +20,16 @@
       <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
 One example I faced was to analyse some data flowing in some connections that I was proxying.
 There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
+    </item>
+    
+    <item>
+      <title>Unmarshaling JSON in Golang</title>
+      <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
+      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/unmarshaling-json-in-golang/</guid>
+      <description>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the internal documentation states, it is possible to unmarshal JSON into an empty interface.
+An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
     </item>
     
   </channel>

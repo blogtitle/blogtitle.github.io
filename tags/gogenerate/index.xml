@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
+<<<<<<< HEAD
     <title>Go:generate on Blog Title</title>
     <link>https://blogtitle.github.io/tags/gogenerate/</link>
     <description>Recent content in Go:generate on Blog Title</description>
+=======
+    <title>go:generate on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/gogenerate/</link>
+    <description>Recent content in go:generate on Blog Title</description>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>

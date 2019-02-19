@@ -3,7 +3,11 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
 <meta name="generator" content="Hugo 0.47-DEV" />
+=======
+<meta name="generator" content="Hugo 0.53" />
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 
 
 <title>Go Advanced Benchmarking - Blog Title</title>
@@ -19,7 +23,10 @@
 
 
 <link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<<<<<<< HEAD
 <link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+=======
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 <link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
 
   </head>
@@ -91,15 +98,24 @@
 	<span class="nx">buffer</span> <span class="o">*</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
 <span class="p">}</span>
 
+<<<<<<< HEAD
 <span class="kd">func</span> <span class="nx">NewBufferedScanner</span><span class="p">(</span><span class="nx">original</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
 	<span class="k">return</span> <span class="nx">bufferedScanner</span> <span class="p">{</span>
 		<span class="nx">Conn</span><span class="p">:</span> <span class="nx">original</span><span class="p">,</span>
 		<span class="nx">tee</span><span class="p">:</span> <span class="nx">io</span><span class="p">.</span><span class="nx">TeeReader</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buffer</span><span class="p">),</span>
+=======
+<span class="kd">func</span> <span class="nf">NewBufferedScanner</span><span class="p">(</span><span class="nx">original</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+	<span class="k">return</span> <span class="nx">bufferedScanner</span> <span class="p">{</span>
+		<span class="nx">Conn</span><span class="p">:</span> <span class="nx">original</span><span class="p">,</span>
+		<span class="nx">tee</span><span class="p">:</span> <span class="nx">io</span><span class="p">.</span><span class="nf">TeeReader</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buffer</span><span class="p">),</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 		<span class="nx">buffer</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">buffer</span><span class="p">,</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 
+<<<<<<< HEAD
 <span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nx">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tee</span><span class="p">.</span><span class="nx">Read</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
 <span class="p">}</span>
@@ -107,6 +123,15 @@
 <span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
 	<span class="nx">analyse</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buffer</span><span class="p">)</span>
 	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">Conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+=======
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nf">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tee</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="nx">bufferedScanner</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
+	<span class="nf">analyse</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buffer</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">Conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 <span class="p">}</span></code></pre></div>
 <p>After small optimizations to <a href="https://golang.org/pkg/sync/#example_Pool">efficiently re-use buffers</a> I was happy with this solution, at least for a while.</p>
 
@@ -161,11 +186,19 @@
 	<span class="nx">GetBench</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
 			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+<<<<<<< HEAD
 				<span class="nx">c</span> <span class="o">:=</span> <span class="nx">NewBufferedScanner</span><span class="p">(</span><span class="nx">stubConnection</span><span class="p">{</span>
 					<span class="nx">bytes</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span>
 				<span class="p">})</span>
 				<span class="nx">io</span><span class="p">.</span><span class="nx">Copy</span><span class="p">(</span><span class="nx">ioutil</span><span class="p">.</span><span class="nx">Discard</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
 				<span class="nx">c</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+=======
+				<span class="nx">c</span> <span class="o">:=</span> <span class="nf">NewBufferedScanner</span><span class="p">(</span><span class="nx">stubConnection</span><span class="p">{</span>
+					<span class="nx">bytes</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span>
+				<span class="p">})</span>
+				<span class="nx">io</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="nx">ioutil</span><span class="p">.</span><span class="nx">Discard</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 			<span class="p">}</span>
 		<span class="p">}</span>
 	<span class="p">},</span>
@@ -173,6 +206,7 @@
 
 <span class="c1">// doBench runs two ConfigurableBenchmarkers and returns whether the
 </span><span class="c1">// first one took less to execute.
+<<<<<<< HEAD
 </span><span class="c1"></span><span class="kd">func</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
 	<span class="nx">aaRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nx">Benchmark</span><span class="p">(</span><span class="nx">aa</span><span class="p">.</span><span class="nx">GetBench</span><span class="p">(</span><span class="nx">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
 	<span class="nx">bbRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nx">Benchmark</span><span class="p">(</span><span class="nx">bb</span><span class="p">.</span><span class="nx">GetBench</span><span class="p">(</span><span class="nx">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
@@ -182,6 +216,17 @@
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">FindTipping</span><span class="p">(</span><span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">,</span> <span class="nx">lower</span><span class="p">,</span> <span class="nx">upper</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">lowerCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">lower</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
 	<span class="nx">upperCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">upper</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+=======
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">doBench</span><span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="nx">aaRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nf">Benchmark</span><span class="p">(</span><span class="nx">aa</span><span class="p">.</span><span class="nf">GetBench</span><span class="p">(</span><span class="nf">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
+	<span class="nx">bbRes</span> <span class="p">=</span> <span class="nx">testing</span><span class="p">.</span><span class="nf">Benchmark</span><span class="p">(</span><span class="nx">bb</span><span class="p">.</span><span class="nf">GetBench</span><span class="p">(</span><span class="nf">genInput</span><span class="p">(</span><span class="nx">size</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="nx">aaRes</span><span class="p">.</span><span class="nf">NsPerOp</span><span class="p">()</span> <span class="p">&lt;</span> <span class="nx">bbRes</span><span class="p">.</span><span class="nf">NsPerOp</span><span class="p">()</span>
+<span class="p">}</span></code></pre></div>
+<p>With this building block I was empowered to do a binary search to see the size of the input at which one solution would start becoming better than the other one:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">FindTipping</span><span class="p">(</span><span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span> <span class="nx">ConfigurableBenchmarker</span><span class="p">,</span> <span class="nx">lower</span><span class="p">,</span> <span class="nx">upper</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">lowerCond</span> <span class="o">:=</span> <span class="nf">doBench</span><span class="p">(</span><span class="nx">lower</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+	<span class="nx">upperCond</span> <span class="o">:=</span> <span class="nf">doBench</span><span class="p">(</span><span class="nx">upper</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 	<span class="k">if</span> <span class="nx">lowerCond</span> <span class="o">==</span> <span class="nx">upperCond</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ErrTippingNotInRange</span>
 	<span class="p">}</span>
@@ -189,7 +234,11 @@
 	<span class="c1">// Good old binsearch.
 </span><span class="c1"></span>	<span class="nx">tip</span> <span class="p">=</span> <span class="p">(</span><span class="nx">lower</span> <span class="o">+</span> <span class="nx">upper</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 	<span class="k">for</span> <span class="nx">tip</span> <span class="p">&gt;</span> <span class="nx">lower</span> <span class="o">&amp;&amp;</span> <span class="nx">tip</span> <span class="p">&lt;</span> <span class="nx">upper</span> <span class="p">{</span>
+<<<<<<< HEAD
 		<span class="nx">tipCond</span> <span class="o">:=</span> <span class="nx">doBench</span><span class="p">(</span><span class="nx">tip</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+=======
+		<span class="nx">tipCond</span> <span class="o">:=</span> <span class="nf">doBench</span><span class="p">(</span><span class="nx">tip</span><span class="p">,</span> <span class="nx">aa</span><span class="p">,</span> <span class="nx">bb</span><span class="p">)</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 		<span class="k">if</span> <span class="nx">tipCond</span> <span class="o">==</span> <span class="nx">lowerCond</span> <span class="p">{</span>
 			<span class="nx">lower</span> <span class="p">=</span> <span class="nx">tip</span>
 		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -239,10 +288,17 @@ Most efficient for input of bigger sizes was &#34;Streamed&#34;</pre></div>
 </span><span class="s">const streamingThreshold = %d
 </span><span class="s">`</span>
 
+<<<<<<< HEAD
 <span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="nx">tip</span> <span class="o">:=</span> <span class="nx">FindTipping</span><span class="p">(</span><span class="cm">/* params */</span><span class="p">)</span>
 	<span class="c1">// Omitted: open file &#34;constants_generated.go&#34; for writing in `f`
 </span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">tip</span><span class="p">)</span>
+=======
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">tip</span> <span class="o">:=</span> <span class="nf">FindTipping</span><span class="p">(</span><span class="cm">/* params */</span><span class="p">)</span>
+	<span class="c1">// Omitted: open file &#34;constants_generated.go&#34; for writing in `f`
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">tip</span><span class="p">)</span>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
 <span class="p">}</span></code></pre></div>
 <p>Then I just needed to add a comment to the rest of the sources:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">//go:generate go run generator.go</code></pre></div>
@@ -286,7 +342,11 @@ Most efficient for input of bigger sizes was &#34;Streamed&#34;</pre></div>
                   
       <hr>
       <li>
+<<<<<<< HEAD
         <i class="fa fa-category"></i><a href="/categories/go">Go</a><a href="/categories/optimization">Optimization</a>
+=======
+        <i class="fa fa-category"></i><a href="/categories/go">Go</a><a href="/categories/golang">Golang</a><a href="/categories/optimization">Optimization</a>
+>>>>>>> bc567507fdbfed562a69c2a00f546b92d6f78b7b
       </li>
       
     
