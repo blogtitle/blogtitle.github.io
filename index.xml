@@ -6,9 +6,34 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 19 Feb 2019 12:07:43 -0800</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>A (un)biased story</title>
+      <link>https://blogtitle.github.io/a-unbiased-story/</link>
+      <pubDate>Tue, 19 Feb 2019 12:07:43 -0800</pubDate>
+      
+      <guid>https://blogtitle.github.io/a-unbiased-story/</guid>
+      <description>I want to tell you a story somebody shared with me. Nobody knows where the story comes from, or who invented it, but now it&amp;rsquo;s widely used as an exercise to improve communication skills. I changed the names of the characters in order to be gender neutral, so, please, bear with me as some sentences are bulky.
+Once upon a time, a long long time ago, there was a town. The town was cut in two halves by a large river.</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Some useful patterns</title>
+      <link>https://blogtitle.github.io/some-useful-patterns/</link>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/some-useful-patterns/</guid>
+      <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
+Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
+Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
+    </item>
     
     
     
@@ -109,8 +134,6 @@ An empty interface represents the empty set of methods and is satisfied by any v
       <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
 The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
     </item>
-    
-    
     
     
   </channel>

@@ -22,7 +22,7 @@
     <item>
       <title>Golang</title>
       <link>https://blogtitle.github.io/categories/golang/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/categories/golang/</guid>
       <description></description>
@@ -31,9 +31,18 @@
     <item>
       <title>Inspirational</title>
       <link>https://blogtitle.github.io/categories/inspirational/</link>
-      <pubDate>Fri, 19 Oct 2018 15:42:57 +0200</pubDate>
+      <pubDate>Tue, 19 Feb 2019 12:07:43 -0800</pubDate>
       
       <guid>https://blogtitle.github.io/categories/inspirational/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Life</title>
+      <link>https://blogtitle.github.io/categories/life/</link>
+      <pubDate>Tue, 19 Feb 2019 12:07:43 -0800</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/life/</guid>
       <description></description>
     </item>
     
@@ -61,6 +70,15 @@
       <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/categories/scripting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Software Engineering</title>
+      <link>https://blogtitle.github.io/categories/software-engineering/</link>
+      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/software-engineering/</guid>
       <description></description>
     </item>
     

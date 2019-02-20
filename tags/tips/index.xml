@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tips on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/tips/</link>
+    <description>Recent content in Tips on Blog Title</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 19 Feb 2019 12:07:43 -0800</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/tags/tips/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>A (un)biased story</title>
+      <link>https://blogtitle.github.io/a-unbiased-story/</link>
+      <pubDate>Tue, 19 Feb 2019 12:07:43 -0800</pubDate>
+      
+      <guid>https://blogtitle.github.io/a-unbiased-story/</guid>
+      <description>I want to tell you a story somebody shared with me. Nobody knows where the story comes from, or who invented it, but now it&amp;rsquo;s widely used as an exercise to improve communication skills. I changed the names of the characters in order to be gender neutral, so, please, bear with me as some sentences are bulky.
+Once upon a time, a long long time ago, there was a town. The town was cut in two halves by a large river.</description>
+    </item>
+    
+  </channel>
+</rss>
