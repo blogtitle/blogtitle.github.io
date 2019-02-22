@@ -13,7 +13,7 @@
     <item>
       <title>Go</title>
       <link>https://blogtitle.github.io/categories/go/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
+      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/categories/go/</guid>
       <description></description>
@@ -25,6 +25,15 @@
       <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gotchas</title>
+      <link>https://blogtitle.github.io/categories/gotchas/</link>
+      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/gotchas/</guid>
       <description></description>
     </item>
     
@@ -88,15 +97,6 @@
       <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/categories/software-engineering/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Travels</title>
-      <link>https://blogtitle.github.io/categories/travels/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/travels/</guid>
       <description></description>
     </item>
     

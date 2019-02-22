@@ -6,10 +6,20 @@
     <description>Recent content in Golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 Feb 2019 08:37:12 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 22 Feb 2019 21:12:56 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go: slices gotchas</title>
+      <link>https://blogtitle.github.io/go-slices-gotchas/</link>
+      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
+      <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
+This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
+    </item>
     
     <item>
       <title>Some useful patterns</title>
