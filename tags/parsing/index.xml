@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Parsing on Blog Title</title>
+    <title>parsing on Blog Title</title>
     <link>https://blogtitle.github.io/tags/parsing/</link>
-    <description>Recent content in Parsing on Blog Title</description>
+    <description>Recent content in parsing on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 May 2018 16:35:28 -0700</lastBuildDate>

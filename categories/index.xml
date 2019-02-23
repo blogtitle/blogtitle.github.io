@@ -11,29 +11,20 @@
     
     
     <item>
+      <title>Funny</title>
+      <link>https://blogtitle.github.io/categories/funny/</link>
+      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/categories/funny/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Go</title>
       <link>https://blogtitle.github.io/categories/go/</link>
       <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/categories/go/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Golang</title>
-      <link>https://blogtitle.github.io/categories/golang/</link>
-      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Gotchas</title>
-      <link>https://blogtitle.github.io/categories/gotchas/</link>
-      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/gotchas/</guid>
       <description></description>
     </item>
     
@@ -56,34 +47,7 @@
     </item>
     
     <item>
-      <title>Misc</title>
-      <link>https://blogtitle.github.io/categories/misc/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/misc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Optimization</title>
-      <link>https://blogtitle.github.io/categories/optimization/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/optimization/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Scripting</title>
-      <link>https://blogtitle.github.io/categories/scripting/</link>
-      <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/categories/scripting/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Software Engineering</title>
+      <title>Software engineering</title>
       <link>https://blogtitle.github.io/categories/software-engineering/</link>
       <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
       
@@ -92,11 +56,11 @@
     </item>
     
     <item>
-      <title>Software engineering</title>
-      <link>https://blogtitle.github.io/categories/software-engineering/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
+      <title>Travels</title>
+      <link>https://blogtitle.github.io/categories/travels/</link>
+      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
       
-      <guid>https://blogtitle.github.io/categories/software-engineering/</guid>
+      <guid>https://blogtitle.github.io/categories/travels/</guid>
       <description></description>
     </item>
     

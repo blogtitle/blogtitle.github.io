@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Benchmark on Blog Title</title>
+    <title>benchmark on Blog Title</title>
     <link>https://blogtitle.github.io/tags/benchmark/</link>
-    <description>Recent content in Benchmark on Blog Title</description>
+    <description>Recent content in benchmark on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>Go Advanced Benchmarking</title>
+      <title>Go advanced benchmarking</title>
       <link>https://blogtitle.github.io/go-advanced-benchmarking/</link>
       <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
       

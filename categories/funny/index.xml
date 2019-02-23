@@ -34,15 +34,5 @@ What follows is a small piece of the aftermath of the rushed job.
 NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
     </item>
     
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
-    </item>
-    
   </channel>
 </rss>

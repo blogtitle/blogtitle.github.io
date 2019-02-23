@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>go build tags on Blog Title</title>
-    <link>https://blogtitle.github.io/tags/go-build-tags/</link>
-    <description>Recent content in go build tags on Blog Title</description>
+    <title>optimization on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/optimization/</link>
+    <description>Recent content in optimization on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Jan 2019 22:15:43 +0100</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/tags/go-build-tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/tags/optimization/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

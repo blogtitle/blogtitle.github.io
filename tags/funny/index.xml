@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Funny on Blog Title</title>
+    <title>funny on Blog Title</title>
     <link>https://blogtitle.github.io/tags/funny/</link>
-    <description>Recent content in Funny on Blog Title</description>
+    <description>Recent content in funny on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 12 Sep 2018 19:57:02 +0200</lastBuildDate>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.47-DEV" />
+<meta name="generator" content="Hugo 0.55.0-DEV" />
 
 
 <title>Go: slices gotchas - Blog Title</title>
@@ -138,16 +138,16 @@ This is a <strong>good</strong> trait of a programming language. When you code y
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
 <span class="nx">b</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>     <span class="cm">/* [1]     */</span>
 <span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">42</span>      <span class="cm">/* [42]    */</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="cm">/* [42, 2] */</span></code></pre></div>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="cm">/* [42, 2] */</span></code></pre></div>
 <p>This kind of trickery is mostly expected by gophers, usually because some core interfaces of the language rely on the fact that slices&rsquo; underlying data is passed by reference.
 For example <code>io.Reader</code> has the same type signature of <code>io.Writer</code>, which might be rather surprising for newcomers:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">interface</span> <span class="p">{</span>
 	<span class="c1">// Read overwrites data in p
-</span><span class="c1"></span>	<span class="nx">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="c1"></span>	<span class="nf">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
 	<span class="c1">// Write reads data from p
-</span><span class="c1"></span>	<span class="nx">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="c1"></span>	<span class="nf">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span></code></pre></div>
 <h2 id="ghost-updates-part-2">Ghost updates: part 2</h2>
 
@@ -156,9 +156,9 @@ For example <code>io.Reader</code> has the same type signature of <code>io.Write
 <span class="nx">b</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="cm">/* [1, 2] */</span>
 <span class="nx">c</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="cm">/* [3, 4] */</span>
 <span class="nx">b</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="cm">/* [1 2 5 4] */</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="cm">/* [1 2 5]   */</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="cm">/* [5 4]     */</span></code></pre></div>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="cm">/* [1 2 5 4] */</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="cm">/* [1 2 5]   */</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="cm">/* [5 4]     */</span></code></pre></div>
 <p>When data gets appended to <code>b</code>, the underlying array has enough capacity to hold two more elements, so append will not re-allocate. This means that appending to <code>b</code> might change <code>c</code>.</p>
 
 <h2 id="ghost-updates-part-3">Ghost updates: part 3</h2>
@@ -167,7 +167,7 @@ For example <code>io.Reader</code> has the same type signature of <code>io.Write
 <span class="nx">b</span> <span class="o">:=</span> <span class="nx">a</span><span class="p">[:]</span>         <span class="cm">/* [0, 0]       */</span>
 <span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="cm">/* [0, 0, 2]    */</span>
 <span class="nx">b</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="cm">/* [0, 0, 1]    */</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="cm">/* 2 &lt;- Legit   */</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="cm">/* 2 &lt;- Legit   */</span>
 
 <span class="c1">// Identical code, just starting with bigger slice:
 </span><span class="c1"></span><span class="nx">c</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span>  <span class="cm">/* [0, 0]       */</span>
@@ -175,7 +175,7 @@ For example <code>io.Reader</code> has the same type signature of <code>io.Write
 <span class="nx">d</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">[:]</span>         <span class="cm">/* [0, 0, 0]    */</span>
 <span class="nx">c</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="cm">/* [0, 0, 0, 2] */</span>
 <span class="nx">d</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="cm">/* [0, 0, 0, 1] */</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="cm">/* 1 &lt;- ??      */</span></code></pre></div>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="cm">/* 1 &lt;- ??      */</span></code></pre></div>
 <p>The reason for this odd behavior is that when a slice becomes bigger than a certain threshold, go stops linear growth and starts allocating slices that are double the size of the previous one. This <strong>depends on the size of the slice type</strong>.</p>
 
 <p>To go more in details:</p>
@@ -201,10 +201,10 @@ For example <code>io.Reader</code> has the same type signature of <code>io.Write
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">a</span> <span class="o">:=</span> <span class="nb">append</span><span class="p">([]</span><span class="kt">int</span><span class="p">{},</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="c1">// The following call might be dangerous if
 </span><span class="c1">// `potentialSliceGrower` keeps a reference to `a`.
-</span><span class="c1"></span><span class="nx">potentialSliceGrower</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span><span class="c1"></span><span class="nf">potentialSliceGrower</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
 <span class="c1">// This is safer: take a slice of the exact size.
 </span><span class="c1">// Appending will cause copying.
-</span><span class="c1"></span><span class="nx">potentialSliceGrower</span><span class="p">(</span><span class="nx">a</span><span class="p">[:</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span></code></pre></div>
+</span><span class="c1"></span><span class="nf">potentialSliceGrower</span><span class="p">(</span><span class="nx">a</span><span class="p">[:</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span></code></pre></div>
 <p>This unusual 3-index syntax takes a slice of <code>a</code> that starts at index <code>0</code>, ends at index <code>4</code> and has <code>cap = 4</code>.</p>
 
 <p>Please use this <strong>only if needed</strong>, but don&rsquo;t forget to do it when necessary.</p>
@@ -219,13 +219,13 @@ For example <code>io.Reader</code> has the same type signature of <code>io.Write
                   
       <hr>
       <li>
-        <i class="fa fa-category"></i><a href="/categories/go">Go</a><a href="/categories/gotchas">Gotchas</a>
+        <i class="fa fa-category"></i><a href="/categories/go">Go</a>
       </li>
       
     
       
       <li>
-        <i class="fa fa-tags"></i><a href="/tags/golang">Golang</a><a href="/tags/go">Go</a>
+        <i class="fa fa-tags"></i><a href="/tags/golang">golang</a><a href="/tags/gotchas">gotchas</a>
       </li>
       
   </article>

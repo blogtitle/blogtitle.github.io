@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.47-DEV" />
+<meta name="generator" content="Hugo 0.55.0-DEV" />
 
 
 <title>Let&#39;s talk about JavaScript - Blog Title</title>
@@ -94,7 +94,7 @@
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">!!</span><span class="p">[];</span> <span class="c1">// true
 </span><span class="c1"></span><span class="o">!!</span><span class="p">{};</span> <span class="c1">// true
 </span><span class="c1"></span><span class="o">!!</span><span class="s2">&#34;&#34;</span><span class="p">;</span> <span class="c1">// false
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>And it gets worse:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[]</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>     <span class="c1">// false
 </span><span class="c1"></span><span class="o">!!</span><span class="p">[]</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>   <span class="c1">// true
@@ -105,7 +105,7 @@
 </span><span class="c1"></span><span class="o">!!</span><span class="p">{}</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>   <span class="c1">// true
 </span><span class="c1"></span>
 <span class="s2">&#34;&#34;</span> <span class="o">==</span> <span class="p">[];</span>       <span class="c1">// true (please keep in mind the code block above)
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>Which brings us to ECMAScript infamous holy trinity. The following statements are all true:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
 <span class="s2">&#34;\t&#34;</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
@@ -127,7 +127,7 @@
 <span class="nx">b</span> <span class="o">=</span> <span class="mi">5</span><span class="err">/7;</span>
 <span class="nx">c</span> <span class="o">=</span> <span class="mi">7</span><span class="err">/13;</span>
 <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">c</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">a</span><span class="p">;</span> <span class="c1">// out: false
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <hr />
 
 <h2 id="what-day-is-today">What day is today?</h2>
@@ -151,7 +151,7 @@
 </span><span class="c1"></span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">!=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>      <span class="c1">// true
 </span><span class="c1"></span>
 <span class="c1">// (╯°□°)╯︵ ┻━┻
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>Let&rsquo;s <strong>stop</strong> playing with them right now&hellip;</p>
 
 <hr />
@@ -162,13 +162,13 @@
 
 <p>For example when you sum a string and a number, the number is cast to string and concatenated with the string:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="s2">&#34;1&#34;</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// out: &#34;11&#34;
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>And this is mostly fine, it makes sense to use string as the dominant type: strings can represent more things than numbers.</p>
 
 <p>But then you find out that you can multiply a string by a number, and that it is not a shorthand for <code>String.prototype.repeat</code> as it is in python, but implicitly casts the string to a number and executes the multiplication:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="s2">&#34; 2&#34;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">;</span> <span class="c1">// out: 8     &lt;- NOTE THE LEADING SPACE
 </span><span class="c1"></span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">;</span>  <span class="c1">// out: NaN
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>But even this&hellip; Is mostly fine&hellip; I guess.</p>
 
 <p>One of the consequences was the need to have explicit conversion helper functions to go back from string to number. It is true that it was possible to multiply by one to cast to number, but that made everything harder to read (more than usual) so they decided to provide two helper functions: <code>parseInt</code> and <code>parseFloat</code>.</p>
@@ -178,7 +178,7 @@
 </span><span class="c1"></span><span class="nb">parseFloat</span><span class="p">(</span><span class="mf">0.002</span><span class="p">);</span>      <span class="c1">// out: 0.002
 </span><span class="c1"></span><span class="nb">parseInt</span><span class="p">(</span><span class="mf">0.0000003</span><span class="p">);</span>    <span class="c1">// out: 3              &lt;- ??
 </span><span class="c1"></span><span class="nb">parseFloat</span><span class="p">(</span><span class="mf">0.0000004</span><span class="p">);</span>  <span class="c1">// out: 0.0000004
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <hr />
 
 <h2 id="dys-functional-approach">(Dys)functional approach</h2>
@@ -195,11 +195,11 @@
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">out</span><span class="p">);</span>
 <span class="c1">// out: [2, 4, 6, 8, 10, 12]
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>When you can compress it and hide the real complexity of the code, and in the meantime obtain something completely different as a result?</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="p">,</span><span class="s2">&#34;6&#34;</span><span class="p">,</span><span class="s2">&#34;8&#34;</span><span class="p">,</span><span class="s2">&#34;10&#34;</span><span class="p">,</span><span class="s2">&#34;12&#34;</span><span class="p">].</span><span class="nx">map</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">);</span>
 <span class="c1">// out: [2, NaN, NaN, NaN, 4, 7]
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <hr />
 
 <h2 id="are-you-in-for-this">Are you <code>in</code> for this?</h2>
@@ -208,7 +208,7 @@
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
 <span class="mi">2</span> <span class="k">in</span> <span class="nx">a</span><span class="p">;</span>     <span class="c1">// true
 </span><span class="c1"></span><span class="mi">4</span> <span class="k">in</span> <span class="nx">a</span><span class="p">;</span>     <span class="c1">// false
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>The <code>in</code> keyword also servers as an iterator over collections:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">];</span>
 <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
@@ -285,7 +285,7 @@
 <span class="p">}</span>
 <span class="nx">countwords</span><span class="p">(</span><span class="s2">&#34;This works and works again&#34;</span><span class="p">);</span>
 <span class="c1">// out: {&#34;This&#34;: 1, &#34;works&#34;: 2, &#34;and&#34;: 1, &#34;again!&#34;: 1}
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>It always works, until it doesn&rsquo;t:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">countwords</span><span class="p">(</span><span class="s2">&#34;I never implement a constructor when I use js!&#34;</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="chroma"><code class="language-JSON" data-lang="JSON"><span class="p">{</span>
@@ -313,7 +313,7 @@
 	<span class="p">}</span>
 <span class="p">}</span>
 <span class="nx">riddle</span><span class="p">();</span>   <span class="c1">// out: &#34;a&#34;
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>No Error is thrown. It is just lost in the stack. <a href="https://blogtitle.github.io/considerations-on-error-handling/">Here</a> are some explanations and considerations on error handling.</p>
 
 <hr />
@@ -340,7 +340,7 @@
 <span class="nx">madness</span><span class="p">(</span><span class="s2">&#34;this is an argument&#34;</span><span class="p">);</span>           <span class="c1">// out: param: this is an argument
 </span><span class="c1"></span><span class="nx">madness</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&#34;this is an object&#34;</span><span class="p">});</span>    <span class="c1">// out: param: [object Object]
 </span><span class="c1"></span><span class="nx">madness</span><span class="p">({</span> <span class="nx">param</span><span class="o">:</span> <span class="s2">&#34;this is a field&#34;</span> <span class="p">});</span>    <span class="c1">// out: param: this is a field
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>This was in the language, and still is, but is now discouraged. To put this in <a href="https://en.wikipedia.org/wiki/Brendan_Eich">Brendan Eich</a> <a href="https://twitter.com/brendaneich/status/68001466471817216">words</a>: &ldquo;with violates lexical scope, making program analysis (e.g. for security) hard to infeasible.&rdquo;</p>
 
 <p>If you don&rsquo;t know who that is, he is co-founder of Mozilla and creator of JavaScript.</p>
@@ -402,13 +402,13 @@
                   
       <hr>
       <li>
-        <i class="fa fa-category"></i><a href="/categories/misc">Misc</a>
+        <i class="fa fa-category"></i><a href="/categories/funny">Funny</a>
       </li>
       
     
       
       <li>
-        <i class="fa fa-tags"></i><a href="/tags/javascript">JavaScript</a><a href="/tags/funny">Funny</a><a href="/tags/rant">Rant</a>
+        <i class="fa fa-tags"></i><a href="/tags/javascript">javascript</a><a href="/tags/funny">funny</a><a href="/tags/rant">rant</a>
       </li>
       
   </article>

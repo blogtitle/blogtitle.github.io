@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Programming Patterns on Blog Title</title>
+    <title>programming patterns on Blog Title</title>
     <link>https://blogtitle.github.io/tags/programming-patterns/</link>
-    <description>Recent content in Programming Patterns on Blog Title</description>
+    <description>Recent content in programming patterns on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 19 Feb 2019 08:37:12 +0100</lastBuildDate>
