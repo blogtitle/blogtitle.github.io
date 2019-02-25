@@ -6,10 +6,21 @@
     <description>Recent content in golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Feb 2019 21:12:56 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 23 Feb 2019 09:47:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 1</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</link>
+      <pubDate>Sat, 23 Feb 2019 09:47:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
+      <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
+Today I decided to start sharing a couple of tricks to handle some peculiar cases.
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
+    </item>
     
     <item>
       <title>Go: slices gotchas</title>

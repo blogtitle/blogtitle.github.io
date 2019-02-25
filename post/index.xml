@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Feb 2019 21:12:56 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 23 Feb 2019 09:47:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 1</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</link>
+      <pubDate>Sat, 23 Feb 2019 09:47:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
+      <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
+Today I decided to start sharing a couple of tricks to handle some peculiar cases.
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
+    </item>
     
     <item>
       <title>Go: slices gotchas</title>
@@ -104,16 +115,6 @@ This is to say that basically up until three years ago I knew one and only one w
       <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
 # # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
 I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
-    </item>
-    
-    <item>
-      <title>Unmarshaling JSON in Golang</title>
-      <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
-      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/unmarshaling-json-in-golang/</guid>
-      <description>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the internal documentation states, it is possible to unmarshal JSON into an empty interface.
-An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
     </item>
     
   </channel>

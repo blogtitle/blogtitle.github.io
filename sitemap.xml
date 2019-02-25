@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/go-slices-gotchas/</loc>
     <lastmod>2019-02-22T21:12:56+01:00</lastmod>
   </url>
@@ -76,12 +81,18 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/concurrency/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -93,7 +104,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/categories/go/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -123,13 +134,13 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -170,6 +181,18 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/concurrency/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/engineering/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/tags/funny/</loc>
     <lastmod>2018-09-12T19:57:02+02:00</lastmod>
     <priority>0</priority>
@@ -189,7 +212,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/golang/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -220,6 +243,12 @@
   <url>
     <loc>https://blogtitle.github.io/tags/parsing/</loc>
     <lastmod>2018-05-30T16:35:28-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/patterns/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
     <priority>0</priority>
   </url>
   
