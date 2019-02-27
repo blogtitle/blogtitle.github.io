@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Feb 2019 09:47:23 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 25 Feb 2019 22:56:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Advanced concurrency patterns: part 2 (timers)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</link>
+      <pubDate>Mon, 25 Feb 2019 22:56:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</guid>
+      <description>As I stated in my previous article timers are hard to use the right way so here are some handful tips.
+Preface If you don&amp;rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:
+ time: Timer.Reset is not possible to use correctly #14038 time: Timer.C can still trigger even after Timer.Reset is called #11513 time: document proper usage of Timer.</description>
+    </item>
     
     <item>
       <title>Go advanced concurrency patterns: part 1</title>
@@ -104,17 +115,6 @@ NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which
       <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
       <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
 This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
-    </item>
-    
-    <item>
-      <title>Splitting Pipelines</title>
-      <link>https://blogtitle.github.io/splitting-pipelines/</link>
-      <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/splitting-pipelines/</guid>
-      <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
-# # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
-I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
     </item>
     
   </channel>

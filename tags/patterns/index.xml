@@ -6,10 +6,21 @@
     <description>Recent content in patterns on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Feb 2019 09:47:23 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 25 Feb 2019 22:56:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/patterns/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Advanced concurrency patterns: part 2 (timers)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</link>
+      <pubDate>Mon, 25 Feb 2019 22:56:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</guid>
+      <description>As I stated in my previous article timers are hard to use the right way so here are some handful tips.
+Preface If you don&amp;rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:
+ time: Timer.Reset is not possible to use correctly #14038 time: Timer.C can still trigger even after Timer.Reset is called #11513 time: document proper usage of Timer.</description>
+    </item>
     
     <item>
       <title>Go advanced concurrency patterns: part 1</title>
