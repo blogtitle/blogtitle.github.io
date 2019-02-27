@@ -176,7 +176,7 @@ This is even worsened by the fact that the <code>Timer</code> returned by <code>
 <span class="p">})</span>
 <span class="c1">// This will deadlock.
 </span><span class="c1"></span><span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span></code></pre></div>
-<p>Also, at the moment of writing, resetting the timer does not make the runtime call <code>f</code> again.</p>
+<p>Also, at the moment of writing, resetting the timer makes the runtime call <code>f</code> again after the passed duration, but it is not documented so it might change in the future.</p>
 
 <h4 id="time-newtimer">time.NewTimer</h4>
 
