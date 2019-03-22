@@ -6,10 +6,21 @@
     <description>Recent content in javascript on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 Aug 2018 19:20:13 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Using JavaScript SharedArrayBuffers and Atomics</title>
+      <link>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</link>
+      <pubDate>Fri, 22 Mar 2019 12:42:05 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</guid>
+      <description>I&amp;rsquo;m not a big fan of JavaScript but I like parallel programming and JS has some interesting concepts of it.
+In addition to the event loop I&amp;rsquo;ve recently got to know the concept of Web Workers. They are real threads that execute in parallel with the main thread, and are allowed to wait and block as much as they want.
+Modern devices are going in the direction of having a lot of FPS and web developers want to maintain the user experience smooth.</description>
+    </item>
     
     <item>
       <title>Let&#39;s talk about JavaScript</title>

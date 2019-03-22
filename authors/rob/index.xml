@@ -6,13 +6,24 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 25 Feb 2019 22:56:23 +0100</lastBuildDate>
+    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Go Advanced concurrency patterns: part 2 (timers)</title>
+      <title>Using JavaScript SharedArrayBuffers and Atomics</title>
+      <link>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</link>
+      <pubDate>Fri, 22 Mar 2019 12:42:05 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</guid>
+      <description>I&amp;rsquo;m not a big fan of JavaScript but I like parallel programming and JS has some interesting concepts of it.
+In addition to the event loop I&amp;rsquo;ve recently got to know the concept of Web Workers. They are real threads that execute in parallel with the main thread, and are allowed to wait and block as much as they want.
+Modern devices are going in the direction of having a lot of FPS and web developers want to maintain the user experience smooth.</description>
+    </item>
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 2 (timers)</title>
       <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</link>
       <pubDate>Mon, 25 Feb 2019 22:56:23 +0100</pubDate>
       
@@ -105,17 +116,6 @@ NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which
       <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
       <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
 This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
-    </item>
-    
-    <item>
-      <title>Splitting Pipelines</title>
-      <link>https://blogtitle.github.io/splitting-pipelines/</link>
-      <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/splitting-pipelines/</guid>
-      <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
-# # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
-I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
     </item>
     
   </channel>

@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</loc>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</loc>
     <lastmod>2019-02-25T22:56:23+01:00</lastmod>
   </url>
@@ -86,7 +91,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -97,7 +102,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/categories/concurrency/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -139,13 +144,13 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -187,13 +192,13 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/concurrency/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/tags/engineering/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -235,7 +240,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/javascript/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -253,7 +258,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/patterns/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
     <priority>0</priority>
   </url>
   
