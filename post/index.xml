@@ -6,10 +6,23 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 29 Jun 2019 07:45:23 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How and Why I&#39;ll use `try` in Go</title>
+      <link>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</link>
+      <pubDate>Sat, 29 Jun 2019 07:45:23 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</guid>
+      <description>I will not, and neither should you.
+Reading
+if err := doSmth(); err != nil { return err } Is just so much less magical than reading
+try(doSmth()) And, anyways, the best way would be to write
+if err := doSmth(); err != nil { return fmt.Errorf(&amp;#34;fizzing the buzz: %v&amp;#34;, err) } If you are really concerned about writing speed and use vim-go you can always add this to your vimrc:</description>
+    </item>
     
     <item>
       <title>Using JavaScript SharedArrayBuffers and Atomics</title>
@@ -104,18 +117,6 @@ There are two main ways to extract some information from traffic: you can either
       <description>Preface I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.
 They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g contains, hasPrefix, trim, replace,&amp;hellip;)
 Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for regular.</description>
-    </item>
-    
-    <item>
-      <title>Let&#39;s talk about JavaScript</title>
-      <link>https://blogtitle.github.io/lets-talk-about-javascript/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/lets-talk-about-javascript/</guid>
-      <description>Short preface: The first version of JavaScript was completed in ten days in order to accommodate the Netscape Navigator 2.0 Beta release schedule.
-Keep in mind that well structured languages usually take a little bit more than that.
-What follows is a small piece of the aftermath of the rushed job.
-NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
     </item>
     
   </channel>

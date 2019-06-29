@@ -6,10 +6,23 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 29 Jun 2019 07:45:23 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How and Why I&#39;ll use `try` in Go</title>
+      <link>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</link>
+      <pubDate>Sat, 29 Jun 2019 07:45:23 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</guid>
+      <description>I will not, and neither should you.
+Reading
+if err := doSmth(); err != nil { return err } Is just so much less magical than reading
+try(doSmth()) And, anyways, the best way would be to write
+if err := doSmth(); err != nil { return fmt.Errorf(&amp;#34;fizzing the buzz: %v&amp;#34;, err) } If you are really concerned about writing speed and use vim-go you can always add this to your vimrc:</description>
+    </item>
     
     <item>
       <title>Using JavaScript SharedArrayBuffers and Atomics</title>
@@ -106,16 +119,6 @@ Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for
 Keep in mind that well structured languages usually take a little bit more than that.
 What follows is a small piece of the aftermath of the rushed job.
 NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
-    </item>
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
   </channel>

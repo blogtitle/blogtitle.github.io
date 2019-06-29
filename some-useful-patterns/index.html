@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.56.0-DEV" />
 
 
 <title>Some useful patterns - Blog Title</title>
@@ -86,13 +86,14 @@
 <p>Or something equivalent in C#</p>
 <div class="highlight"><pre class="chroma"><code class="language-cs" data-lang="cs"><span class="na">[Authorize(Roles = &#34;User&#34;)]</span>
 <span class="k">public</span> <span class="k">class</span> <span class="nc">SecretManager</span><span class="p">:</span> <span class="n">Controller</span>
-<span class="p">{</span><span class="na">
-</span><span class="na">	[Route(&#34;/private&#34;)]</span>
+<span class="p">{</span>
+<span class="na">	[Route(&#34;/private&#34;)]</span>
 	<span class="k">public</span> <span class="n">ActionResult</span> <span class="n">GetSecret</span><span class="p">()</span>
 	<span class="p">{</span>
 		<span class="c1">// Code here
 </span><span class="c1"></span>	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre></div>
 <p>These say that you need to be authenticated in order to access some data under <code>/private</code>.</p>
 
 <p>There are several issues with this kind of programming practice that I find rather dangerous and annoying:</p>
@@ -169,15 +170,15 @@
 <p>Go makes sure that <code>init</code> functions are done executing before running the <code>main</code> function, so this ensures all values have been initialized before using them.</p>
 
 <p>Let&rsquo;s talk about the lazy ones now. In Java it may seem trivial to do it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyType</span> <span class="o">{</span>
-	<span class="kd">static</span> <span class="n">MyType</span> <span class="n">single</span><span class="o">;</span>
-	<span class="kd">public</span> <span class="kd">static</span> <span class="n">MyType</span> <span class="nf">getSingle</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">if</span> <span class="o">(</span><span class="n">single</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-			<span class="n">single</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyType</span><span class="o">();</span>
-		<span class="o">}</span>
-		<span class="k">return</span> <span class="n">single</span><span class="o">;</span>
-	<span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="nf">class</span> <span class="n">MyType</span> <span class="p">{</span>
+	<span class="kd">static</span> <span class="nf">MyType</span> <span class="n">single</span><span class="p">;</span>
+	<span class="kd">public</span> <span class="nf">static</span> <span class="n">MyType</span> <span class="nf">getSingle</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">single</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">single</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyType</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="n">single</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></div>
 <p>I&rsquo;ve seen this pattern hundreds of times, but there is a problem in it: there is a race condition, a nasty one.
 If multiple concurrent calls to <code>getSingle</code> happen, single will be initialized multiple times, breaking the constraint of it being a singleton. To do it right a <code>synchronized</code> keyword needs to be added, but it is quite heavy on a performance standpoint.</p>
 

@@ -6,10 +6,23 @@
     <description>Recent content in Go on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 25 Feb 2019 22:56:23 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 29 Jun 2019 07:45:23 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How and Why I&#39;ll use `try` in Go</title>
+      <link>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</link>
+      <pubDate>Sat, 29 Jun 2019 07:45:23 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</guid>
+      <description>I will not, and neither should you.
+Reading
+if err := doSmth(); err != nil { return err } Is just so much less magical than reading
+try(doSmth()) And, anyways, the best way would be to write
+if err := doSmth(); err != nil { return fmt.Errorf(&amp;#34;fizzing the buzz: %v&amp;#34;, err) } If you are really concerned about writing speed and use vim-go you can always add this to your vimrc:</description>
+    </item>
     
     <item>
       <title>Go advanced concurrency patterns: part 2 (timers)</title>

@@ -3,100 +3,61 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</loc>
-    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</loc>
-    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/go-slices-gotchas/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/a-unbiased-story/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/some-useful-patterns/</loc>
-    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/go-advanced-benchmarking/</loc>
-    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/the-hidden-pricse-of-research/</loc>
-    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/regexp-fun/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/lets-talk-about-javascript/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/considerations-on-error-handling/</loc>
-    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/splitting-pipelines/</loc>
-    <lastmod>2018-07-13T21:08:41+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/unmarshaling-json-in-golang/</loc>
-    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/kauai/</loc>
-    <lastmod>2018-05-25T21:35:39-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/about/</loc>
-    <lastmod>2018-05-03T17:33:02-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/authors/anna/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/authors/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/categories/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/go/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/post/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/authors/rob/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/go/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/try/</loc>
+    <lastmod>2019-06-29T07:45:23+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -107,87 +68,8 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/categories/funny/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/go/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/inspirational/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/json/</loc>
-    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/life/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/page/</loc>
-    <lastmod>2018-05-03T17:33:02-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/post/</loc>
+    <loc>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</loc>
     <lastmod>2019-03-22T12:42:05+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/software-engineering/</loc>
-    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/</loc>
-    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/categories/travels/</loc>
-    <lastmod>2018-05-25T21:35:39-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/art/</loc>
-    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/bash/</loc>
-    <lastmod>2018-07-13T21:08:41+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/benchmark/</loc>
-    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -203,8 +85,104 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/funny/</loc>
-    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <loc>https://blogtitle.github.io/tags/javascript/</loc>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/patterns/</loc>
+    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</loc>
+    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/golang/</loc>
+    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</loc>
+    <lastmod>2019-02-23T09:47:23+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/go-slices-gotchas/</loc>
+    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/gotchas/</loc>
+    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/a-unbiased-story/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/authors/anna/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/inspirational/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/life/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/thoughts/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/tips/</loc>
+    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/software-engineering/</loc>
+    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/some-useful-patterns/</loc>
+    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/programming-patterns/</loc>
+    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/go-advanced-benchmarking/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/benchmark/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -221,14 +199,91 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/golang/</loc>
-    <lastmod>2019-02-25T22:56:23+01:00</lastmod>
+    <loc>https://blogtitle.github.io/tags/optimization/</loc>
+    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/gotchas/</loc>
-    <lastmod>2019-02-22T21:12:56+01:00</lastmod>
+    <loc>https://blogtitle.github.io/the-hidden-pricse-of-research/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/art/</loc>
+    <lastmod>2018-10-19T15:42:57+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/funny/</loc>
+    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/regexp-fun/</loc>
+    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/funny/</loc>
+    <lastmod>2018-09-12T19:57:02+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/lets-talk-about-javascript/</loc>
+    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/rant/</loc>
+    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/considerations-on-error-handling/</loc>
+    <lastmod>2018-08-10T12:34:41+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/splitting-pipelines/</loc>
+    <lastmod>2018-07-13T21:08:41+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/bash/</loc>
+    <lastmod>2018-07-13T21:08:41+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/json/</loc>
+    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/unmarshaling-json-in-golang/</loc>
+    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/tags/parsing/</loc>
+    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/kauai/</loc>
+    <lastmod>2018-05-25T21:35:39-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/travels/</loc>
+    <lastmod>2018-05-25T21:35:39-07:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -239,56 +294,19 @@
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/javascript/</loc>
-    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/optimization/</loc>
-    <lastmod>2019-01-11T22:15:43+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/parsing/</loc>
-    <lastmod>2018-05-30T16:35:28-07:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/patterns/</loc>
-    <lastmod>2019-03-22T12:42:05+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/programming-patterns/</loc>
-    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://blogtitle.github.io/tags/rant/</loc>
-    <lastmod>2018-08-11T19:20:13+02:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://blogtitle.github.io/tags/scuba/</loc>
     <lastmod>2018-05-25T21:35:39-07:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/thoughts/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
-    <priority>0</priority>
+    <loc>https://blogtitle.github.io/about/</loc>
+    <lastmod>2018-05-03T17:33:02-07:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blogtitle.github.io/tags/tips/</loc>
-    <lastmod>2019-02-19T12:07:43-08:00</lastmod>
+    <loc>https://blogtitle.github.io/page/</loc>
+    <lastmod>2018-05-03T17:33:02-07:00</lastmod>
     <priority>0</priority>
   </url>
   

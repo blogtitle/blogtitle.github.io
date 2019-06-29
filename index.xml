@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blog Title</title>
@@ -6,9 +5,24 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 29 Jun 2019 07:45:23 +0200</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>How and Why I&#39;ll use `try` in Go</title>
+      <link>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</link>
+      <pubDate>Sat, 29 Jun 2019 07:45:23 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/how-and-why-ill-use-try-in-go/</guid>
+      <description>I will not, and neither should you.
+Reading
+if err := doSmth(); err != nil { return err } Is just so much less magical than reading
+try(doSmth()) And, anyways, the best way would be to write
+if err := doSmth(); err != nil { return fmt.Errorf(&amp;#34;fizzing the buzz: %v&amp;#34;, err) } If you are really concerned about writing speed and use vim-go you can always add this to your vimrc:</description>
+    </item>
     
     
     
@@ -136,6 +150,57 @@ Keep in mind that well structured languages usually take a little bit more than 
 What follows is a small piece of the aftermath of the rushed job.
 NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
     </item>
+    
+    
+    
+    <item>
+      <title>Considerations on error handling</title>
+      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
+      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
+      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
+This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Splitting Pipelines</title>
+      <link>https://blogtitle.github.io/splitting-pipelines/</link>
+      <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/splitting-pipelines/</guid>
+      <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
+# # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
+I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Unmarshaling JSON in Golang</title>
+      <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
+      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/unmarshaling-json-in-golang/</guid>
+      <description>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the internal documentation states, it is possible to unmarshal JSON into an empty interface.
+An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Kauai</title>
+      <link>https://blogtitle.github.io/kauai/</link>
+      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/kauai/</guid>
+      <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
+The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
+    </item>
+    
+    
     
     
   </channel>
