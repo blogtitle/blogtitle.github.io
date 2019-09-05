@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>go on Blog Title</title>
-    <link>https://blogtitle.github.io/tags/go/</link>
-    <description>Recent content in go on Blog Title</description>
+    <title>try on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/try/</link>
+    <description>Recent content in try on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 29 Jun 2019 07:45:23 +0200</lastBuildDate>
     
-	<atom:link href="https://blogtitle.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blogtitle.github.io/tags/try/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
