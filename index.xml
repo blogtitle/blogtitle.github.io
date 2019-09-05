@@ -6,9 +6,21 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 21 Aug 2019 02:52:26 -0700</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Rob&#39;n Go security pearls: fundamentals</title>
+      <link>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</link>
+      <pubDate>Wed, 21 Aug 2019 02:52:26 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</guid>
+      <description>Welcome to this introductory series on web security. I&amp;rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic. Most server-side code will be in Go but you&amp;rsquo;ll be able to understand it if you know any C-like language.
+This first post is about the fundamentals: URI, HTTP, TLS, HTML and escaping. If you are already familiar with those concepts please feel free to skip to the next post.</description>
+    </item>
     
     
     
@@ -121,20 +133,6 @@ There are two main ways to extract some information from traffic: you can either
       <description>Preface I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.
 They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g contains, hasPrefix, trim, replace,&amp;hellip;)
 Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for regular.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Let&#39;s talk about JavaScript</title>
-      <link>https://blogtitle.github.io/lets-talk-about-javascript/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/lets-talk-about-javascript/</guid>
-      <description>Short preface: The first version of JavaScript was completed in ten days in order to accommodate the Netscape Navigator 2.0 Beta release schedule.
-Keep in mind that well structured languages usually take a little bit more than that.
-What follows is a small piece of the aftermath of the rushed job.
-NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
     </item>
     
     

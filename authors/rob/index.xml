@@ -6,10 +6,20 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 21 Aug 2019 02:52:26 -0700</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Rob&#39;n Go security pearls: fundamentals</title>
+      <link>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</link>
+      <pubDate>Wed, 21 Aug 2019 02:52:26 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</guid>
+      <description>Welcome to this introductory series on web security. I&amp;rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic. Most server-side code will be in Go but you&amp;rsquo;ll be able to understand it if you know any C-like language.
+This first post is about the fundamentals: URI, HTTP, TLS, HTML and escaping. If you are already familiar with those concepts please feel free to skip to the next post.</description>
+    </item>
     
     <item>
       <title>Using JavaScript SharedArrayBuffers and Atomics</title>
@@ -106,16 +116,6 @@ Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for
 Keep in mind that well structured languages usually take a little bit more than that.
 What follows is a small piece of the aftermath of the rushed job.
 NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
-    </item>
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
   </channel>

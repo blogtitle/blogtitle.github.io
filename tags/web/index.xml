@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web on Blog Title</title>
+    <link>https://blogtitle.github.io/tags/web/</link>
+    <description>Recent content in web on Blog Title</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 21 Aug 2019 02:52:26 -0700</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/tags/web/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Rob&#39;n Go security pearls: fundamentals</title>
+      <link>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</link>
+      <pubDate>Wed, 21 Aug 2019 02:52:26 -0700</pubDate>
+      
+      <guid>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</guid>
+      <description>Welcome to this introductory series on web security. I&amp;rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic. Most server-side code will be in Go but you&amp;rsquo;ll be able to understand it if you know any C-like language.
+This first post is about the fundamentals: URI, HTTP, TLS, HTML and escaping. If you are already familiar with those concepts please feel free to skip to the next post.</description>
+    </item>
+    
+  </channel>
+</rss>
