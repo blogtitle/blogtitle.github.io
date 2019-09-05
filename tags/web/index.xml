@@ -6,7 +6,7 @@
     <description>Recent content in web on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 21 Aug 2019 02:52:26 -0700</lastBuildDate>
+    <lastBuildDate>Thu, 05 Sep 2019 12:25:40 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/web/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Rob&#39;n Go security pearls: fundamentals</title>
       <link>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</link>
-      <pubDate>Wed, 21 Aug 2019 02:52:26 -0700</pubDate>
+      <pubDate>Thu, 05 Sep 2019 12:25:40 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</guid>
       <description>Welcome to this introductory series on web security. I&amp;rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic. Most server-side code will be in Go but you&amp;rsquo;ll be able to understand it if you know any C-like language.
