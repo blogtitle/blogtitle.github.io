@@ -82,7 +82,7 @@ Most server-side code will be in Go but you&rsquo;ll be able to understand it if
 <p>URIs are composed by the following parts:</p>
 <div class="highlight"><pre class="chroma">// [block] means that `block` is optional
 [scheme:][//[userinfo@]host[:port]][/]path[?query][#fragment]</pre></div>
-<p>The most common scheme are <code>http</code> and <code>https</code>, but <code>javascript</code> and <code>mailto</code> are also broadly used.
+<p>The most common schemes are <code>http</code> and <code>https</code>, but <code>javascript</code> and <code>mailto</code> are also broadly used.
 This first part instruct the application that needs to use the URI on how to interpret the rest. It is not unusual to have custom schemes for specific applications, so that everything else in the URI is determined by that application and can use a custom format. One example for this is <code>smb</code> which allows on some operating systems to browse remote files on other machines.</p>
 
 <p>Whatever comes after the scheme depends on it, so if it is omitted the client application (the browser from now on) needs to decide a default one when the user types a URI in the address bar.
@@ -103,7 +103,7 @@ Sometimes in web pages even the host is not specified, so the browser must provi
 <span class="n">Content-Length</span><span class="o">:</span> <span class="l">11</span>
 
 hello world</code></pre></div>
-<p>You can try this yourself by connecting on port 80 of any HTTP server with netcat or telnet and writing the request manually (hit return twice after done typing the host).</p>
+<p>You can try this yourself by connecting to port 80 of any HTTP server with netcat or telnet and writing the request manually (hit return twice after done typing the host).</p>
 
 <p>Let&rsquo;s unwrap what is going on here:</p>
 
@@ -154,6 +154,7 @@ Note: in HTTP lines are separated by &ldquo;\r\n&rdquo; and not just &ldquo;\n&r
 <li>only who has the private key can decipher what is encrypted with the public one;</li>
 <li>only who has the private key can sign a certificate in a way that matches the public one.</li>
 </ul></li>
+<li>The rest of the communication is encrypted with the shared secret.</li>
 </ul>
 
 <p>The cipher suite agreed in the first part determine some important algorithms, the most relevant are:</p>
