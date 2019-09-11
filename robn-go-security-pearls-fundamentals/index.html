@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.57.2" />
 
 
 <title>Rob&#39;n Go security pearls: fundamentals - Blog Title</title>
@@ -73,7 +73,7 @@
 <p>Welcome to this introductory series on web security. I&rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic.
 Most server-side code will be in Go but you&rsquo;ll be able to understand it if you know any C-like language.</p>
 
-<p>This first post is about the fundamentals: URI, HTTP, TLS, HTML and escaping. If you are already familiar with those concepts please feel free to skip to the next post.</p>
+<p>This first post is about the fundamentals: URI, HTTP, TLS, HTML, escaping and cookies. If you are already familiar with those concepts please feel free to skip to the next post.</p>
 
 <h1 id="it-starts-with-a-uri">It starts with a URI</h1>
 
@@ -112,9 +112,12 @@ hello world</code></pre></div>
 <li><code>/hello</code> is the path we want. Usually this is taken from the URI as anything that comes after the host[:port] portion and before the <code>#</code> character.</li>
 <li><code>HTTP/1.1</code> is the protocol we want to use to talk to the server. This implies that a &ldquo;Host&rdquo; header will follow.</li>
 <li><code>Host: localhost</code> is a header. Headers are always in the form <code>Key: value</code>. In this case this means that on the machine we are connected to we want to talk to the host that is responding to the name &ldquo;localhost&rdquo;. This allows multiple virtual hosts to be served by the same machine. We will focus on the dangerous consequences of having the Host header specified so openly in the chapter on DNS rebinding attacks.</li>
-<li>An empty line is needed to signal that headers are finished and the request body (if any) will follow. In this case we are using &ldquo;GET&rdquo; and we didn&rsquo;t specify a &ldquo;Content-Length&rdquo; header so the server starts responding as no body is expected.
-Note: in HTTP lines are separated by &ldquo;\r\n&rdquo; and not just &ldquo;\n&rdquo;. While some modern servers might accept single separators it is always better to use both, so our request will end with bytes <code>[0x0d 0x0a 0x0d 0x0a]</code> in this case.</li>
+<li>An empty line is needed to signal that headers are finished and the request body (if any) will follow. In this case we are using &ldquo;GET&rdquo; and we didn&rsquo;t specify a &ldquo;Content-Length&rdquo; header so the server starts responding as no body is expected.</li>
 </ul>
+
+<blockquote>
+<p>Note: in HTTP lines are separated by &ldquo;\r\n&rdquo; and not just &ldquo;\n&rdquo;. While some modern servers might accept single separators it is always better to use both, so our request will end with bytes <code>[0x0d 0x0a 0x0d 0x0a]</code> in this case.</p>
+</blockquote>
 
 <p>The server then responds:</p>
 
@@ -165,7 +168,7 @@ Note: in HTTP lines are separated by &ldquo;\r\n&rdquo; and not just &ldquo;\n&r
 <li>how to check for message integrity</li>
 </ul>
 
-<h1 id="and-it-is-described-by-html">And it is described by HTML</h1>
+<h1 id="it-s-described-by-html">It&rsquo;s described by HTML</h1>
 
 <p>HyperText Markup Language(HTML) is a twisted, fuzzy derivation of XML that describes how web pages should look and behave. Over the years HTML evolved from a markup language that allowed hyperlinks to a fully blown style-markup-code descriptor.</p>
 
@@ -209,7 +212,7 @@ For example when the HTML processor sees the <code>&lt;style&gt;</code> tag, it 
 
 <p>This fact has the interesting consequence that in JavaScript it is impossible to have the code <code>var scr = &quot;&lt;/script&gt;&quot;;</code> and it is necessary to do something like <code>var scr = &quot;&lt;/scr&quot; +&quot;ipt&gt;&quot;;</code> to prevent the HTML processor from switching context. We will see the proper way to do it in a few lines.</p>
 
-<p>The main problem is that the HTML parser has no knowledge of the internal state of the JavaScript one, so it needs to be instructed somehow to know when it is time to resume processing tags and the JS block is finished.</p>
+<p>The main problem is that the HTML parser has no knowledge of the internal state of the JavaScript one, so it needs to be instructed somehow to know when it is time to resume processing tags and the JavaScript block is finished.</p>
 
 <p>The right way to tackle this problem is to not use HTML special characters in non-HTML blocks. All characters that might be relevant for the HTML processor need to be &ldquo;escaped&rdquo; somehow.</p>
 
@@ -220,6 +223,26 @@ Please note that also URIs need encoding of some characters that are not allowed
 
 <p>Stay tuned! Next post is on Cross-Site-Scripting(XSS) and will explain what happens when developers are not careful.</p>
 
+<h1 id="and-can-be-authenticated">And can be authenticated</h1>
+
+<p>As you might have noticed, HTTP it is a stateless protocol. Roughly every time you need to fetch a resource you have to issue a new request and if you need to access some restricted endpoint you need to <strong>authenticate again</strong>. As you can imagine this would cause some degradation in user experience, so the platform provides some ways to get around the problem.</p>
+
+<p>Cookies are a built-in mechanism: whenever a server response contains a <code>Set-Cookie</code> header the browser will store the value in a so-called jar. From that moment on and until the cookie expires the browser will attach the cookie value to every request that is directed to that &ldquo;endpoint&rdquo; (more about this below).</p>
+
+<p>When a user authenticates to the server the cookie is bound to their identity and to their credentials on the server side, so that the user won&rsquo;t need to authenticate again.</p>
+
+<p>Steps of a standard authentication process:</p>
+
+<ul>
+<li>User visits the website and might be issued a unique cookie;</li>
+<li>User logs into the website with their credentials;</li>
+<li>The server issues a new unique cookie and stores it in its database together with a reference to the user;</li>
+<li>Every time the user agent(usually a browser) requests a resource in the scope of the cookie it also sends the cookie along;</li>
+<li>When the server receives a requests it will lookup the cookie in the database and respond based on the user permissions.</li>
+</ul>
+
+<p>The server might not use a database but might decide to sign the cookie somehow to recognize the user later. Moreover some applications might use Authorization tokens instead of cookies. These are carried over different headers or in the body of the request. For the purpose of most of the following posts you don&rsquo;t need to pay too much attention in the difference between the two.</p>
+
 <h1 id="recap">Recap</h1>
 
 <p>If you want to send some content to a client and display it, you will have:</p>
@@ -227,7 +250,7 @@ Please note that also URIs need encoding of some characters that are not allowed
 <ul>
 <li>The content escaped as many times as many nested contexts it is sent in, no more, no less;</li>
 <li>HTML sent with HTTP;</li>
-<li>HTTP resource fetched over TLS over TCP;</li>
+<li>HTTP, with potential authentication, fetches a resource over TLS over TCP;</li>
 <li>The resource is described by a URI that needs escaping itself;</li>
 </ul>
 

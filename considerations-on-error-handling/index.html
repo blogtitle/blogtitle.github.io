@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.57.2" />
 
 
 <title>Considerations on error handling - Blog Title</title>
@@ -161,17 +161,17 @@ This made it so that some packages export helper functions to check errors, like
 <h3 id="taxonomy">Taxonomy</h3>
 
 <p>One of the remarkable things about errors in go is that they are values, and the language focuses on that rather than their inheritance and taxonomy. This makes very hard to have ambiguities such as the following one:</p>
-<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="o">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="p">{</span>
 	<span class="c1">// Explicitly declared as Exception
-</span><span class="c1"></span>	<span class="n">Exception</span> <span class="n">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PermissionException</span><span class="o">();</span>
-	<span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
-<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">PermissionException</span> <span class="n">re</span><span class="o">){</span>
-	<span class="n">log</span><span class="o">(</span><span class="s">&#34;Make sure you have permission&#34;</span><span class="o">);</span>
+</span><span class="c1"></span>	<span class="n">Exception</span> <span class="nf">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PermissionException</span><span class="p">();</span>
+	<span class="k">throw</span> <span class="n">e</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">PermissionException</span> <span class="nf">re</span><span class="p">){</span>
+	<span class="n">log</span><span class="p">(</span><span class="s">&#34;Make sure you have permission&#34;</span><span class="p">);</span>
 	<span class="c1">// No fallthrough
-</span><span class="c1"></span><span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="o">;</span>
-<span class="o">}</span>
-<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span></code></pre></div>
+</span><span class="c1"></span><span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="p">;</span></code></pre></div>
 <p>What does this code return?</p>
 
 <p>Luckily Java well behaves and enters the first catch block, and the code logs correctly and returns &ldquo;a&rdquo;.</p>
@@ -181,26 +181,26 @@ This made it so that some packages export helper functions to check errors, like
 <h3 id="finally">Finally</h3>
 
 <p>Early returns usually make code more readable: they reduce the need for indentation and cyclomatic complexity, and they make sure code is never accidentally executed. But Java has some issues with early returns and error handling code:</p>
-<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span><span class="o">{</span>
-	<span class="k">throw</span> <span class="k">new</span> <span class="n">Exception</span><span class="o">();</span>
-<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">){</span>
-	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span>
-<span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="o">;</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span><span class="p">{</span>
+	<span class="k">throw</span> <span class="k">new</span> <span class="n">Exception</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="nf">e</span><span class="p">){</span>
+	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 <p>This code returns &ldquo;b&rdquo; as the <code>finally</code> block is always executed after the <code>catch</code> blocks, even if they invoked a return statement.</p>
 
 <p>This is a little bit weird, but after a while you can get used to it, I guess. The madness comes right now.</p>
 
 <h3 id="eventually">Eventually</h3>
-<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="o">{</span>
-	<span class="n">Exception</span> <span class="n">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Exception</span><span class="o">();</span>
-	<span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
-<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-	<span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="o">();</span>
-<span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="p">{</span>
+	<span class="n">Exception</span> <span class="nf">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Exception</span><span class="p">();</span>
+	<span class="k">throw</span> <span class="n">e</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="nf">e</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 <p>What does this code do? Who catches the <code>RuntimeException</code>?</p>
 
 <p>Short answer: no one. This code returns &ldquo;a&rdquo;. The stack escalation caused by the <code>throw</code> statement in the catch block is stopped by the <code>finally</code> block. And there is <em>no way</em> to catch that exception anymore. It is just lost.</p>

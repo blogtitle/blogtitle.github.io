@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Sep 2019 12:25:40 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 11 Sep 2019 23:23:40 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS)</title>
+      <link>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</link>
+      <pubDate>Wed, 11 Sep 2019 23:23:40 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</guid>
+      <description>This post is part of my developer-friendly security series. You can find all other posts here.
+ XSS is a vulnerability that allows attackers to run arbitrary JavaScript code in applications they shouldn&amp;rsquo;t be able to control. This can lead to complete account compromises for every victim that follows a malicious link or visits a compromised page.
+There are two major families of XSS: server side and client side.</description>
+    </item>
     
     <item>
       <title>Rob&#39;n Go security pearls: fundamentals</title>
@@ -18,7 +29,7 @@
       
       <guid>https://blogtitle.github.io/robn-go-security-pearls-fundamentals/</guid>
       <description>Welcome to this introductory series on web security. I&amp;rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic. Most server-side code will be in Go but you&amp;rsquo;ll be able to understand it if you know any C-like language.
-This first post is about the fundamentals: URI, HTTP, TLS, HTML and escaping. If you are already familiar with those concepts please feel free to skip to the next post.</description>
+This first post is about the fundamentals: URI, HTTP, TLS, HTML, escaping and cookies. If you are already familiar with those concepts please feel free to skip to the next post.</description>
     </item>
     
     <item>
@@ -103,17 +114,6 @@ There are two main ways to extract some information from traffic: you can either
       
       <guid>https://blogtitle.github.io/the-hidden-pricse-of-research/</guid>
       <description>You wake up one Sunday morning and think: &amp;ldquo;how the hell does that thing work?&amp;rdquo;. So you go and google for it and find several blog posts, talks and papers about the topic. During your research you find out some more detailed parts of the topic, so you search the web for it again and find out more. After several hours you find out something very interesting, many layers deeper than where you started, something that you can&amp;rsquo;t really grasp because it is too complex or requires some background knowledge that the speaker/researcher/blogger couldn&amp;rsquo;t possibly fit in the talk/paper/post.</description>
-    </item>
-    
-    <item>
-      <title>Regexp Fun</title>
-      <link>https://blogtitle.github.io/regexp-fun/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/regexp-fun/</guid>
-      <description>Preface I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.
-They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g contains, hasPrefix, trim, replace,&amp;hellip;)
-Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for regular.</description>
     </item>
     
   </channel>
