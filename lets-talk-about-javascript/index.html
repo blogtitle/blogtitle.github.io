@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.57.2" />
 
 
 <title>Let&#39;s talk about JavaScript - Blog Title</title>
@@ -123,9 +123,9 @@
 <p>When they designed ECMAScript they decided to get rid of <code>int</code>s altogether. Processors were starting to be really fast and optimizing algebra was not necessary anymore. What they forgot is that comparison is not reliable on doubles, but it is on <code>int</code>s.</p>
 
 <p>A programmer coming from old, strongly typed languages, might expect <code>a + b + c === c + b + a</code> to always be true, but it is not reliably so if you only use doubles:</p>
-<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="err">/3;</span>
-<span class="nx">b</span> <span class="o">=</span> <span class="mi">5</span><span class="err">/7;</span>
-<span class="nx">c</span> <span class="o">=</span> <span class="mi">7</span><span class="err">/13;</span>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">;</span>
+<span class="nx">b</span> <span class="o">=</span> <span class="mi">5</span><span class="o">/</span><span class="mi">7</span><span class="p">;</span>
+<span class="nx">c</span> <span class="o">=</span> <span class="mi">7</span><span class="o">/</span><span class="mi">13</span><span class="p">;</span>
 <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">c</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">a</span><span class="p">;</span> <span class="c1">// out: false
 </span></code></pre></div>
 <hr />
