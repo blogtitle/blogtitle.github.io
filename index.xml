@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blog Title</title>
@@ -133,84 +134,6 @@ There are two main ways to extract some information from traffic: you can either
       <guid>https://blogtitle.github.io/the-hidden-pricse-of-research/</guid>
       <description>You wake up one Sunday morning and think: &amp;ldquo;how the hell does that thing work?&amp;rdquo;. So you go and google for it and find several blog posts, talks and papers about the topic. During your research you find out some more detailed parts of the topic, so you search the web for it again and find out more. After several hours you find out something very interesting, many layers deeper than where you started, something that you can&amp;rsquo;t really grasp because it is too complex or requires some background knowledge that the speaker/researcher/blogger couldn&amp;rsquo;t possibly fit in the talk/paper/post.</description>
     </item>
-    
-    
-    
-    <item>
-      <title>Regexp Fun</title>
-      <link>https://blogtitle.github.io/regexp-fun/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/regexp-fun/</guid>
-      <description>Preface I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.
-They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g contains, hasPrefix, trim, replace,&amp;hellip;)
-Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for regular.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Let&#39;s talk about JavaScript</title>
-      <link>https://blogtitle.github.io/lets-talk-about-javascript/</link>
-      <pubDate>Sat, 11 Aug 2018 19:20:13 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/lets-talk-about-javascript/</guid>
-      <description>Short preface: The first version of JavaScript was completed in ten days in order to accommodate the Netscape Navigator 2.0 Beta release schedule.
-Keep in mind that well structured languages usually take a little bit more than that.
-What follows is a small piece of the aftermath of the rushed job.
-NOTE: There is more madness in destroy all software&amp;rsquo;s wat video, which I suggest watching before reading this post.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Splitting Pipelines</title>
-      <link>https://blogtitle.github.io/splitting-pipelines/</link>
-      <pubDate>Fri, 13 Jul 2018 21:08:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/splitting-pipelines/</guid>
-      <description>The problem Some days ago I was looking at some configuration files that were presented in this form:
-# # This is a section # VALUE_ENABLED=y # VALUE_DISABLED  The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.
-I would have liked to see comments in a different file than the rest, so I thought: &amp;ldquo;Well, this is an easy job for grep&amp;rdquo;.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Unmarshaling JSON in Golang</title>
-      <link>https://blogtitle.github.io/unmarshaling-json-in-golang/</link>
-      <pubDate>Wed, 30 May 2018 16:35:28 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/unmarshaling-json-in-golang/</guid>
-      <description>Unmarshaling JSON files in Golang can be tricky. Golang is a statically typed language and does not allow dynamic JSON deserialization. In order to unmarshal a JSON blob into Golang it usually requires to know its structure beforehand. But, as the internal documentation states, it is possible to unmarshal JSON into an empty interface.
-An empty interface represents the empty set of methods and is satisfied by any value, since any value has zero or more methods.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Kauai</title>
-      <link>https://blogtitle.github.io/kauai/</link>
-      <pubDate>Fri, 25 May 2018 21:35:39 -0700</pubDate>
-      
-      <guid>https://blogtitle.github.io/kauai/</guid>
-      <description>This last weekend I flew to Hawaii for the first time in my life. What. An. Experience. Before leaving I read a couple of travel guides online, but nothing prepared me for the beauty of this island.
-The flight I chose was on a Friday night. By 0330 I was done with my work for the week; quickly grabbed enough clothes for 4 days, my travel backpack and I was on a Lyft to the airport.</description>
-    </item>
-    
-    
     
     
   </channel>

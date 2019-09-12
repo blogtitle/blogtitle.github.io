@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.57.2" />
+<meta name="generator" content="Hugo 0.55.0-DEV" />
 
 
 <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS) - Blog Title</title>
@@ -177,7 +177,7 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 
 <p>Well&hellip; It doesn&rsquo;t <code>¯\_(ツ)_/¯</code>.</p>
 
-<p>That said something can still be done: proper escaping can be performed with libraries like <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a> and a way to enforce a secure access to the DOM APIs like <code>innerHTML</code> is being worked on with <a href="https://github.com/WICG/trusted-types#polyfill">trusted types</a>. If you want to experiment with something new there is a <a href="https://github.com/WICG/trusted-types#polyfill">a polyfill library</a> ready for you to use. Moreover, if you use a major framework like <a href="https://angular.io/guide/security#xss">Angular</a> or <a href="https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml">React</a>, I also suggest to consult their user guides on XSS prevention.</p>
+<p>That said something can still be done: proper escaping can be performed with libraries like <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a> and a way to enforce a secure access to the DOM APIs like <code>innerHTML</code> is being worked on with <a href="https://github.com/WICG/trusted-types#polyfill">trusted types</a>. If you want to experiment with something new there is a <a href="https://github.com/WICG/trusted-types#polyfill">a polyfill library</a> ready for you to use. Moreover, if you use a major framework like Angular you should probably read <a href="https://angular.io/guide/security#xss">their considerations on XSS</a>. Please note that React <strong>does not</strong> perform contextual auto-escaping.</p>
 
 <h1 id="mitigations">Mitigations</h1>
 
