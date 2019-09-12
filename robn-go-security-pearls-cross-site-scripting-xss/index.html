@@ -84,7 +84,7 @@
 
 <p>Let&rsquo;s make an example, suppose you are using &ldquo;text/template&rdquo; to generate pages:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
-Hello I&#39;m {{.Username}} and welcome to my shop!
+Hello I&#39;m {{ .Username }} and welcome to my shop!
 <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
 <p>If the username is <code>Rob</code> the output of the page will be</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
@@ -125,7 +125,7 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 
 <p>If you are interpolating, for example, in this context:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="s2">&#34;{{.Data}}&#34;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="s2">&#34;{{ .Data  }}&#34;</span><span class="p">;</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>This will automatically be encoded in a way that an attacker could not break. This means that 2 encoders will be executed:</p>
 
@@ -277,7 +277,7 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">tpl</span> <span class="p">=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="s">`
-</span><span class="s">&lt;script nonce=&#34;</span><span class="cp">{{</span><span class="na">.CSPNonce</span><span class="cp">}}</span><span class="s">&#34;&gt; alert(&#34;This works!&#34;); &lt;/script&gt;
+</span><span class="s">&lt;script nonce=&#34;</span><span class="cp">{{</span><span class="w"> </span><span class="na">.CSPNonce</span><span class="w"> </span><span class="cp">}}</span><span class="s">&#34;&gt; alert(&#34;This works!&#34;); &lt;/script&gt;
 </span><span class="s">&lt;script&gt; alert(&#34;This doesnt!&#34;); &lt;/script&gt;`</span><span class="p">))</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
