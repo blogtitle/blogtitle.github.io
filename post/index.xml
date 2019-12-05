@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Sep 2019 23:23:40 +0200</lastBuildDate>
+    <lastBuildDate>Thu, 05 Dec 2019 20:07:04 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 3 (channels)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</link>
+      <pubDate>Thu, 05 Dec 2019 20:07:04 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</guid>
+      <description>Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the sync package from scratch.
+In doing so I&amp;rsquo;m just going to accept some compromises:
+ This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</description>
+    </item>
     
     <item>
       <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS)</title>
@@ -105,15 +116,6 @@ Decorators This feature is extensively used in most object oriented languages, a
       <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
 One example I faced was to analyse some data flowing in some connections that I was proxying.
 There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
-    </item>
-    
-    <item>
-      <title>The Hidden Pri(c|s)e of Research</title>
-      <link>https://blogtitle.github.io/the-hidden-pricse-of-research/</link>
-      <pubDate>Fri, 19 Oct 2018 15:42:57 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/the-hidden-pricse-of-research/</guid>
-      <description>You wake up one Sunday morning and think: &amp;ldquo;how the hell does that thing work?&amp;rdquo;. So you go and google for it and find several blog posts, talks and papers about the topic. During your research you find out some more detailed parts of the topic, so you search the web for it again and find out more. After several hours you find out something very interesting, many layers deeper than where you started, something that you can&amp;rsquo;t really grasp because it is too complex or requires some background knowledge that the speaker/researcher/blogger couldn&amp;rsquo;t possibly fit in the talk/paper/post.</description>
     </item>
     
   </channel>

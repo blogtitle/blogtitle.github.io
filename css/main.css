@@ -498,6 +498,24 @@ blockquote {
   padding: 0 10px 0px 0;
 }
 
+@media (prefers-color-scheme: dark) {
+  html {
+    filter: invert() hue-rotate(180deg) contrast(80%);
+  }
+  html img {
+    filter: invert() hue-rotate(180deg) contrast(100%);
+  }
+  html video {
+    filter: invert() hue-rotate(180deg) contrast(100%);
+  }
+  html .highlight {
+    filter: invert() hue-rotate(180deg) contrast(100%);
+  }
+  body {
+    background: black !important;
+  }
+}
+
 @media (min-width: 600px) {
   code {
     padding: 2px 4px;

@@ -6,10 +6,21 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Sep 2019 23:23:40 +0200</lastBuildDate>
+    <lastBuildDate>Thu, 05 Dec 2019 20:07:04 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 3 (channels)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</link>
+      <pubDate>Thu, 05 Dec 2019 20:07:04 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</guid>
+      <description>Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the sync package from scratch.
+In doing so I&amp;rsquo;m just going to accept some compromises:
+ This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</description>
+    </item>
     
     <item>
       <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS)</title>
@@ -104,17 +115,6 @@ There are two main ways to extract some information from traffic: you can either
       
       <guid>https://blogtitle.github.io/the-hidden-pricse-of-research/</guid>
       <description>You wake up one Sunday morning and think: &amp;ldquo;how the hell does that thing work?&amp;rdquo;. So you go and google for it and find several blog posts, talks and papers about the topic. During your research you find out some more detailed parts of the topic, so you search the web for it again and find out more. After several hours you find out something very interesting, many layers deeper than where you started, something that you can&amp;rsquo;t really grasp because it is too complex or requires some background knowledge that the speaker/researcher/blogger couldn&amp;rsquo;t possibly fit in the talk/paper/post.</description>
-    </item>
-    
-    <item>
-      <title>Regexp Fun</title>
-      <link>https://blogtitle.github.io/regexp-fun/</link>
-      <pubDate>Wed, 12 Sep 2018 19:57:02 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/regexp-fun/</guid>
-      <description>Preface I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.
-They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g contains, hasPrefix, trim, replace,&amp;hellip;)
-Regular The &amp;ldquo;reg&amp;rdquo; in &amp;ldquo;regexp&amp;rdquo; stands for regular.</description>
     </item>
     
   </channel>

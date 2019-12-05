@@ -170,7 +170,7 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 <p>Let&rsquo;s look at an example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="kd">var</span> <span class="nx">mydiv</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;myDiv&#34;</span><span class="p">);</span>
-<span class="nx">mydiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">;</span>
+<span class="nx">mydiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">);</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>If the current page URI ends with <code>#&lt;img%20src=x%20onerror=&quot;alert(1)&quot;/&gt;</code> this code will execute <code>alert(1)</code> in the context of the page. The attack scenario in this case is that the attacker sends to the victim a link like:</p>
 

@@ -188,7 +188,7 @@ Instead, if <code>wait</code> detects that the value is different from the one y
 <li>Calling <code>wait</code> on a WaitGroup should suspend execution until the counter is equal to <code>0</code></li>
 </ul>
 
-<p>Beware that <code>add</code> should always be called <strong>before the work is tarted</strong>, and this is why I added an initial value in the constructor. Calling <code>add</code> in the worker that calls <code>done</code> causes race conditions and might result in undesired early returns from <code>wait</code>.</p>
+<p>Beware that <code>add</code> should always be called <strong>before the work is started</strong>, and this is why I added an initial value in the constructor. Calling <code>add</code> in the worker that calls <code>done</code> causes race conditions and might result in undesired early returns from <code>wait</code>.</p>
 
 <p>To implement it I used the following primitives:</p>
 
