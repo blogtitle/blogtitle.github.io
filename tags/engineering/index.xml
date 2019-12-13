@@ -6,10 +6,20 @@
     <description>Recent content in engineering on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Dec 2019 20:07:04 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/engineering/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Sneaky race conditions and granular locks</title>
+      <link>https://blogtitle.github.io/sneaky-race-conditions-and-granular-locks/</link>
+      <pubDate>Wed, 11 Dec 2019 09:33:58 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/sneaky-race-conditions-and-granular-locks/</guid>
+      <description>Race conditions are the main problem you have to care about when writing concurrent code. Go provides high level primitives that make it easier to get concurrency and parallelism right, but those are often times not enough.
+This is one of the reasons why Go has a race detector. You should always run your tests and, where possible, a portion of your production fleet with -race enabled. Beware that this might still not be enough: the detector only triggers when a race manifests and not all races are detected by it.</description>
+    </item>
     
     <item>
       <title>Go advanced concurrency patterns: part 3 (channels)</title>
