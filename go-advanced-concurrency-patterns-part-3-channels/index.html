@@ -101,7 +101,7 @@
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="nx">Once</span><span class="p">)</span> <span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
 	<span class="c1">// Read from a closed chan always succeedes.
-</span><span class="c1"></span>  <span class="c1">// This only blocks during initialization.
+</span><span class="c1"></span>	<span class="c1">// This only blocks during initialization.
 </span><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">o</span>
 	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
 		<span class="c1">// Channel is closed, early return.

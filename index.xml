@@ -6,9 +6,21 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 01 Mar 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>I Am Switching to JS</title>
+      <link>https://blogtitle.github.io/i-am-switching-to-js/</link>
+      <pubDate>Sun, 01 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blogtitle.github.io/i-am-switching-to-js/</guid>
+      <description>After 5 years of using Go I am finally moving on. Go has served me well and has been the best language I could have possibly used for the longest time, but it is now the moment for me to let it Go.
+Over time Go has not failed to show me its limitations and its issues, to the point where I decided to switch to something more future proof and with a more thriving community.</description>
+    </item>
     
     
     
@@ -121,19 +133,6 @@ This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; featur
       <guid>https://blogtitle.github.io/a-unbiased-story/</guid>
       <description>I want to tell you a story somebody shared with me. Nobody knows where the story comes from, or who invented it, but now it&amp;rsquo;s widely used as an exercise to improve communication skills. I changed the names of the characters in order to be gender neutral, so, please, bear with me as some sentences are bulky.
 Once upon a time, a long long time ago, there was a town. The town was cut in two halves by a large river.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>Some useful patterns</title>
-      <link>https://blogtitle.github.io/some-useful-patterns/</link>
-      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/some-useful-patterns/</guid>
-      <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
-Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
-Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
     </item>
     
     
