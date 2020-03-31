@@ -6,7 +6,7 @@
     <description>Recent content in Funny on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 01 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 Apr 2020 00:00:00 +0300</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/categories/funny/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>I Am Switching to JS</title>
       <link>https://blogtitle.github.io/i-am-switching-to-js/</link>
-      <pubDate>Sun, 01 Mar 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0300</pubDate>
       
       <guid>https://blogtitle.github.io/i-am-switching-to-js/</guid>
       <description>After 5 years of using Go I am finally moving on. Go has served me well and has been the best language I could have possibly used for the longest time, but it is now the moment for me to let it Go.
