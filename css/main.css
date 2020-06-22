@@ -512,7 +512,7 @@ blockquote {
     filter: invert() hue-rotate(180deg) contrast(100%);
   }
   body {
-    background: black !important;
+    background: white !important;
   }
 }
 
