@@ -6,10 +6,20 @@
     <description>Recent content in golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 13:03:31 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Safe HTML</title>
+      <link>https://blogtitle.github.io/go-safe-html/</link>
+      <pubDate>Tue, 30 Jun 2020 13:03:31 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-safe-html/</guid>
+      <description>Disclaimer: this is not an official Google post or communication, it is just me commenting on something that is now available.
+ The Google infosec team just released the Go &amp;ldquo;safehtml&amp;rdquo; package. If you are interested in making your application resilient to server-side XSS you might want to adopt it instead of &amp;ldquo;html/template&amp;rdquo;. Migration to safehtml should be quite straightforward as it is just a hardened fork of the original html/template standard package.</description>
+    </item>
     
     <item>
       <title>Sneaky race conditions and granular locks</title>
@@ -105,16 +115,6 @@ Decorators This feature is extensively used in most object oriented languages, a
       <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
 One example I faced was to analyse some data flowing in some connections that I was proxying.
 There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
-    </item>
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
   </channel>

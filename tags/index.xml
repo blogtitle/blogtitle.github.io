@@ -75,6 +75,15 @@
     </item>
     
     <item>
+      <title>go</title>
+      <link>https://blogtitle.github.io/tags/go/</link>
+      <pubDate>Tue, 30 Jun 2020 13:03:31 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>go build tags</title>
       <link>https://blogtitle.github.io/tags/go-build-tags/</link>
       <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
@@ -89,15 +98,6 @@
       <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/tags/gogenerate/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>golang</title>
-      <link>https://blogtitle.github.io/tags/golang/</link>
-      <pubDate>Wed, 11 Dec 2019 09:33:58 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/golang/</guid>
       <description></description>
     </item>
     

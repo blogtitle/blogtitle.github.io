@@ -6,10 +6,20 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 01 Apr 2020 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 13:03:31 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Safe HTML</title>
+      <link>https://blogtitle.github.io/go-safe-html/</link>
+      <pubDate>Tue, 30 Jun 2020 13:03:31 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-safe-html/</guid>
+      <description>Disclaimer: this is not an official Google post or communication, it is just me commenting on something that is now available.
+ The Google infosec team just released the Go &amp;ldquo;safehtml&amp;rdquo; package. If you are interested in making your application resilient to server-side XSS you might want to adopt it instead of &amp;ldquo;html/template&amp;rdquo;. Migration to safehtml should be quite straightforward as it is just a hardened fork of the original html/template standard package.</description>
+    </item>
     
     <item>
       <title>I Am Switching to JS</title>
@@ -104,17 +114,6 @@ Timed channels operations Sometimes you want to time your channels operations: k
       <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
       <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
 This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
-    </item>
-    
-    <item>
-      <title>Some useful patterns</title>
-      <link>https://blogtitle.github.io/some-useful-patterns/</link>
-      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/some-useful-patterns/</guid>
-      <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
-Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
-Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
     </item>
     
   </channel>

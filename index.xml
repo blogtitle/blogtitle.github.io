@@ -6,9 +6,21 @@
     <description>Recent content on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 01 Apr 2020 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 13:03:31 +0200</lastBuildDate>
     
         <atom:link href="https://blogtitle.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Go Safe HTML</title>
+      <link>https://blogtitle.github.io/go-safe-html/</link>
+      <pubDate>Tue, 30 Jun 2020 13:03:31 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-safe-html/</guid>
+      <description>Disclaimer: this is not an official Google post or communication, it is just me commenting on something that is now available.
+ The Google infosec team just released the Go &amp;ldquo;safehtml&amp;rdquo; package. If you are interested in making your application resilient to server-side XSS you might want to adopt it instead of &amp;ldquo;html/template&amp;rdquo;. Migration to safehtml should be quite straightforward as it is just a hardened fork of the original html/template standard package.</description>
+    </item>
     
     
     
@@ -121,18 +133,6 @@ Timed channels operations Sometimes you want to time your channels operations: k
       <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
       <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
 This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
-    </item>
-    
-    
-    
-    <item>
-      <title>A (un)biased story</title>
-      <link>https://blogtitle.github.io/a-unbiased-story/</link>
-      <pubDate>Tue, 19 Feb 2019 12:07:43 -0800</pubDate>
-      
-      <guid>https://blogtitle.github.io/a-unbiased-story/</guid>
-      <description>I want to tell you a story somebody shared with me. Nobody knows where the story comes from, or who invented it, but now it&amp;rsquo;s widely used as an exercise to improve communication skills. I changed the names of the characters in order to be gender neutral, so, please, bear with me as some sentences are bulky.
-Once upon a time, a long long time ago, there was a town. The town was cut in two halves by a large river.</description>
     </item>
     
     

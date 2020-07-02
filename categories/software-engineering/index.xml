@@ -6,10 +6,20 @@
     <description>Recent content in Software engineering on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 Feb 2019 08:37:12 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 13:03:31 +0200</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/categories/software-engineering/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Safe HTML</title>
+      <link>https://blogtitle.github.io/go-safe-html/</link>
+      <pubDate>Tue, 30 Jun 2020 13:03:31 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-safe-html/</guid>
+      <description>Disclaimer: this is not an official Google post or communication, it is just me commenting on something that is now available.
+ The Google infosec team just released the Go &amp;ldquo;safehtml&amp;rdquo; package. If you are interested in making your application resilient to server-side XSS you might want to adopt it instead of &amp;ldquo;html/template&amp;rdquo;. Migration to safehtml should be quite straightforward as it is just a hardened fork of the original html/template standard package.</description>
+    </item>
     
     <item>
       <title>Some useful patterns</title>

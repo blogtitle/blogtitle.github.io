@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blogtitle.github.io/go-safe-html/</loc>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/i-am-switching-to-js/</loc>
     <lastmod>2020-04-01T00:00:00+03:00</lastmod>
   </url>
@@ -116,7 +121,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/</loc>
-    <lastmod>2020-04-01T00:00:00+03:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -139,7 +144,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/categories/go/</loc>
-    <lastmod>2019-12-11T09:33:58+01:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -169,19 +174,25 @@
   
   <url>
     <loc>https://blogtitle.github.io/post/</loc>
-    <lastmod>2020-04-01T00:00:00+03:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/authors/rob/</loc>
-    <lastmod>2020-04-01T00:00:00+03:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blogtitle.github.io/categories/security/</loc>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blogtitle.github.io/categories/software-engineering/</loc>
-    <lastmod>2019-02-19T08:37:12+01:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -240,6 +251,12 @@
   </url>
   
   <url>
+    <loc>https://blogtitle.github.io/tags/go/</loc>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blogtitle.github.io/tags/go-build-tags/</loc>
     <lastmod>2019-01-11T22:15:43+01:00</lastmod>
     <priority>0</priority>
@@ -253,7 +270,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/golang/</loc>
-    <lastmod>2019-12-11T09:33:58+01:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -319,7 +336,7 @@
   
   <url>
     <loc>https://blogtitle.github.io/tags/security/</loc>
-    <lastmod>2019-09-11T23:23:40+02:00</lastmod>
+    <lastmod>2020-06-30T13:03:31+02:00</lastmod>
     <priority>0</priority>
   </url>
   
