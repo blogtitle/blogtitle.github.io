@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>I Am Switching to JS - Blog Title</title>
@@ -68,16 +68,10 @@
     
 
     <div class="article-content">
-      
-
-<p>After 5 years of using Go I am finally moving on. Go has served me well and has been the best language I could have possibly used for the longest time, but it is now the moment for me to let it Go.</p>
-
+      <p>After 5 years of using Go I am finally moving on. Go has served me well and has been the best language I could have possibly used for the longest time, but it is now the moment for me to let it Go.</p>
 <p>Over time Go has not failed to show me its limitations and its issues, to the point where I decided to switch to something more future proof and with a more thriving community.</p>
-
 <p>I don&rsquo;t want to write this post as a list of things that pushed me away from my previous language, I find that kind of post sterile and of very little use for the readers, this is just a post on what I find great in JavaScript and what made me decide to switch.</p>
-
 <h1 id="the-type-system-and-numbers">The type system and numbers</h1>
-
 <p>For the longest time JavaScript has had no integers. It only had some weird double that would sometimes well-behave as integer. Well, now that is no more, we have integers and arrays of integers that we can convert to each other&rsquo;s type, which makes it the language with the best numerical types.</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArrayBuffer</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="kd">var</span> <span class="nx">intArr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="nx">sb</span><span class="p">)</span>
@@ -85,9 +79,7 @@
 <span class="c1">// 65536
 </span><span class="c1"></span><span class="nx">intArr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="c1">// 65536
-</span></code></pre></div>
-<p>This is something I have been waiting for: exact arithmetics. It is incredible to think about a language having such a feature.</p>
-
+</span></code></pre></div><p>This is something I have been waiting for: exact arithmetics. It is incredible to think about a language having such a feature.</p>
 <p>Beware, it doesn&rsquo;t stop here as this would just make JavaScript on par with many other languages. We can use a <code>Int32Array</code> as a <code>Int16Array</code> and it will work, no exception thrown and it will behave as expected:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArrayBuffer</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="kd">var</span> <span class="nx">intArr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="nx">sb</span><span class="p">)</span>
@@ -101,9 +93,7 @@
 <span class="c1">// 0
 </span><span class="c1"></span><span class="nx">shortArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="c1">// 1
-</span></code></pre></div>
-<p>&ldquo;Does this result depend on the endianness of the underlying architecture? If so, why are you on a big-endian architecture?&rdquo; you might ask, and I would reply &ldquo;Thanks for asking, that is a good question&rdquo;.</p>
-
+</span></code></pre></div><p>&ldquo;Does this result depend on the endianness of the underlying architecture? If so, why are you on a big-endian architecture?&rdquo; you might ask, and I would reply &ldquo;Thanks for asking, that is a good question&rdquo;.</p>
 <p>Moving on to another cool feature of these integers: it handles overflow as anyone would expect, unlike any other languages:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">var</span> <span class="nx">shortArr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int16Array</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">shortArr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">15</span> <span class="c1">// bonus: cool multiple assignment
@@ -113,52 +103,40 @@
 <span class="c1">// -32768
 </span><span class="c1"></span><span class="nx">c</span>
 <span class="c1">// 32768
-</span></code></pre></div>
-<p>At this point I think I have shown the power of numbers in JavaScript, but I will add more just to make sure my point is clear.</p>
-
+</span></code></pre></div><p>At this point I think I have shown the power of numbers in JavaScript, but I will add more just to make sure my point is clear.</p>
 <p>You can use the modulus operator on floating point numbers and it does not misbehave:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="mf">3.14</span> <span class="o">%</span> <span class="mi">5</span>
 <span class="c1">// 3.14
 </span><span class="c1"></span><span class="mf">13.14</span> <span class="o">%</span> <span class="mi">5</span>
 <span class="c1">// 3.1400000000000006
-</span></code></pre></div>
-<p>It is also easy and immediate to sort an array of integers unlike many statically strongly typed languages, you don&rsquo;t even need to see the generic code underneath:</p>
+</span></code></pre></div><p>It is also easy and immediate to sort an array of integers unlike many statically strongly typed languages, you don&rsquo;t even need to see the generic code underneath:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mf">0.0000001</span><span class="p">,</span> <span class="mf">0.0000000006</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">].</span><span class="nx">sort</span><span class="p">()</span>
 <span class="c1">// [-2, -7, 10, 1e-7, 6, 6e-10]
-</span></code></pre></div>
-<p>And syntax is always clear and intuitive:</p>
+</span></code></pre></div><p>And syntax is always clear and intuitive:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span> <span class="o">===</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
 <span class="c1">// true
-</span></code></pre></div>
-<p>Let&rsquo;s also say that you have a string that represents a number inputted by the user and you want to increment it by one. In many languages to do so you need to waste a lot of lines with annoying casts, while in JavaScript you can do it in a very elegant and readable way:</p>
+</span></code></pre></div><p>Let&rsquo;s also say that you have a string that represents a number inputted by the user and you want to increment it by one. In many languages to do so you need to waste a lot of lines with annoying casts, while in JavaScript you can do it in a very elegant and readable way:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="s2">&#34;41&#34;</span>
 <span class="nx">a</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="c1">// 411, wrong, unbalanced, weird.
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="s2">&#34;41&#34;</span>
 <span class="nx">b</span> <span class="o">-=-</span> <span class="mi">1</span>
 <span class="c1">// 42, with a beautifully symmetric operator, just perfect
-</span></code></pre></div>
-<p>The only surprising thing that I found and that is hard to keep in mind (and I have to get used to) is that when you deal with dates the months start from 0 while everything else starts from 1. There is no other surprising behavior to keep in mind that I know of.</p>
-
+</span></code></pre></div><p>The only surprising thing that I found and that is hard to keep in mind (and I have to get used to) is that when you deal with dates the months start from 0 while everything else starts from 1. There is no other surprising behavior to keep in mind that I know of.</p>
 <h1 id="more-on-types">More on types</h1>
-
 <p>I find that the most beautiful part about JavaScript is indeed the type system so I would like to spend some more time on this with stuff that I found thanks to the JavaScript community on Twitter or while using this incredible language:</p>
-
 <p><a href="https://twitter.com/hashseed/status/1174238124756656128">Null coalescing</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="o">~~!!</span><span class="p">[[]]</span><span class="o">||</span><span class="nx">__</span><span class="sb">``</span><span class="o">&amp;&amp;</span><span class="nx">$$</span><span class="o">++&lt;&lt;</span><span class="p">((</span><span class="s2">&#34;&#34;</span><span class="o">??</span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">**</span><span class="mi">00</span><span class="o">==</span><span class="nx">ಠಠ</span><span class="o">--</span><span class="c1">//\\
 </span><span class="c1">// 1
-</span></code></pre></div>
-<p><a href="https://twitter.com/shadowcheets/status/1161012147884707840">Want a banana? Beware of where you put your spaces</a>:</p>
+</span></code></pre></div><p><a href="https://twitter.com/shadowcheets/status/1161012147884707840">Want a banana? Beware of where you put your spaces</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="o">+</span><span class="s1">&#39;a&#39;</span><span class="o">++</span><span class="s1">&#39;a&#39;</span><span class="o">+</span><span class="s1">&#39;a&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span>
 <span class="c1">// Uncaught SyntaxError: Invalid left-hand side expression in postfix operation
 </span><span class="c1"></span><span class="p">(</span><span class="s1">&#39;b&#39;</span> <span class="o">+</span> <span class="s1">&#39;a&#39;</span> <span class="o">+</span> <span class="o">+</span> <span class="s1">&#39;a&#39;</span> <span class="o">+</span> <span class="s1">&#39;a&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span>
 <span class="c1">// &#34;banana&#34;
-</span></code></pre></div>
-<p><a href="https://twitter.com/_jayphelps/status/1230538121743360001">Like to have many operators? JavaScript has got you covered</a></p>
+</span></code></pre></div><p><a href="https://twitter.com/_jayphelps/status/1230538121743360001">Like to have many operators? JavaScript has got you covered</a></p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="c1">// Concise code is best code
 </span><span class="c1"></span><span class="nx">input</span> <span class="o">??</span> <span class="nx">obj</span><span class="o">?</span><span class="p">.</span><span class="nx">key</span> <span class="o">?</span> <span class="s1">&#39;yes&#39;</span> <span class="o">:</span> <span class="s1">&#39;no&#39;</span>
-</code></pre></div>
-<p>This one I particularly love: regexp (<a href="https://blogtitle.github.io/regexp-fun/">see my post about them here</a>) and JavaScript joined together to create <a href="https://twitter.com/brianloveswords/status/1225459820746149889">something that will never get you bored</a>:</p>
+</code></pre></div><p>This one I particularly love: regexp (<a href="https://blogtitle.github.io/regexp-fun/">see my post about them here</a>) and JavaScript joined together to create <a href="https://twitter.com/brianloveswords/status/1225459820746149889">something that will never get you bored</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/a/g</span>
 <span class="nx">re</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ab&#39;</span><span class="p">)</span>
 <span class="c1">// true
@@ -166,8 +144,7 @@
 <span class="c1">// false
 </span><span class="c1"></span><span class="nx">re</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;ab&#39;</span><span class="p">)</span>
 <span class="c1">// true
-</span></code></pre></div>
-<p>Operators are sometimes not commutative, so keep that in mind while you write your JavaScript:</p>
+</span></code></pre></div><p>Operators are sometimes not commutative, so keep that in mind while you write your JavaScript:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">{</span><span class="nx">property</span><span class="o">:</span> <span class="s2">&#34;value&#34;</span><span class="p">}</span> <span class="o">&amp;&amp;</span> <span class="p">{</span><span class="nx">property</span><span class="o">:</span> <span class="s2">&#34;value&#34;</span><span class="p">}</span>
 <span class="c1">// {property: &#34;value&#34;}
 </span><span class="c1"></span><span class="nb">Date</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nb">Date</span><span class="p">()</span>
@@ -176,15 +153,13 @@
 <span class="c1">// {property: &#34;value&#34;}
 </span><span class="c1"></span><span class="p">{</span><span class="nx">property</span><span class="o">:</span> <span class="s2">&#34;value&#34;</span><span class="p">}</span> <span class="o">&amp;&amp;</span> <span class="nb">Date</span><span class="p">()</span>
 <span class="c1">// Uncaught SyntaxError: Unexpected token &#39;&amp;&amp;&#39;
-</span></code></pre></div>
-<p>Types might change under your fingers to help you stay awake during long coding nights:</p>
+</span></code></pre></div><p>Types might change under your fingers to help you stay awake during long coding nights:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="k">typeof</span><span class="p">([</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 <span class="c1">// number
 </span><span class="c1"></span><span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">]){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">i</span><span class="p">))}</span>
 <span class="c1">// string
-</span></code></pre></div>
-<p>Even values might change by just observing them, just to make sure you don&rsquo;t sleep on the job:</p>
-<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="k">const</span> <span class="nx">x</span><span class="o">=</span><span class="p">{</span>
+</span></code></pre></div><p>Even values might change by just observing them, just to make sure you don&rsquo;t sleep on the job:</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kr">const</span> <span class="nx">x</span><span class="o">=</span><span class="p">{</span>
   <span class="nx">i</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
   <span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">i</span><span class="o">++</span><span class="p">;</span>
@@ -194,19 +169,15 @@
 <span class="k">if</span><span class="p">(</span><span class="nx">x</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">x</span><span class="o">==</span><span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="nx">x</span><span class="o">==</span><span class="mi">3</span><span class="p">){</span>
   <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&#34;This will be printed!&#34;</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>I could go on for another while on what is really nice about JavaScript being easy to read and easy to predict but I will stop with this last example that also takes the DOM into account:</p>
+</code></pre></div><p>I could go on for another while on what is really nice about JavaScript being easy to read and easy to predict but I will stop with this last example that also takes the DOM into account:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="nb">document</span><span class="p">.</span><span class="nx">all</span>
 <span class="c1">// HTMLAllCollection(359) [html.inited, head, …]
 </span><span class="c1"></span><span class="nb">document</span><span class="p">.</span><span class="nx">all</span> <span class="o">==</span> <span class="kc">true</span>
 <span class="c1">// false
 </span><span class="c1"></span><span class="nb">document</span><span class="p">.</span><span class="nx">all</span> <span class="o">==</span> <span class="kc">false</span>
 <span class="c1">// false
-</span></code></pre></div>
-<h1 id="a-little-deeper-into-the-rabbit-hole">A little deeper into the rabbit hole</h1>
-
+</span></code></pre></div><h1 id="a-little-deeper-into-the-rabbit-hole">A little deeper into the rabbit hole</h1>
 <p>This is a more serious section of this post. I usually like to dig deep in tools and languages I use, and what better way to learn things than ask colleagues and friends?</p>
-
 <p>I recently started working with <a href="https://twitter.com/terjanq">Jan</a> and he shared this amazing piece of JavaScript with me:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">(</span><span class="kd">function</span><span class="p">({</span><span class="nx">substr</span><span class="p">}){</span><span class="k">return</span> <span class="nx">substr</span><span class="p">.</span><span class="nx">call</span><span class="p">})(</span><span class="s2">&#34;&#34;</span><span class="p">)</span>
 <span class="c1">// function call()
@@ -222,27 +193,20 @@
 <span class="c1">// &#34;function&#34;
 </span><span class="c1"></span><span class="nx">x</span><span class="p">(</span><span class="s2">&#34;this is a string&#34;</span><span class="p">)</span>
 <span class="c1">// TypeError: Function.prototype.call called on incompatible undefined
-</span></code></pre></div>
-<p>He didn&rsquo;t stop at that but also provided another amazing piece of code:</p>
+</span></code></pre></div><p>He didn&rsquo;t stop at that but also provided another amazing piece of code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="k">return</span> <span class="k">this</span><span class="p">}.</span><span class="nx">call</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="k">return</span> <span class="k">this</span><span class="p">}.</span><span class="nx">call</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="c1">// false
-</span></code></pre></div>
-<h1 id="one-last-step-concurrency">One last step: concurrency</h1>
-
+</span></code></pre></div><h1 id="one-last-step-concurrency">One last step: concurrency</h1>
 <p>Once I got to this point I was basically convinced to switch to JavaScript for good.</p>
-
 <p>The last step would have been to check on my favorite stuff: concurrency and parallelism.</p>
-
 <p>The complete lack of a standard library, an unpredictable type system, oddly-behaved operators, state-changing comparisons and non-telling compiler errors are the solid foundations I usually want to build my software on, but I needed to be sure also concurrency and parallelism would behave in a similar way.</p>
-
 <p>Since I come from Go <a href="https://play.golang.org/p/f_kSJ65nyba">it is immediate for me</a> to understand why this code prints three times &lsquo;3&rsquo;:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
   <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>But I have to admit the output of this code is a little less intuitive at first:</p>
+</code></pre></div><p>But I have to admit the output of this code is a little less intuitive at first:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">_</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
 <span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">_</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
@@ -253,15 +217,12 @@
 </span><span class="c1">// 3
 </span><span class="c1">// 2
 </span><span class="c1">// 1
-</span></code></pre></div>
-<p>But then everything <a href="https://www.youtube.com/watch?v=cCOL7MC4Pl0">becomes clearer</a> if you consider that we are calling two synchronous functions, we are scheduling a &ldquo;Macro Task&rdquo; we are spawning a &ldquo;Micro Task&rdquo; and we are requesting an animation frame.</p>
-
+</span></code></pre></div><p>But then everything <a href="https://www.youtube.com/watch?v=cCOL7MC4Pl0">becomes clearer</a> if you consider that we are calling two synchronous functions, we are scheduling a &ldquo;Macro Task&rdquo; we are spawning a &ldquo;Micro Task&rdquo; and we are requesting an animation frame.</p>
 <p>With that I think concurrency in JavaScript is intuitive. What about parallelism?</p>
-
 <p>Here is some code that I am going to be using, kindly provided by <a href="https://github.com/codediodeio/async-await-pro-tips/blob/master/2-create-promise.ts"><code>codediodeio</code></a></p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="c1">// The following code is to log how much time has passed:
-</span><span class="c1"></span><span class="k">const</span> <span class="nx">start</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
-<span class="kd">function</span> <span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">v</span><span class="si">}</span><span class="sb"> </span><span class="err">\</span><span class="sb">n Elapsed: </span><span class="si">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="si">}</span><span class="sb">ms`</span><span class="p">);}</span>
+</span><span class="c1"></span><span class="kr">const</span> <span class="nx">start</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+<span class="kd">function</span> <span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">v</span><span class="si">}</span><span class="sb"> \n Elapsed: </span><span class="si">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="si">}</span><span class="sb">ms`</span><span class="p">);}</span>
 <span class="c1">// Here i define a CPU-intensive task that will block the current thread
 </span><span class="c1"></span><span class="kd">function</span> <span class="nx">doWork</span><span class="p">(){</span>
   <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">1000000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">);</span> <span class="c1">// note the semicolon
@@ -274,9 +235,7 @@
 </span><span class="c1">//  Elapsed: 0ms
 </span><span class="c1">// after work
 </span><span class="c1">//  Elapsed: 624ms
-</span></code></pre></div>
-<p>This code was just to show how much time it takes to run the task in a synchronous way.</p>
-
+</span></code></pre></div><p>This code was just to show how much time it takes to run the task in a synchronous way.</p>
 <p>Let&rsquo;s now try to use <code>Promise</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">function</span> <span class="nx">doWork</span><span class="p">(){</span>
   <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
@@ -293,8 +252,7 @@
 </span><span class="c1">//  Elapsed: 637ms
 </span><span class="c1">// work done
 </span><span class="c1">//  Elapsed: 637ms
-</span></code></pre></div>
-<p>We have the same issue. Some might argue that the issue is that this is still running as a &ldquo;Macro Task&rdquo; or that we are blocking on it, so let&rsquo;s refactor it to run the entire loop in a &ldquo;Micro Task&rdquo;:</p>
+</span></code></pre></div><p>We have the same issue. Some might argue that the issue is that this is still running as a &ldquo;Macro Task&rdquo; or that we are blocking on it, so let&rsquo;s refactor it to run the entire loop in a &ldquo;Micro Task&rdquo;:</p>
 <div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">function</span> <span class="nx">doWork</span><span class="p">(){</span>
   <span class="c1">// Adding the `resolve` makes this run in a different kind of task
 </span><span class="c1"></span>  <span class="k">return</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">v</span> <span class="p">=&gt;</span>  <span class="p">{</span>
@@ -314,29 +272,17 @@
 </span><span class="c1">//  Elapsed: 631ms
 </span><span class="c1">// time to next frame
 </span><span class="c1">//  Elapsed: 630ms
-</span></code></pre></div>
-<p>This seems to have addressed the issue if you just look at the first log lines, but it has not. It just moved the work to the next available execution slot on the main thread. We might have managed to run some of our synchronous code faster but the asynchronous one will still take its toll on our frame count ad the application will not be responding to the user for half a second.</p>
-
+</span></code></pre></div><p>This seems to have addressed the issue if you just look at the first log lines, but it has not. It just moved the work to the next available execution slot on the main thread. We might have managed to run some of our synchronous code faster but the asynchronous one will still take its toll on our frame count ad the application will not be responding to the user for half a second.</p>
 <p>This is something that has personally hit me at work: if you have intensive work to do in JavaScript, it will block the main thread and everything will become slow. You will find plenty of videos and tutorials that will tell you how to use <code>async</code> or <code>Promise</code> to address this issue and they will all be wrong. Those primitives only introduce <strong>concurrency, not parallelism</strong>. The only promises that will be able to run in parallel will be the one that are native in the browser like <code>fetch</code>, but <strong>your code will never run in parallel</strong>.</p>
-
-<p>So how do you run code in parallel? You spawn a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API">web worker</a>, which is much like a thread in other languages. It is a cool new feature that introduces the much needed <s>race conditions</s> parallelism in JavaScript.</p>
-
+<p>So how do you run code in parallel? You spawn a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API">web worker</a>, which is much like a thread in other languages. It is a cool new feature that introduces the much needed <!-- raw HTML omitted -->race conditions<!-- raw HTML omitted --> parallelism in JavaScript.</p>
 <p>Using it is quite simple: we have to put the code that we want to run in parallel in a separate file, then we just instantiate the new worker and we can communicate with it via <code>postMessage</code>. This will give us real parallelism, which is nice and <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">well documented on MDN</a>. Is it cumbersome? Sure, but it is there and people can create <a href="https://github.com/GoogleChromeLabs/comlink">libraries</a> to use this primitive in a more user-friendly way. After all, <a href="https://en.wikipedia.org/wiki/Supply_chain_attack">what is wrong with one more external dependency</a>?</p>
-
 <p>Since JavaScript now has this amazing feature, it must provide some orchestration or synchronization primitive, right? Right. It does provide <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"><code>postMessage</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MessageChannel"><code>MessageChannel</code></a> which work in similar ways of <code>chan</code>, which is great. If you use just those you won&rsquo;t have race conditions and it is going to be very easy to reason about your concurrent code. Lovely.</p>
-
 <p><strong>But</strong> if you want something more responsive that doesn&rsquo;t have to trigger events here and there and wait for callbacks to be scheduled, if you want to <strong>really</strong> go faster, there are <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer"><code>SharedArrayBuffers</code></a>. These are chunks of memory that you can share across threads and do <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics"><code>Atomic</code></a> operations on. No <code>Mutex</code>, no <code>select</code>, no <code>WaitGroup</code>. If you want to have those primitives you have to write your own <a href="https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/">as I did</a>. HOW FUN IS THAT? This API even <a href="https://github.com/tc39/ecma262/issues/1492">returns values that are impossible to use correctly</a>!</p>
-
 <p>Who likes to have an easy job after all‽ (this is an interrobang symbol, which is not a JavaScript operator yet)</p>
-
 <h1 id="conclusions">Conclusions</h1>
-
 <p>JavaScript is now mature and provides everything I need: it has concurrency, parallelism and strongly typed variables. Moreover it spices up programming and makes everything fun by adding unpredictable and unfathomable behaviors right out of the box, so you don&rsquo;t get bored while debugging.</p>
-
 <p>What&rsquo;s there not to like?</p>
-
 <h1 id="want-more">Want more?</h1>
-
 <p>What to read more about the greatness of JavaScript? See <a href="https://blogtitle.github.io/lets-talk-about-javascript/">my previous post about it</a></p>
 
     </div>

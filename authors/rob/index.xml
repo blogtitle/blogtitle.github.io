@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Rob on Blog Title</title>
@@ -6,10 +6,18 @@
     <description>Recent content in Rob on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 30 Jun 2020 13:03:31 +0200</lastBuildDate>
-    
-	<atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Fri, 07 May 2021 05:54:36 +0200</lastBuildDate><atom:link href="https://blogtitle.github.io/authors/rob/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go Generics</title>
+      <link>https://blogtitle.github.io/go-generics/</link>
+      <pubDate>Fri, 07 May 2021 05:54:36 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-generics/</guid>
+      <description>Preface Go doesn&amp;rsquo;t have generics yet, but there is a proposal that looks promising, and this post refers to that.
+Here is a version of the playground you can use to try this proposal out if you want to experiment without installing any tools.
+Functions Converting a slice into a channel. This is not necessarily the most useful function but it&amp;rsquo;s a good and simple example:
+func chanFromSlice[T any](in []T) chan T { c := make(chan T, len(in)) for _, v := range in { c &amp;lt;- v } return c } Here you can see that this looks and feels like Go, with the only difference of the [T any] bit.</description>
+    </item>
     
     <item>
       <title>Go Safe HTML</title>
@@ -60,7 +68,7 @@ In doing so I&amp;rsquo;m just going to accept some compromises:
       <guid>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</guid>
       <description>This post is part of my developer-friendly security series. You can find all other posts here.
  XSS is a vulnerability that allows attackers to run arbitrary JavaScript code in applications they shouldn&amp;rsquo;t be able to control. This can lead to complete account compromises for every victim that follows a malicious link or visits a compromised page.
-There are two major families of XSS: server side and client side.</description>
+There are two major families of XSS: server side and client side. Today we&amp;rsquo;ll discover how to better protect against server-side XSS, how to reduce the risk of client-side XSS (with some novel technologies) and how to mitigate both of them with some defense-in-depth mechanisms.</description>
     </item>
     
     <item>
@@ -103,17 +111,8 @@ Preface If you don&amp;rsquo;t think dealing with time and timers while also jug
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
       <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
 Today I decided to start sharing a couple of tricks to handle some peculiar cases.
-Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
-    </item>
-    
-    <item>
-      <title>Go: slices gotchas</title>
-      <link>https://blogtitle.github.io/go-slices-gotchas/</link>
-      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
-      <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
-This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.
+To do so you can either use context or time, both are fine.</description>
     </item>
     
   </channel>

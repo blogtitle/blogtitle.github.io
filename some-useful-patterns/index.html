@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Some useful patterns - Blog Title</title>
@@ -68,47 +68,38 @@
     
 
     <div class="article-content">
-      
-
-<p>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.</p>
-
+      <p>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.</p>
 <p>Here is a collection of some common patterns and the best way I&rsquo;ve found to express them.</p>
-
 <h1 id="decorators">Decorators</h1>
-
 <p>This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</p>
-
 <p>If you come from python you&rsquo;re probably familiar with something like</p>
 <div class="highlight"><pre class="chroma"><code class="language-py" data-lang="py"><span class="nd">@login_required</span>
 <span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/private&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_secret</span><span class="p">():</span>
-	<span class="c1"># code here</span></code></pre></div>
-<p>Or something equivalent in C#</p>
+	<span class="c1"># code here</span>
+</code></pre></div><p>Or something equivalent in C#</p>
 <div class="highlight"><pre class="chroma"><code class="language-cs" data-lang="cs"><span class="na">[Authorize(Roles = &#34;User&#34;)]</span>
 <span class="k">public</span> <span class="k">class</span> <span class="nc">SecretManager</span><span class="p">:</span> <span class="n">Controller</span>
-<span class="p">{</span><span class="na">
-</span><span class="na">	[Route(&#34;/private&#34;)]</span>
+<span class="p">{</span>
+<span class="na">	[Route(&#34;/private&#34;)]</span>
 	<span class="k">public</span> <span class="n">ActionResult</span> <span class="n">GetSecret</span><span class="p">()</span>
 	<span class="p">{</span>
 		<span class="c1">// Code here
 </span><span class="c1"></span>	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>These say that you need to be authenticated in order to access some data under <code>/private</code>.</p>
-
+<span class="p">}</span>
+</code></pre></div><p>These say that you need to be authenticated in order to access some data under <code>/private</code>.</p>
 <p>There are several issues with this kind of programming practice that I find rather dangerous and annoying:</p>
-
 <ul>
 <li>It&rsquo;s easy to forget annotations, or misplace them</li>
 <li>In order to understand if the code is correct, you need to know an additional feature of the language (e.g. is order of annotations relevant?)</li>
 <li>It is complicated to find where those annotations are defined</li>
 <li>Control flow is hidden in glorified comments</li>
 </ul>
-
 <p>The way you&rsquo;d do this in Go is</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nf">Authenticate</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Response</span><span class="p">){</span>
  <span class="c1">// Code here
-</span><span class="c1"></span><span class="p">})</span></code></pre></div>
-<p>A simple implementation for <code>Authenticate</code> would be:</p>
+</span><span class="c1"></span><span class="p">})</span>
+</code></pre></div><p>A simple implementation for <code>Authenticate</code> would be:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Authenticate</span><span class="p">(</span><span class="nx">h</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Response</span><span class="p">){</span>
 		<span class="k">if</span> <span class="p">!</span><span class="nf">isAuth</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
@@ -118,8 +109,8 @@
 		<span class="p">}</span>
 		<span class="nx">h</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>Moreover this pattern allows gophers to decorate entire types, not just functions. One could apply something similar for <code>(http.ServeMux).ServeHTTP</code>. This could be used to add default headers as in the following example:</p>
+<span class="p">}</span>
+</code></pre></div><p>Moreover this pattern allows gophers to decorate entire types, not just functions. One could apply something similar for <code>(http.ServeMux).ServeHTTP</code>. This could be used to add default headers as in the following example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">securityHeaders</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
 	<span class="s">&#34;Strict-Transport-Security&#34;</span><span class="p">:</span> <span class="s">&#34;max-age=31536000; includeSubDomains&#34;</span><span class="p">,</span>
 	<span class="s">&#34;X-XSS-Protection&#34;</span><span class="p">:</span>          <span class="s">&#34;1; mode=block&#34;</span><span class="p">,</span>
@@ -150,24 +141,20 @@
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">srv</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>In this case spotting a missing call to <code>Authenticate</code> in the initialization phase is quite easy: all handlers are set up in subcessive calls in a single function, not where the handlers are defined. All routes are in one place and you can&rsquo;t forget some endpoints open.</p>
-
+<span class="p">}</span>
+</code></pre></div><p>In this case spotting a missing call to <code>Authenticate</code> in the initialization phase is quite easy: all handlers are set up in subcessive calls in a single function, not where the handlers are defined. All routes are in one place and you can&rsquo;t forget some endpoints open.</p>
 <h1 id="singleton">Singleton</h1>
-
 <p>Singletons are a common way to express &ldquo;this thing exists only in one point of my program&rdquo;. There can be lazy or non lazy ones, depending on when initialization of the value happen. Non lazy singletons can be expressed as global variables, and they can be initialized during <code>init</code>  or directly in declaration:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">myOnlyInstance</span> <span class="o">*</span><span class="nx">myType</span>
 <span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
 	<span class="c1">// Prepare things that are needed here
 </span><span class="c1"></span>
 	<span class="nx">myOnlyInstance</span> <span class="p">=</span> <span class="nf">newMyType</span><span class="p">()</span>
-<span class="p">}</span></code></pre></div>
-<p>or, better if no previous initialization is needed:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">myOnlyInstance</span> <span class="p">=</span> <span class="nf">newMyType</span><span class="p">()</span></code></pre></div>
-<p>This is trivial, and similar across most languages that I&rsquo;ve used. The only big difference is that in Java/C# the value would need to be the static member of a class.</p>
-
+<span class="p">}</span>
+</code></pre></div><p>or, better if no previous initialization is needed:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">myOnlyInstance</span> <span class="p">=</span> <span class="nf">newMyType</span><span class="p">()</span>
+</code></pre></div><p>This is trivial, and similar across most languages that I&rsquo;ve used. The only big difference is that in Java/C# the value would need to be the static member of a class.</p>
 <p>Go makes sure that <code>init</code> functions are done executing before running the <code>main</code> function, so this ensures all values have been initialized before using them.</p>
-
 <p>Let&rsquo;s talk about the lazy ones now. In Java it may seem trivial to do it:</p>
 <div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyType</span> <span class="o">{</span>
 	<span class="kd">static</span> <span class="n">MyType</span> <span class="n">single</span><span class="o">;</span>
@@ -177,10 +164,9 @@
 		<span class="o">}</span>
 		<span class="k">return</span> <span class="n">single</span><span class="o">;</span>
 	<span class="o">}</span>
-<span class="o">}</span></code></pre></div>
-<p>I&rsquo;ve seen this pattern hundreds of times, but there is a problem in it: there is a race condition, a nasty one.
+<span class="o">}</span>
+</code></pre></div><p>I&rsquo;ve seen this pattern hundreds of times, but there is a problem in it: there is a race condition, a nasty one.
 If multiple concurrent calls to <code>getSingle</code> happen, single will be initialized multiple times, breaking the constraint of it being a singleton. To do it right a <code>synchronized</code> keyword needs to be added, but it is quite heavy on a performance standpoint.</p>
-
 <p>The same pattern can be expressed in Go with <code>sync.Once</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// The zero value for Once is ready to use
 </span><span class="c1"></span><span class="kd">var</span> <span class="nx">oSingle</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Once</span>
@@ -189,19 +175,15 @@ If multiple concurrent calls to <code>getSingle</code> happen, single will be in
 <span class="kd">func</span> <span class="nf">getSingle</span><span class="p">()</span> <span class="o">*</span><span class="nx">myType</span> <span class="p">{</span>
 	<span class="nx">oSingle</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="kd">func</span><span class="p">(){</span> <span class="nx">single</span> <span class="p">=</span> <span class="nf">newMyType</span><span class="p">()</span> <span class="p">})</span>
 	<span class="k">return</span> <span class="nx">single</span>
-<span class="p">}</span></code></pre></div>
-<p>This ensures three main good things:</p>
-
+<span class="p">}</span>
+</code></pre></div><p>This ensures three main good things:</p>
 <ol>
 <li>One and exactly one call to <code>Do</code> invokes <code>newMyType()</code></li>
 <li>Concurrent calls while <code>newMyType</code> runs block until the first one has returned</li>
 <li>Calls after initialization have a very efficient fast path</li>
 </ol>
-
 <p>For those interested about performance <a href="https://go-review.googlesource.com/c/go/+/156362/">a recent change</a> made calls to the fast path of <code>Do</code> take about ~0.5ns.</p>
-
 <p>A derivation of this pattern and the decorator one also comes in handy if you need to turn a non-race-safe API into one that is safe to call multiple times concurrently.</p>
-
 <p>For example, <a href="https://github.com/golang/go/issues/28461">it is not allowed to call <code>Wait</code> multiple times on the same <code>exec.Cmd</code></a> so you can wrap it up like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">multiWaitableCmd</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">exec</span><span class="p">.</span><span class="nx">Cmd</span> <span class="c1">// Promote all Cmd methods
@@ -213,23 +195,18 @@ If multiple concurrent calls to <code>getSingle</code> happen, single will be in
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">mwc</span> <span class="o">*</span><span class="nx">multiWaitableCmd</span><span class="p">)</span> <span class="nf">Wait</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
 	<span class="nx">mwc</span><span class="p">.</span><span class="nx">o</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nx">mwc</span><span class="p">.</span><span class="nx">err</span> <span class="p">=</span> <span class="nx">mwc</span><span class="p">.</span><span class="nx">Cmd</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="p">})</span>
 	<span class="k">return</span> <span class="nx">mwc</span><span class="p">.</span><span class="nx">err</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="static-members">Static members</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="static-members">Static members</h1>
 <p>This section is just here because in some very rare occasions you need to have all instances of a certain struct share some values. One example of this I recently stumbled across was for debugging purposes: an interface I was implementing had a <code>Kind() string</code> method on it that was used for logging.</p>
-
 <p>This can be done very easily without cluttering package namespace.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">myImpl</span> <span class="kd">struct</span><span class="p">{}</span>
 
 <span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">myImpl</span><span class="p">)</span> <span class="nf">Kind</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="s">&#34;Best implementation&#34;</span>
-<span class="p">}</span></code></pre></div>
-<p>Note that <code>Kind()</code> has a pointer receiver, but does not name the variable, so it is clear it doesn&rsquo;t use it.</p>
-
+<span class="p">}</span>
+</code></pre></div><p>Note that <code>Kind()</code> has a pointer receiver, but does not name the variable, so it is clear it doesn&rsquo;t use it.</p>
 <h1 id="semaphores">Semaphores</h1>
-
 <p>Since I&rsquo;ve always been very interested concurrency patterns, I was surprised to see that Go had no standard semaphores.</p>
-
 <p>It was relatively quick to find out how to emulate them with channels:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Semaphore can be created with `make(Semaphore, size)`
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Semaphore</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
@@ -237,19 +214,15 @@ If multiple concurrent calls to <code>getSingle</code> happen, single will be in
 <span class="c1">// Lock uses channels send operations to emulate an &#34;acquire&#34;.
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Semaphore</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span>   <span class="p">{</span> <span class="nx">s</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span> <span class="p">}</span>
 <span class="c1">// Lock uses channels receive operations to emulate a &#34;release&#34;.
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Semaphore</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span> <span class="o">&lt;-</span><span class="nx">s</span> <span class="p">}</span></code></pre></div>
-<p>Note that <code>Semaphore</code> implements <code>sync.Locker</code>. This code works because trying to send over a full channel will block until some other goroutine calls <code>Unlock()</code> and reads from the channel. If this is instantiated with size 1 it will have the same semantics of a <code>Mutex</code>.</p>
-
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Semaphore</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span> <span class="o">&lt;-</span><span class="nx">s</span> <span class="p">}</span>
+</code></pre></div><p>Note that <code>Semaphore</code> implements <code>sync.Locker</code>. This code works because trying to send over a full channel will block until some other goroutine calls <code>Unlock()</code> and reads from the channel. If this is instantiated with size 1 it will have the same semantics of a <code>Mutex</code>.</p>
 <p>A more efficient and weighted implementation can also be found in <a href="https://godoc.org/golang.org/x/sync/semaphore">the exprimental <code>sync</code> package</a>.</p>
-
 <h1 id="errgroups">Errgroups</h1>
-
 <p>Sometimes you want to spawn multiple goroutines and have them work in parallel, but when something goes bad or you don&rsquo;t need the output anymore, you would also like to cancel the entire process.</p>
-
 <p>Achieving this with <code>sync.Waitgroup</code> and <code>context.Context</code> is doable but it requires a lot of boilerplate, so here I&rsquo;d suggest using <a href="https://godoc.org/golang.org/x/sync/errgroup"><code>errgroup.Errgroup</code></a>.</p>
-
 <p>Example usage:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="s">&#34;golang.org/x/sync/errgroup&#34;</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">eg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">errgroup</span><span class="p">.</span><span class="nf">WithContext</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">())</span>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="s">&#34;golang.org/x/sync/errgroup&#34;</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">eg</span><span class="p">,</span> <span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">errgroup</span><span class="p">.</span><span class="nf">WithContext</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">TODO</span><span class="p">())</span>
 	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">w</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">work</span> <span class="p">{</span>
 			<span class="nx">w</span> <span class="o">:=</span> <span class="nx">w</span>
 			<span class="nx">g</span><span class="p">.</span><span class="nf">Go</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
@@ -261,7 +234,8 @@ If multiple concurrent calls to <code>getSingle</code> happen, single will be in
 </span><span class="c1"></span>	<span class="c1">// canceled and err will be non-nil.
 </span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">g</span><span class="p">.</span><span class="nf">Wait</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="nx">err</span>
-	<span class="p">}</span></code></pre></div>
+	<span class="p">}</span>
+</code></pre></div>
     </div>
  
     <ul class="article-taxonomy">

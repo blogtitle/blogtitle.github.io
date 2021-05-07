@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Go advanced concurrency patterns: part 3 (channels) - Blog Title</title>
@@ -68,27 +68,18 @@
     
 
     <div class="article-content">
-      
-
-<p>Today I&rsquo;m going to dive into the expressive power of Go channels and the <code>select</code> statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the <code>sync</code> package from scratch.</p>
-
+      <p>Today I&rsquo;m going to dive into the expressive power of Go channels and the <code>select</code> statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the <code>sync</code> package from scratch.</p>
 <p>In doing so I&rsquo;m just going to accept some compromises:</p>
-
 <ul>
 <li>This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</li>
 <li>Channels, unlike slices, don&rsquo;t have a fixed size equivalent type. While you can have a <code>[4]int</code> type in Go you can&rsquo;t have a <code>chan int</code> of size 4, so I won&rsquo;t have valid zero values and all types will require a constructor call. There is <a href="https://github.com/golang/go/issues/28366">a proposal open</a> to address this issue but this is beyond the scope of this post.</li>
 <li>Most types will be just channels but nothing prevents you from hiding those channels in an opaque struct to avoid misuse. Since this is a blogpost and not an actual library I&rsquo;m going to use bare channels for brevity and clarity.</li>
 <li>I will not explain what the primitives are supposed to do but I&rsquo;ll link to their official doc.</li>
 </ul>
-
 <p>That said, let&rsquo;s start!</p>
-
 <h1 id="once">Once</h1>
-
 <p><a href="https://golang.org/pkg/sync/#Once">Once</a> is a fairly simple primitive: the first call to <code>Do(func())</code> will cause all other concurrent calls to block until the argument of <code>Do</code> returns. After this happens all blocked calls and successive ones will do nothing and return immediately.</p>
-
 <p>This is useful for lazy initialization and singleton instances.</p>
-
 <p>Let&rsquo;s take a look at the code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
 
@@ -114,16 +105,13 @@
 </span><span class="c1"></span>	<span class="nf">f</span><span class="p">()</span>
 	<span class="c1">// This unleashes all waiting goroutines and future ones.
 </span><span class="c1"></span>	<span class="nb">close</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="mutex">Mutex</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="mutex">Mutex</h1>
 <p>For <a href="https://golang.org/pkg/sync/#Mutex">Mutex</a> I&rsquo;m going to make two little digressions:</p>
-
 <ul>
 <li>A Semaphore of size N allows at most N goroutines to hold its lock at any given time. Mutexes are special cases of Semaphores of size 1.</li>
 <li>Mutexes might benefit from a <code>TryLock</code> method</li>
 </ul>
-
 <p>The <code>sync</code> package does not provide semaphores or triable locks but since we are trying to prove the expressive power of channels and <code>select</code> let&rsquo;s implement both.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Semaphore</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
 
@@ -152,21 +140,17 @@
 <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Semaphore</span><span class="p">)</span> <span class="nf">Unlock</span><span class="p">()</span> <span class="p">{</span>
 	<span class="c1">// Make room for other users of the semaphore.
 </span><span class="c1"></span>	<span class="o">&lt;-</span><span class="nx">s</span>
-<span class="p">}</span></code></pre></div>
-<p>If we now want to implement a Mutex based on this we can do the following:</p>
+<span class="p">}</span>
+</code></pre></div><p>If we now want to implement a Mutex based on this we can do the following:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="nx">Semaphore</span>
 
 <span class="kd">func</span> <span class="nf">NewMutex</span><span class="p">()</span> <span class="nx">Mutex</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nf">Mutex</span><span class="p">(</span><span class="nf">NewSemaphore</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="read-write-mutexes">Read-Write Mutexes</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="read-write-mutexes">Read-Write Mutexes</h1>
 <p><a href="https://golang.org/pkg/sync/#RWMutex">RWMutex</a> is a slightly more complicated primitive: it allows an arbitrary amount of concurrent read locks but only a single write lock at any given time. It is also guaranteed that if someone is holding a write lock no one should be able to have or acquire a read lock.</p>
-
 <p>The standard library implementation also grants that if a write lock is attempted, further read locks will queue up and wait to avoid starving write lock. We are going to relax this condition for brevity. There is a way to to this by using a 1-sized channel as mutex to protect the RWLock state, but it is a boring example to show. This implementation will starve writers if there is always at least one reader.</p>
-
 <p>Note: This code is inspired by an implementation of this concept by Bryan Mills.</p>
-
 <p>RWMutex has three states: free, with a writer and with readers. This means we need two channels: when the mutex is free we&rsquo;ll have both channels empty; when there is a writer we&rsquo;ll have a channel with an empty struct in it; when there are readers we&rsquo;ll have a value in both channels, one of which will be the count of the readers.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RWMutex</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">write</span>   <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
@@ -223,8 +207,8 @@
 </span><span class="c1"></span>	<span class="c1">// at most one of the two channels will have a value
 </span><span class="c1"></span>	<span class="c1">// at any given time.
 </span><span class="c1"></span>	<span class="nx">l</span><span class="p">.</span><span class="nx">readers</span> <span class="o">&lt;-</span> <span class="nx">rs</span>
-<span class="p">}</span></code></pre></div>
-<p><code>TryLock</code> and <code>TryRLock</code> methods could be implemented as I did in the previous example by adding default cases to channel operations:</p>
+<span class="p">}</span>
+</code></pre></div><p><code>TryLock</code> and <code>TryRLock</code> methods could be implemented as I did in the previous example by adding default cases to channel operations:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">TryLock</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
 	<span class="k">select</span> <span class="p">{</span>
 	<span class="k">case</span> <span class="nx">l</span><span class="p">.</span><span class="nx">write</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}:</span>
@@ -246,21 +230,14 @@
 	<span class="nx">rs</span><span class="o">++</span>
 	<span class="nx">l</span><span class="p">.</span><span class="nx">readers</span> <span class="o">&lt;-</span> <span class="nx">rs</span>
 	<span class="k">return</span> <span class="kc">true</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="pool">Pool</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="pool">Pool</h1>
 <p><a href="https://golang.org/pkg/sync/#Pool">Pool</a> is used to relieve stress on the garbage collector and re-use objects that are frequently allocated and destroyed.</p>
-
 <p>The standard library uses many techniques for this: thread local storage; removing oversized objects and generations to make objects survive in the pool only if they are used between two garbage collections.</p>
-
 <p>We are not going to provide all of these functionalities: we don&rsquo;t have access to thread local storage nor garbage collection information, nor we care. Our pool will be fixed size as we just want to express the semantic of the type, not the implementation details.</p>
-
 <p>One utility that we are going to provide that Pool does not have is a cleanup function.</p>
-
 <p>It is very common when using Pool to not clear up the objects that come out of it, thus causing re-use of non-zeroed memory, which can lead to nasty bugs and vulnerabilities. Our implementation is going to guarantee that a cleaner function is called if and only if the returned object is recycled.</p>
-
 <p>This could, for example, be used on slices to re-slice to 0 length or on structs to zero all the fields.</p>
-
 <p>If a cleanup is not specified we will not call it.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Item is any type, I gave it a name for readability.
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">Item</span> <span class="p">=</span> <span class="kd">interface</span><span class="p">{}</span>
@@ -296,36 +273,28 @@
 	<span class="k">default</span><span class="p">:</span>
 		<span class="c1">// Pool is full, garbage-collect item.
 </span><span class="c1"></span>	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>One example usage of this would be:</p>
+<span class="p">}</span>
+</code></pre></div><p>One example usage of this would be:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">p</span> <span class="o">:=</span> <span class="nf">NewPool</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span>
 		<span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
 			<span class="k">return</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 		<span class="p">},</span>
 		<span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
 			<span class="k">return</span> <span class="nx">i</span><span class="p">.([]</span><span class="kt">byte</span><span class="p">)[:</span><span class="mi">0</span><span class="p">]</span>
-		<span class="p">})</span></code></pre></div>
-<h1 id="map">Map</h1>
-
+		<span class="p">})</span>
+</code></pre></div><h1 id="map">Map</h1>
 <p><a href="https://golang.org/pkg/sync/#Map">Map</a> is not very interesting for this post as it is semantically equivalent to a <code>map</code> with a <code>RWMutex</code> on it. The <code>Map</code> type is basically a dictionary optimized for use cases that foresee to have many more reads than writes. It is just a technique to make some specific use cases faster and I will thus skip it as today we don&rsquo;t care about speed.</p>
-
 <h1 id="waitgroup">WaitGroup</h1>
-
 <p><a href="https://golang.org/pkg/sync/#WaitGroup">WaitGroup</a> somehow always ends up being one of the most complicated primitives to implement. This also happened <a href="https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/">in my JavaScript&rsquo;s Atomic post</a> where I put a race condition in the <code>WaitGroup</code> (have fun finding it).</p>
-
 <p>Wait groups allow for a variety of uses but the most common one is to create a group, <code>Add</code> a count to it, spawn as many goroutines as that count and then wait for all of them to complete. Every time a goroutine is done running it will call <code>Done</code> on the group to signal it has finished working. Wait groups can reach the &ldquo;0&rdquo; count by calling <code>Done</code> or calling <code>Add</code> with a negative count (even greater than -1).
 When a group reaches 0 all the waiters currently blocked on a <code>Wait</code> call will resume execution. Future calls to <code>Wait</code> will not be blocking.</p>
-
 <p>One little known feature is that wait groups can be re-used: <code>Add</code> can still be called after the counter reached 0 and it will put the wait group back in the blocking state.</p>
-
 <p>This means we have a sort of &ldquo;generation&rdquo; for each given wait group:</p>
-
 <ul>
 <li>a generation begins when the counter moves from 0 to a positive number</li>
 <li>a generation ends when the counter reaches 0</li>
 <li>when a generation ends all waiters of that generation are unblocked.</li>
 </ul>
-
 <p>Let&rsquo;s see it in code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">generation</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="c1">// A barrier for waiters to wait on.
@@ -388,31 +357,22 @@ When a group reaches 0 all the waiters currently blocked on a <code>Wait</code> 
 </span><span class="c1"></span>	<span class="nx">wg</span> <span class="o">&lt;-</span> <span class="nx">g</span>
 	<span class="c1">// Wait for the chan to be closed.
 </span><span class="c1"></span>	<span class="o">&lt;-</span><span class="nx">wait</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="condition">Condition</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="condition">Condition</h1>
 <p><a href="https://golang.org/pkg/sync/#Cond">Cond</a> is the most controversial type in the sync package. I think it&rsquo;s a dangerous primitive and it is too easy to use incorrectly. I never use it because I don&rsquo;t trust myself to use it right and during code review I always suggest to use other primitives instead.
 Even Bryan Mills (who is in the Go team and works a lot on <code>sync</code> primitives) got to the point of <a href="https://github.com/golang/go/issues/21165">proposing to remove it</a>.</p>
-
 <p>I suppose the most important reason for <code>Cond</code> to exist is that channels cannot be re-opened to broadcast twice but I am not sure the benefit is worth the cost.</p>
-
 <p>Even not considering the fact that this is error prone it also doesn&rsquo;t work well with channels (<a href="https://github.com/golang/go/issues/16620">issue about this</a>). It is, for example, currently impossible to select over a <code>Cond</code> and context cancellation: it requires some wrapping and additional goroutines, which are expensive and might be leaked.</p>
-
 <p>There is even more weirdness in this API: it requires its users to do part of the synchronization themselves. Quoting the doc:</p>
-
 <blockquote>
 <p>Each Cond has an associated Locker L (often a *Mutex or *RWMutex), which must be held when changing the condition and when calling the Wait method.</p>
 </blockquote>
-
 <p>This means that we don&rsquo;t have to care about the user changing the <code>L</code> field of Cond or racing on <code>Wait</code> calls, but there might be races on <code>Broadcast</code> and <code>Signal</code> which we&rsquo;ll address.</p>
-
 <p>This gets even worse if we consider the documentation on <code>Wait</code>:</p>
-
 <blockquote>
 <p>Wait atomically unlocks c.L and suspends execution of the calling goroutine. After later resuming execution, Wait locks c.L before returning.
 Because c.L is not locked when Wait first resumes, the caller typically cannot assume that the condition is true when Wait returns. Instead, the caller should Wait in a loop.</p>
 </blockquote>
-
 <p>To implement this odd primitive I am going to use a channel of channels.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Locker</span> <span class="kd">interface</span> <span class="p">{</span>
 	<span class="nf">Lock</span><span class="p">()</span>
@@ -477,17 +437,17 @@ Because c.L is not locked when Wait first resumes, the caller typically cannot a
 </span><span class="c1"></span>	<span class="o">&lt;-</span><span class="nx">b</span>
 	<span class="c1">// We were unblocked, acquire lock.
 </span><span class="c1"></span>	<span class="nx">c</span><span class="p">.</span><span class="nx">L</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-<span class="p">}</span></code></pre></div>
-<h1 id="conclusion">Conclusion</h1>
-
+<span class="p">}</span>
+</code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>Go channels and <code>select</code> combined are extremely expressive and allow to create high level synchronization and orchestration primitives in a very expressive way. I think many of the design choices, like having limited size channels or selects that can receive and send at the same time, give Go builtin types something that is rarely seen in other languages.</p>
-
 <h1 id="want-to-learn-more">Want to learn more?</h1>
-
 <ul>
-<li><p><a href="https://blogtitle.github.io/categories/concurrency/">Here</a> you can find my other posts on advanced concurrency.</p></li>
-
-<li><p><a href="https://drive.google.com/file/d/1nPdvhB0PutEJzdCq5ms6UI58dp50fcAN/view">Here</a> you can find a very interesting presentation on rethinking concurrency patterns by Bryan Mills.</p></li>
+<li>
+<p><a href="https://blogtitle.github.io/categories/concurrency/">Here</a> you can find my other posts on advanced concurrency.</p>
+</li>
+<li>
+<p><a href="https://drive.google.com/file/d/1nPdvhB0PutEJzdCq5ms6UI58dp50fcAN/view">Here</a> you can find a very interesting presentation on rethinking concurrency patterns by Bryan Mills.</p>
+</li>
 </ul>
 
     </div>

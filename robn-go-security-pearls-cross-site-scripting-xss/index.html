@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS) - Blog Title</title>
@@ -68,38 +68,28 @@
     
 
     <div class="article-content">
-      
-
-<blockquote>
+      <blockquote>
 <p>This post is part of my developer-friendly security series. You can find all other posts <a href="https://blogtitle.github.io/categories/web-security/">here</a>.</p>
 </blockquote>
-
 <p>XSS is a vulnerability that allows attackers to run arbitrary JavaScript code in applications they shouldn&rsquo;t be able to control. This can lead to <strong>complete account compromises for every victim</strong> that follows a malicious link or visits a compromised page.</p>
-
 <p>There are two major families of XSS: server side and client side. Today we&rsquo;ll discover how to better protect against server-side XSS, how to reduce the risk of client-side XSS (with some novel technologies) and how to mitigate both of them with some defense-in-depth mechanisms. In the end there will be a recap (with code!) to put together the most important bits you shouldn&rsquo;t forget.</p>
-
 <h1 id="server-side-xss">Server-Side XSS</h1>
-
 <p>Most programs and web applications need to store and/or send back some data to the users. Modern web applications have hundreds of inputs and hundreds of outputs. As you might imagine sometimes developers get some escaping wrong and that is where things start going bad.</p>
-
 <p>Let&rsquo;s make an example, suppose you are using &ldquo;text/template&rdquo; to generate pages:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
 Hello I&#39;m {{.Username}} and welcome to my shop!
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
-<p>If the username is <code>Rob</code> the output of the page will be</p>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div><p>If the username is <code>Rob</code> the output of the page will be</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
 Hello I&#39;m Rob and welcome to my shop!
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
-<p>This works as intended. But what happens if the username is <code>&lt;script&gt;evilCode()&lt;/script&gt;</code>?</p>
-
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div><p>This works as intended. But what happens if the username is <code>&lt;script&gt;evilCode()&lt;/script&gt;</code>?</p>
 <p>When the browser receives the code, it can&rsquo;t figure out that the string above should be treated as text, so it executes it:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
 Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nx">evilCode</span><span class="p">()&lt;/</span><span class="nt">script</span><span class="p">&gt;</span> and welcome to my shop!
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
-<p>In this example the <code>evilCode()</code> function is invoked.</p>
-
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div><p>In this example the <code>evilCode()</code> function is invoked.</p>
 <p>An attack scenario would be that an evil user signs up in this application, enters the malicious code as their name, and sends a link to their profile to the victim. When the victim visits the profile the name of the attacker is improperly interpolated in the page and evil code is executed. This will cause the application to <strong>perform actions in the name of the victim without them knowing</strong>.</p>
-
 <p>The example above is an instance of <em>stored XSS</em> as it persists in the database of the application. Some other server-side XSS might only trigger when interpolating data from the request into the response, and those are called <em>reflected XSS</em>. One example in Go would be:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">vulnerableHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">r</span><span class="p">.</span><span class="nf">ParseForm</span><span class="p">()</span>
@@ -108,49 +98,35 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;Invalid token: %q&#34;</span><span class="p">,</span> <span class="nx">tok</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="c1">//...
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
-<p>This would reflect part of the input in the output without escaping, which causes XSS (you should <strong>never</strong> use <code>fmt</code> to write to a HTTP response).</p>
-
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>This would reflect part of the input in the output without escaping, which causes XSS (you should <strong>never</strong> use <code>fmt</code> to write to a HTTP response).</p>
 <p>In both reflected and stored XSS the culprit is a <strong>lack of proper escaping</strong>. The way you you can think about this is that you should only be able to write trusted content to the page. Everything else would need to be &ldquo;promoted&rdquo; to be trusted. You can imagine text and HTML to be two different types:</p>
-
 <ul>
 <li>TrustedHtml + Trusted HTML → TrustedHtml</li>
 <li>TrustedHtml + escapeHtml(text) → TrustedHtml</li>
 <li>TrustedHtml + sanitizeHtml(untrustedHTML) → TrustedHtml</li>
 <li>TrustedHtml + text → ERROR</li>
 </ul>
-
 <p>If you are a developer like me you <strong>don&rsquo;t want to care</strong> about all the possible escaping contexts and steps you have to go through, you just want things to work. Stuff should be secure by default and not require the developers to care about it. Libraries should be close to impossible to use wrong.</p>
-
 <h3 id="a-solution">A solution</h3>
-
 <p>If you are working with Go you are lucky. The <code>html/template</code> package performs contextual auto-escaping. This means that when your templates are parsed the library detects in which context you are putting strings in and it will pick a chain of escaping functions to properly encode it.</p>
-
 <p>If you are interpolating, for example, in this context:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
   <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="s2">&#34;{{.Data}}&#34;</span><span class="p">;</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
-<p>This will automatically be encoded in a way that an attacker could not break. This means that 2 encoders will be executed:</p>
-
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div><p>This will automatically be encoded in a way that an attacker could not break. This means that 2 encoders will be executed:</p>
 <ul>
 <li>JavaScript string: characters like <code>\</code> and <code>&quot;</code> will be escaped like <code>\\</code> <code>\&quot;</code> so that the attacker cannot &ldquo;get out&rdquo; of the JavaScript string context.</li>
 <li>HTML: characters like <code>&lt;</code> will be encoded to <code>&amp;lt;</code> so that if the attacker is called <code>&lt;/script&gt;</code> it will not break the &ldquo;script&rdquo; context and won&rsquo;t be able to inject HTML in the sources of the page.</li>
 </ul>
-
 <p>If the first escaping wouldn&rsquo;t have been performed a string like <code>&quot;; evilCode(); var b = &quot;</code> would have executed <code>evilCode</code>.</p>
-
 <p>This might seem trivial but there are some complicated cases where escaping might not be intuitive, like inside <code>style</code> blocks or HTML attributes (where escaping depends on the attribute key). Currently the standard library supports 16 different escaping functions and it goes through 24 different possible valid states and contexts while parsing the templates. It is very well designed and has only very minor known issues. <strong>I advise against trying to do this by hand or re-implementing this logic yourself</strong>. For Go 1.13 as long as you don&rsquo;t interpolate data in <a href="https://github.com/golang/go/issues/19669">a html tag name</a> (and why would you?) or <a href="https://github.com/golang/go/issues/9200">a JavaScript template literal</a> (you shouldn&rsquo;t use two templates together anyways) your app should be in a pretty good shape.</p>
-
 <p>Moreover all widespread open-source libraries that I found in the wild for Go and Rust <strong>do not</strong> perform contextual auto-escaping so keep in mind that if you want to use a template that is not <code>html/template</code> <strong>you are putting yourself at risk</strong>. On this topic I can only suggest to stick to the standard library to stay safe.</p>
-
 <blockquote>
 <p>Note: in the near future Google is planning to open-source <a href="https://github.com/golang/go/issues/27926">another Go library</a> that grants an even better level of protection against XSS. Stay tuned to be updated when it is released!</p>
 </blockquote>
-
 <p>If you want to know more about some bypasses and advanced details about contextual auto-escaping <a href="https://rawgit.com/mikesamuel/sanitized-jquery-templates/trunk/safetemplate.html#problem_definition">here</a> is your poison.</p>
-
 <p>A final but very important note: if your response is not HTML (e.g. JSON or plain text) it is <strong>of vital importance</strong> that you appropriately set the Content-Type header to the correct value.</p>
-
 <p>For example, in Go:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">jsonHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// This should be set on the entire service
@@ -158,40 +134,26 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
   <span class="c1">// This must be set on every JSON response
 </span><span class="c1"></span>  <span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span><span class="s">&#34;application/json; charset=utf-8&#34;</span><span class="p">)</span>
   <span class="c1">// Write your JSON response here.
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
-<p>If you don&rsquo;t do this there are some attacks that can be performed to trick the browser into executing code from non-HTML responses.</p>
-
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>If you don&rsquo;t do this there are some attacks that can be performed to trick the browser into executing code from non-HTML responses.</p>
 <h1 id="client-side-dom-based-xss">Client-Side (DOM based) XSS</h1>
-
 <p>If you think using the proper template will save you from XSS, you&rsquo;re out of luck. There is still a whole family of XSS that is waiting behind the corner to hit you and your users when you least expect it. The server might do all the escaping correctly depending on the context the strings are interpolated in but, then, the client-side code might just decide to execute arbitrary code.</p>
-
 <p>The Document Object Model(DOM) is a way to programmatically access and modify a webpage. JavaScript can call special functions and methods that can, during or after page load, change something.</p>
-
 <p>Let&rsquo;s look at an example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="kd">var</span> <span class="nx">mydiv</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;myDiv&#34;</span><span class="p">);</span>
 <span class="nx">mydiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">);</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
-<p>If the current page URI ends with <code>#&lt;img%20src=x%20onerror=&quot;alert(1)&quot;/&gt;</code> this code will execute <code>alert(1)</code> in the context of the page. The attack scenario in this case is that the attacker sends to the victim a link like:</p>
-
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div><p>If the current page URI ends with <code>#&lt;img%20src=x%20onerror=&quot;alert(1)&quot;/&gt;</code> this code will execute <code>alert(1)</code> in the context of the page. The attack scenario in this case is that the attacker sends to the victim a link like:</p>
 <p><code>https://vulnerable.com/#&lt;img%20src=x%20onerror=&quot;evilCode()&quot;/&gt;</code></p>
-
 <p>and if the user clicks on it the attacker executes <code>evilCode</code> in their browser, in the context of the vulnerable application.</p>
-
 <p>As you can see no server-side code was involved. This is true to the point where the &ldquo;frame&rdquo; part of a URI (the string after and including the first <code>#</code> character) <strong>is not even sent to the server</strong>.</p>
-
 <p>As a developer you might want to protect against this kind of vulnerability and <strong>you might expect</strong> the web platform to provide standard APIs for escaping and some well-defined ways to disable all JavaScript APIs calls that might result in an XSS.</p>
-
 <p>Well&hellip; It doesn&rsquo;t <code>¯\_(ツ)_/¯</code>.</p>
-
 <p>That said something can still be done: proper escaping can be performed with libraries like <a href="https://github.com/cure53/DOMPurify"><code>DOMPurify</code></a> and a way to enforce a secure access to the DOM APIs like <code>innerHTML</code> is being worked on with <a href="https://github.com/WICG/trusted-types#polyfill">trusted types</a>. If you want to experiment with something new there is a <a href="https://github.com/WICG/trusted-types#polyfill">a polyfill library</a> ready for you to use. Moreover, if you use a major framework like Angular you should probably read <a href="https://angular.io/guide/security#xss">their considerations on XSS</a>. Please note that React <strong>does not</strong> perform URI sanitization so you should be very careful when interpolating URIs (like removing anything that starts with case-invariant <code>javascript:</code> schemes).</p>
-
 <h1 id="mitigations">Mitigations</h1>
-
 <p>There are some features in the web platform that were built to help out. In the sad case in which some attacker-controlled code might end up in your HTML page there are some countermeasures that might still render the exploitation extremely hard or, sometimes, impossible. Those countermeasures help in both server-side XSS and DOM XSS, but they might have limited benefits in the latter.</p>
-
 <h3 id="mitigation-content-security-policy">Mitigation: Content Security Policy</h3>
-
 <p>Content Security Policy (CSP) allows developers to declare which scripts they trust so that the browser will refuse to execute any other code. Let&rsquo;s see an example of HTTP HTML response protected with strict CSP:</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/html;</span>
@@ -207,33 +169,22 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 <span class="c1">// This does not get executed.
 </span><span class="c1"></span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
-<p>The idea is to use an HTTP header to communicate to the browser a secret that changes for every HTML response generated by the server. Only scripts that have the <code>nonce</code> attribute set to that secret will be executed. This means that the attacker will need to guess the random or somehow predict it in order to get code to execute. This makes exploitation significantly harder and sometimes impossible.</p>
-
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div><p>The idea is to use an HTTP header to communicate to the browser a secret that changes for every HTML response generated by the server. Only scripts that have the <code>nonce</code> attribute set to that secret will be executed. This means that the attacker will need to guess the random or somehow predict it in order to get code to execute. This makes exploitation significantly harder and sometimes impossible.</p>
 <p>If you want to (and you should) adopt CSP on your application you can take a look at <a href="https://csp.withgoogle.com/docs/strict-csp.html">Google official guide for it</a> which contains an actual policy Google uses in production (the one above is oversimplified and might cause problems with some browsers).</p>
-
 <blockquote>
 <p>Note: There currently is no library in Go to automatically add nonces and CSP but <a href="https://github.com/golang/go/issues/31107">I&rsquo;m working on it</a> and will update you when it is ready.</p>
 </blockquote>
-
 <p>In case your application doesn&rsquo;t use JavaScript and you want to make sure it never will, not even by accident, you can set content security policy to the one described in the guide above and replace the <code>script-src</code> directive to be <code>'none'</code>. This renders XSS impossible to exploit.</p>
-
 <p><code>Content-Security-Policy: base-uri 'none'; object-src 'none'; script-src 'none';</code></p>
-
 <blockquote>
 <p>Note: want to know more about CSP, the successes, the difficulties and the way to deploy and harden it at scale? We got you covered: a couple of engineers in my team gave <a href="https://www.youtube.com/watch?v=_L06HetskC4">a talk</a> at LocoMocoSec this year on how to do it at Google scale!</p>
 </blockquote>
-
 <h3 id="mitigation-cookies-scope">Mitigation: Cookies scope</h3>
-
 <p>Cookies should be scoped and restricted to only be sent when necessary. In addition to that cookies should not be directly accessible by JavaScript. This can be achieved with the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Scope_of_cookies"><code>Domain and Path</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies"><code>HttpOnly</code></a> attributes.</p>
-
 <p>This mitigation provides little protection against XSS but it is very simple to deploy so it is still worth the effort.</p>
-
 <h1 id="recap">Recap</h1>
-
 <p>If you want to secure you application from XSS you should:</p>
-
 <ol>
 <li>Use templating engines with contextual auto-escaping (<a href="https://golang.org/pkg/html/template/">Go standard library</a> or <a href="https://github.com/google/closure-templates">Google closure templates</a> do it);</li>
 <li>Appropriately set <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"><code>Content-Type</code></a> (both response type and <code>charset</code>) and make sure browsers <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options">don&rsquo;t &ldquo;sniff&rdquo; the <code>Content-Type</code></a>;</li>
@@ -241,15 +192,12 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 <li>Make sure to carefully review all uses of <a href="https://wicg.github.io/trusted-types/dist/spec/#injection-sinks">dangerous DOM APIs</a>, use your frameworks properly and, potentially, try out <a href="https://github.com/WICG/trusted-types#polyfill">trusted types</a>;</li>
 <li>Set your cookies as <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Secure_and_HttpOnly_cookies"><code>HttpOnly</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#Scope_of_cookies">scope them</a> so that only the endpoints that need them receive them.</li>
 </ol>
-
-<h1 id="let-s-apply-this-to-go">Let&rsquo;s apply this to Go!</h1>
-
+<h1 id="lets-apply-this-to-go">Let&rsquo;s apply this to Go!</h1>
 <ul>
 <li>Trusted Types and JavaScript frameworks are client side, so not much for Go to do, but we can take a look at the rest.</li>
 <li>To generate responses make sure you always write to an <code>http.ResponseWriter</code> set to <code>Content-Type: text/html</code> with an HTML template and nothing else. It should be easy to catch this mistake in code review but it is also quite easy to write an analyzer for it. If you want to try and write such a tool here is the <a href="https://godoc.org/golang.org/x/tools/go/analysis">doc</a> and <a href="https://www.youtube.com/watch?v=HDJE-_s3x8Q">a talk</a> about it. If you end up writing it, please <a href="https://staticcheck.io">share it</a>!</li>
 <li>Strict CSP and contextual auto-escaping can be done with something like the following proof of concept. Make sure you import <code>&quot;html/template&quot;</code> and <code>&quot;crypto/rand&quot;</code> and <strong>not</strong> <code>&quot;text/template&quot;</code> and <code>&quot;math/rand&quot;</code>.</li>
 </ul>
-
 <p>The code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -300,11 +248,9 @@ Hello I&#39;m <span class="p">&lt;</span><span class="nt">script</span><span cla
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nf">EncodeToString</span><span class="p">(</span><span class="nx">b</span><span class="p">[:])</span>
-<span class="p">}</span></code></pre></div>
-<p>Please note that here I&rsquo;m decorating only a single handler but an entire <code>http.ServeMux</code> can be protected with CSP in the same way. Setting CSP on non-html responses will not affect your application.</p>
-
+<span class="p">}</span>
+</code></pre></div><p>Please note that here I&rsquo;m decorating only a single handler but an entire <code>http.ServeMux</code> can be protected with CSP in the same way. Setting CSP on non-html responses will not affect your application.</p>
 <p>Cookies attributes can be set together with cookies by using <a href="https://golang.org/pkg/net/http/#Cookie">the standard http package</a>.</p>
-
 <p>This is all for today, stay tuned for the next chapter: Cross Site Request Forgery(CSRF).</p>
 
     </div>

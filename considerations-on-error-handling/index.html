@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Considerations on error handling - Blog Title</title>
@@ -68,32 +68,24 @@
     
 
     <div class="article-content">
-      
-
-<h2 id="the-impact">The impact</h2>
-
+      <h2 id="the-impact">The impact</h2>
 <p>The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.</p>
-
 <p>This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">try</span><span class="p">:</span>
 	<span class="c1"># dostuff</span>
 <span class="k">except</span><span class="p">:</span> <span class="c1"># or catch</span>
 	<span class="c1"># handle problems</span>
 <span class="k">finally</span><span class="p">:</span>
-	<span class="c1"># make sure I didn&#39;t forget anything</span></code></pre></div>
-<p>That&rsquo;s it: out of band error signaling (errors flow in a different channel than normal return values), with explicit specialized syntax.</p>
-
+	<span class="c1"># make sure I didn&#39;t forget anything</span>
+</code></pre></div><p>That&rsquo;s it: out of band error signaling (errors flow in a different channel than normal return values), with explicit specialized syntax.</p>
 <p>I was only writing python and C# when I felt the need for something more powerful on the concurrency/parallelism side. Working with networking and concurrent, deeply parallel, code with python is just a hassle, and C# was way too verbose.</p>
-
 <p>That is one of the reasons I started trying Go. And the impact was <em>awful</em>.</p>
-
 <p>I loved the concurrency patterns and the <code>go</code> statement. But I stumbles on the lack of features, the lack of good UI libraries, the lack of constructors, the lack of proper package management. But what really pissed me off was the error handling:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">result</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">doStuff</span><span class="p">()</span>
 <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 	<span class="c1">// handleProblems
-</span><span class="c1"></span><span class="p">}</span></code></pre></div>
-<p>My first reaction to this was: &ldquo;Did they just forget about errors while designing the language?&rdquo;</p>
-
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>My first reaction to this was: &ldquo;Did they just forget about errors while designing the language?&rdquo;</p>
 <p>But then I discovered this: when you return a nil error, make sure you return <code>nil</code> and not a <code>nil</code> value of a <code>struct</code> implementing the <code>error</code> interface or <a href="https://golang.org/doc/faq#nil_error">it will not be nil</a>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MyErr</span> <span class="kt">string</span>
 
@@ -113,30 +105,20 @@
 		<span class="k">return</span>
 	<span class="p">}</span>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;not err&#34;</span><span class="p">)</span>
-<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma">out: &#34;err&#34;</pre></div>
-<p>To which my reaction was just a long list of swear words.</p>
-
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">out: &#34;err&#34;
+</code></pre></div><p>To which my reaction was just a long list of swear words.</p>
 <p>All those things that I didn&rsquo;t like didn&rsquo;t prevent me from using Go for some projects: I went on exploring the environment, the small details, I started appreciating channels and loving the <code>select</code> statement.</p>
-
 <h2 id="some-months-later">Some months later</h2>
-
 <p>After a while, almost all clicked in place, and while the package manager was just not there, but some experiments solved most of my problems (<a href="https://github.com/golang/dep">dep</a>). The only thing that really kept bugging me was the verbose error handling.</p>
-
 <p>I wanted to understand what was behind it and what was the reasoning that made the language creators settle on it. The <a href="https://golang.org/src/errors/errors.go">errors</a> package is ten (10) lines long cleaned of empty lines and comments and that is everything that the standard library provides.</p>
-
 <p>Simple is nice, but too simple is scary.</p>
-
 <h2 id="the-reasoning">The reasoning</h2>
-
 <p>I listened to <a href="https://www.youtube.com/watch?v=lsBF58Q-DnY">a very nice talk</a>, read <a href="https://blog.golang.org/errors-are-values">an official blogpost</a> and saw a couple of potential solutions: <a href="https://github.com/pkg/errors">pkg/errors</a> <a href="https://github.com/juju/errgo">ErrGo</a>. Those addressed some issues but nothing really seemed to justify the verboseness and the complete lack of fine-grained error catching.</p>
-
 <p>Then <a href="https://twitter.com/matryer">Mat Ryer</a> gave a valid explanation to the verbosity in <a href="https://youtu.be/yeetIgNeIkc?t=257">his talk on idiomatic Go tricks</a> by introducing to me the concept of &ldquo;happy path&rdquo; and &ldquo;line of sight&rdquo;.
 That made me realize how much easier it is to read Go code than Java-like code: my eyes don&rsquo;t have to jump up and down between a try block and a catch block to understand the flow, and I don&rsquo;t need to know the Exception inheritance hierarchy and taxonomy to understand which catch block is going to be selected.</p>
-
 <p>That explained the verbosity, and even though I&rsquo;d like to have a short form for <code>if err != nil</code>, I would now never go back to try-catch-finally statements. I like to have error handling code near to the calls that caused the error.</p>
-
 <p>What that didn&rsquo;t explain, although, was the lack of granularity of error handling. All errors are equal and if you need to understand the underlying cause of an error you can&rsquo;t: you shouldn&rsquo;t rely on strings in messages as they may vary, and you cannot inspect an unexported type coming from another package.</p>
-
 <p>The point is that Go doesn&rsquo;t like strong contracts: functions should accept interfaces whenever they can, packages should export interfaces to prevent users from using the <code>structs</code> wherever it makes sense to do so. And that is also true for errors: a package that exposes granularity for errors might become harder to maintain (potential breakages if errors are added/changed or the underlying system is updated) and more complex to use.
 This made it so that some packages export helper functions to check errors, like the <code>os</code> package for <a href="https://golang.org/pkg/os/#IsPermission">permissions</a>, or even export the error values like <a href="https://golang.org/pkg/io/#pkg-variables">io.EOF</a>. A nice perk on checking errors with boolean operators instead of using a <code>catch</code> block is that error handling code can fallthroug from a more specific handler to a less specific one:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">file</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;foo.txt&#34;</span><span class="p">)</span>
@@ -149,17 +131,12 @@ This made it so that some packages export helper functions to check errors, like
 		<span class="k">return</span> <span class="nx">err</span>
 <span class="p">}</span>
 <span class="c1">// The powerful defer statement, way better/different than a `finally` block
-</span><span class="c1"></span><span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span></code></pre></div>
-<p>After some time spent coding Go, that starts to feel natural and if a package does not expose an error, you get used to the fact that it means <em>that package cannot guarantee forward compatiblity on that error</em> and that&rsquo;s it, because in Go people try to do their best not to break other people&rsquo;s code. Panics are handled inside the package and updates do not break APIs, this requires weaker contracts in some cases.</p>
-
+</span><span class="c1"></span><span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</code></pre></div><p>After some time spent coding Go, that starts to feel natural and if a package does not expose an error, you get used to the fact that it means <em>that package cannot guarantee forward compatiblity on that error</em> and that&rsquo;s it, because in Go people try to do their best not to break other people&rsquo;s code. Panics are handled inside the package and updates do not break APIs, this requires weaker contracts in some cases.</p>
 <h2 id="the-comeback">The comeback</h2>
-
 <p>Now it has been three years of writing Go, and I use it for everything: big software or scripting. Every time a bash script might get longer than ten lines, I switch to go. I started thinking with values, and errors are no different values. I stick to the fact that the syntax might give some sugar for <code>if err != nil</code> but that&rsquo;s it. The problem now is the opposite, I realized how uselessly complex is the try-catch-finally statement.</p>
-
 <p>Let&rsquo;s give some examples with the &ldquo;Guess the output&rdquo; game. One of my theories is that code should <strong>never be surprising</strong> and traditional error handling might do sometimes:</p>
-
 <h3 id="taxonomy">Taxonomy</h3>
-
 <p>One of the remarkable things about errors in go is that they are values, and the language focuses on that rather than their inheritance and taxonomy. This makes very hard to have ambiguities such as the following one:</p>
 <div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="o">{</span>
 	<span class="c1">// Explicitly declared as Exception
@@ -171,15 +148,11 @@ This made it so that some packages export helper functions to check errors, like
 </span><span class="c1"></span><span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
 	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="o">;</span>
 <span class="o">}</span>
-<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span></code></pre></div>
-<p>What does this code return?</p>
-
+<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span>
+</code></pre></div><p>What does this code return?</p>
 <p>Luckily Java well behaves and enters the first catch block, and the code logs correctly and returns &ldquo;a&rdquo;.</p>
-
 <p>But it gets trickier.</p>
-
 <h3 id="finally">Finally</h3>
-
 <p>Early returns usually make code more readable: they reduce the need for indentation and cyclomatic complexity, and they make sure code is never accidentally executed. But Java has some issues with early returns and error handling code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span><span class="o">{</span>
 	<span class="k">throw</span> <span class="k">new</span> <span class="n">Exception</span><span class="o">();</span>
@@ -187,11 +160,9 @@ This made it so that some packages export helper functions to check errors, like
 	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span>
 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
 	<span class="k">return</span> <span class="s">&#34;b&#34;</span><span class="o">;</span>
-<span class="o">}</span></code></pre></div>
-<p>This code returns &ldquo;b&rdquo; as the <code>finally</code> block is always executed after the <code>catch</code> blocks, even if they invoked a return statement.</p>
-
+<span class="o">}</span>
+</code></pre></div><p>This code returns &ldquo;b&rdquo; as the <code>finally</code> block is always executed after the <code>catch</code> blocks, even if they invoked a return statement.</p>
 <p>This is a little bit weird, but after a while you can get used to it, I guess. The madness comes right now.</p>
-
 <h3 id="eventually">Eventually</h3>
 <div class="highlight"><pre class="chroma"><code class="language-Java" data-lang="Java"><span class="k">try</span> <span class="o">{</span>
 	<span class="n">Exception</span> <span class="n">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Exception</span><span class="o">();</span>
@@ -200,21 +171,19 @@ This made it so that some packages export helper functions to check errors, like
 	<span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="o">();</span>
 <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
 	<span class="k">return</span> <span class="s">&#34;a&#34;</span><span class="o">;</span>
-<span class="o">}</span></code></pre></div>
-<p>What does this code do? Who catches the <code>RuntimeException</code>?</p>
-
+<span class="o">}</span>
+</code></pre></div><p>What does this code do? Who catches the <code>RuntimeException</code>?</p>
 <p>Short answer: no one. This code returns &ldquo;a&rdquo;. The stack escalation caused by the <code>throw</code> statement in the catch block is stopped by the <code>finally</code> block. And there is <em>no way</em> to catch that exception anymore. It is just lost.</p>
-
 <p>This means that there is no real equivalent of a <code>defer</code> statement. If there is a need to catch and filter some exceptions, but you still let some other ones escalate the stack, the finally block must not be used. This prevents Java-like programs to have something like:</p>
-<div class="highlight"><pre class="chroma">try:
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">try:
 	something
 catch a_particular_error:
 	// let other errors bubble up
 anyways:
 	// execute this cleanup code
 	// and DO NOT continue execution
-	// but don&#39;t stop other errors that are bubbling up</pre></div>
-<p>which in Go exists as</p>
+	// but don&#39;t stop other errors that are bubbling up
+</code></pre></div><p>which in Go exists as</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">defer</span> <span class="nf">cleanup</span><span class="p">()</span>
 <span class="nx">err</span> <span class="o">:=</span> <span class="nf">something</span><span class="p">()</span>
 <span class="nx">swtich</span> <span class="p">{</span>
@@ -223,27 +192,21 @@ anyways:
 	<span class="k">case</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">:</span>
 		<span class="k">return</span> <span class="nx">err</span>
 <span class="p">}</span>
-<span class="nf">somethingElse</span><span class="p">()</span></code></pre></div>
-<h2 id="conclusion">Conclusion</h2>
-
+<span class="nf">somethingElse</span><span class="p">()</span>
+</code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>Go error handling is not perfect. The fact that external packages have been written to provide more is a giveaway of this. It is, although, a change. It is something different that tries to demistify errors, and that is leading somewhere more where code is more readable and less confusing.</p>
-
 <p>Some things that might seem tempting when coming from other languages but that would <strong>not</strong> be nice to have are:</p>
-
 <ul>
 <li>The <code>finally</code> statement, as the examples above try to show.</li>
 <li>Error handling relying on inheritance/embedding: errors should be values, and their taxonomy should not interfere with the semantics of the handling code.</li>
 </ul>
-
 <p>There is, on the other hand, a lot to learn. It would be nice to have:</p>
-
 <ul>
 <li>More concise syntax</li>
 <li>If err is not nil, the linter/compiler should warn when the user is trying to access the other values returned by the call anyways. Even if there are <a href="https://golang.org/pkg/bytes/#Buffer.ReadBytes">exceptions</a> to this rule, it is almost always wrong to read return values on non-nil errors. (this confusion can&rsquo;t happen in languages with exceptions as extra return values are discarded)</li>
 <li>Errors should be explicitly ignored. Since Go is very pedantic when <a href="https://github.com/golang/go/blob/c359d759a77fcec1457f3eb5c5d04fb74f47dad4/src/cmd/compile/internal/gc/walk.go#L52">assigned values are not used</a>, function calls that return only an error should, in my opinion, require to be called with the underscore syntax ( <code>_ = myFunc()</code>). This would work as a warning that errors are being ignored for the readers. It is otherwise hard to spot such mistakes.</li>
 <li>An idiomatic way to have some granularity like the one offered by catch. I like that the os package tries to export helper functions, but there should be consistency across the standard library. I was once trying to distinguish between different TLS errors, but the <code>tls</code> package only exports <a href="https://golang.org/pkg/crypto/tls/#RecordHeaderError">one error</a> which was not the one I needed.</li>
 </ul>
-
 <p>Please feel free to share this and discuss it on <a href="https://twitter.com/empijei">twitter</a>.</p>
 
     </div>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Inspirational on Blog Title</title>
@@ -6,11 +6,7 @@
     <description>Recent content in Inspirational on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 Feb 2019 12:07:43 -0800</lastBuildDate>
-    
-	<atom:link href="https://blogtitle.github.io/categories/inspirational/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 19 Feb 2019 12:07:43 -0800</lastBuildDate><atom:link href="https://blogtitle.github.io/categories/inspirational/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A (un)biased story</title>
       <link>https://blogtitle.github.io/a-unbiased-story/</link>

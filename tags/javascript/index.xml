@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>javascript on Blog Title</title>
@@ -6,11 +6,7 @@
     <description>Recent content in javascript on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate>
-    
-	<atom:link href="https://blogtitle.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 22 Mar 2019 12:42:05 +0100</lastBuildDate><atom:link href="https://blogtitle.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using JavaScript SharedArrayBuffers and Atomics</title>
       <link>https://blogtitle.github.io/using-javascript-sharedarraybuffers-and-atomics/</link>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Go Safe HTML - Blog Title</title>
@@ -68,147 +68,104 @@
     
 
     <div class="article-content">
-      
-
-<blockquote>
+      <blockquote>
 <p>Disclaimer: this is not an official Google post or communication, it is just me commenting on something that is now available.</p>
 </blockquote>
-
 <p>The Google infosec team just released <a href="https://github.com/google/safehtml">the Go &ldquo;safehtml&rdquo; package</a>. If you are interested in making your application resilient to server-side XSS you might want to adopt it instead of &ldquo;html/template&rdquo;. Migration to safehtml should be quite straightforward as it is just a hardened fork of the original html/template standard package. If you don&rsquo;t have major flaws in your app it should not be too complicated to convert it to use the safe version.</p>
-
 <p>This is what Google uses internally to protect products from XSS.</p>
-
 <p>If you just want to use it without reading through the explanation you can jump to <a href="#the-checklist">the checklist</a>.</p>
-
-<h1 id="issues-with-html-template">Issues with &ldquo;html/template&rdquo;</h1>
-
+<h1 id="issues-with-htmltemplate">Issues with &ldquo;html/template&rdquo;</h1>
 <p>&ldquo;html/template&rdquo; has no concept of &ldquo;tainting&rdquo; and does not keep track on how dangerous types like <a href="https://golang.org/pkg/html/template/#HTML"><code>template.HTML</code></a> are constructed. There is just a line in the documentation stating:</p>
-
 <blockquote>
 <p>Use of this type presents a security risk: the encapsulated content should come from a trusted source, as it will be included verbatim in the template output.</p>
 </blockquote>
-
 <p>This not only is lacking explanation on the &ldquo;why&rdquo; and the &ldquo;how&rdquo; to use the type, but it is also very commonly used, making it a very dangerous pitfall together with all the other types that have that line in the doc (seven in total).</p>
-
 <p>Moreover &ldquo;html/template&rdquo; has some standing issues that don&rsquo;t have a good way to be properly fixed without breaking backward compatibility. The tradeoff between breakage potential and security benefit there is not clear, so if you want to <strong>opt in</strong> to be more secure, you should probably abandon &ldquo;html/template&rdquo;.</p>
-
 <p>Note that I am maintaining &ldquo;html/template&rdquo; (I&rsquo;m empijei <a href="https://dev.golang.org/owners">here</a>), so I am telling you this with a bit of background of being bitten by that package. If I could magically migrate all users to the safe version I would.</p>
-
 <h1 id="the-structure">The structure</h1>
-
 <p>Safehtml is composed of several packages. Depending on your build system or your company toolchain there are some constraints that you should enforce. Your company&rsquo;s security team or security-aware folks should be setting this up for everyone.</p>
-
 <h3 id="safehtml">safehtml</h3>
-
 <p>This is the root package and it is just providing types that are <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42934.pdf">safe by construction</a>. Here is how it works in a nutshell:</p>
-
 <ul>
 <li>There are only 3 ways to construct the <a href="https://godoc.org/github.com/google/safehtml#HTML">HTML type</a>:
-
 <ul>
 <li><a href="https://godoc.org/github.com/google/safehtml#HTMLEscaped">by escaping an untrusted string</a>, making it safe to use</li>
 <li><a href="https://godoc.org/github.com/google/safehtml/template#Template.ExecuteToHTML">by rendering a safe template</a>, which uses contextual auto-escaping, so it is safe (you can read more about this <a href="https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/">in a previous post of mine</a>)</li>
 <li><a href="https://godoc.org/github.com/google/safehtml#HTMLConcat">by concatenating already trusted HTML</a>, which is mostly safe and practically requires bad intention to get wrong.</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>This guarantees that every single instance of the HTML type is known to be safe. The <a href="https://godoc.org/github.com/google/safehtml#Script">Script type</a> behaves similarly but instead of having templates it can only be built from constants or data. To express the concept of a &ldquo;compile time constant&rdquo; it has <a href="https://godoc.org/github.com/google/safehtml#ScriptFromConstant">constructors that take unexported string types</a>, so the only way to call them is with a <a href="https://golang.org/ref/spec#String_literals">string literal</a> (I find this to be a very neat trick).</p>
-
 <p>All other types in this package follow a similar pattern.</p>
-
-<h3 id="safehtml-template">safehtml/template</h3>
-
+<h3 id="safehtmltemplate">safehtml/template</h3>
 <p>This is your real &ldquo;html/template&rdquo; replacement and it is the package everyone should be using. If &ldquo;legacyconversions&rdquo; and &ldquo;uncheckedconversions&rdquo; (read below) are not used and <strong>all your HTML responses are generated by this package</strong> you have the guarantee there is not going to be any server-side XSS in your products.</p>
-
 <p>We are working on tools that ensure this last condition is true, but it will take a bit of time. <a href="https://blogtitle.github.io/index.xml">Stay tuned</a> for updates.</p>
-
-<h3 id="safehtml-legacyconversions">safehtml/legacyconversions</h3>
-
-<p>This package should only be used to transition to the safe API. It blesses any arbitrary string to be a safe type so that transition to safehtml can be very quick and all new code will be safe. <ins><strong>Once the migration has happened the use of this package should be prevented</strong></ins>. As the name states: this is just for legacy code, no new code should be using it, and <strong>all usages of this packages should gradually be refactored to use safe constructors instead</strong>.</p>
-
-<h3 id="safehtml-testconversions">safehtml/testconversions</h3>
-
+<h3 id="safehtmllegacyconversions">safehtml/legacyconversions</h3>
+<p>This package should only be used to transition to the safe API. It blesses any arbitrary string to be a safe type so that transition to safehtml can be very quick and all new code will be safe. <!-- raw HTML omitted --><strong>Once the migration has happened the use of this package should be prevented</strong><!-- raw HTML omitted -->. As the name states: this is just for legacy code, no new code should be using it, and <strong>all usages of this packages should gradually be refactored to use safe constructors instead</strong>.</p>
+<h3 id="safehtmltestconversions">safehtml/testconversions</h3>
 <p>This package should only be used in test targets and only when necessary. You should set up some <a href="https://godoc.org/golang.org/x/tools/go/analysis">linters</a> that make sure of it.</p>
-
-<h3 id="safehtml-uncheckedconversions">safehtml/uncheckedconversions</h3>
-
+<h3 id="safehtmluncheckedconversions">safehtml/uncheckedconversions</h3>
 <p>This is the most nuanced matter. Sometimes the safehtml API is too inconvenient or even impossible to use. Sometimes you <em>have to</em> use unsafe patterns because you want to do something that cannot be proven to be safe (e.g. take some HTML that you trust from a database and serve it to the client).</p>
-
 <p>For these <strong>very rare</strong> situations you can use this package. Importing it should be restricted to a hand-picked set of dependants and every new import should require some security-aware folks to review it.</p>
-
 <p>Make sure that the usage <strong>is safe and will stay safe</strong>, as uncheckedconversions do not increase safety. They are just there to inform the compiler that you have reviewed the code and want it to be trusted. Follow these guidelines:</p>
-
 <ul>
 <li>use only if strictly necessary (e.g. if using safehtml/template requires a bit more work but does the job, do the extra work)</li>
 <li>document why the usage is safe for future reviewers and maintainers</li>
 <li>narrow down the context by reducing dependency of the uncheckedconversion on enclosing function arguments, struct fields that can be arbitrarily modified and so on</li>
 </ul>
-
 <p>Usages of this package are your single point of failure, so make sure you follow these. (This sentence assumes you will eventually get rid of legacy conversions)</p>
-
 <p>One example of a correct use of this package would be for the output of a sanitizer. If you need to have some HTML that your users provide to be embedded in a response (e.g. because you render markdown or you have a webmail) you will sanitize that HTML. Once it is sanitized (if your sanitizer is correctly implemented) it should be okay to use an unchecked conversion to promote it to the HTML type.</p>
-
-<h3 id="safehtml-raw">safehtml/raw</h3>
-
+<h3 id="safehtmlraw">safehtml/raw</h3>
 <p>Importing this package should be prevented. Anything outside of the &ldquo;safehtml/&rdquo; directory tree should not have visibility of this package.</p>
-
-<h3 id="safehtml-safehtmlutil">safehtml/safehtmlutil</h3>
-
+<h3 id="safehtmlsafehtmlutil">safehtml/safehtmlutil</h3>
 <p>Yes, I know, not a good name. Consider that this package, like the previous one, should also not be imported outside of safehtml and it was just created to reduce code duplication and avoid cyclic dependencies. I agree this could have been named or structured differently, but since you&rsquo;re never going to interact with this package it should not bother you too much.</p>
-
 <h1 id="how-to-do-the-refactor">How to do the refactor</h1>
-
 <h3 id="printf-and-nested-templates"><code>Printf</code> and nested templates</h3>
-
 <p>One example of code that you might have is</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">theLink</span> <span class="nx">template</span><span class="p">.</span><span class="nx">HTML</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;&lt;a href=%q&gt;the link&lt;/a&gt;&#34;</span><span class="p">,</span> <span class="nx">myLink</span><span class="p">)</span>
-<span class="nx">myTemplate</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">httpResponseWriter</span><span class="p">,</span> <span class="nx">theLink</span><span class="p">)</span></code></pre></div>
-<p>To refactor this you have multiple options: you either build the string with another template (note that here &ldquo;template&rdquo; is &ldquo;safehtml/template&rdquo;)</p>
+<span class="nx">myTemplate</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">httpResponseWriter</span><span class="p">,</span> <span class="nx">theLink</span><span class="p">)</span>
+</code></pre></div><p>To refactor this you have multiple options: you either build the string with another template (note that here &ldquo;template&rdquo; is &ldquo;safehtml/template&rdquo;)</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">myLinkTpl</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;myUrl&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="s">&#34;&lt;a href={{.}}&gt;the link&lt;/a&gt;&#34;</span><span class="p">))</span>
 <span class="nx">theLink</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">myLinkTpl</span><span class="p">.</span><span class="nf">ExecuteToHtml</span><span class="p">(</span><span class="nx">myLink</span><span class="p">)</span>
 <span class="c1">// handle err
-</span><span class="c1"></span><span class="nx">myTemplate</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">httpResponseWriter</span><span class="p">,</span> <span class="nx">theLink</span><span class="p">)</span></code></pre></div>
-<p>or, for more complex cases, you can use nested templates:</p>
+</span><span class="c1"></span><span class="nx">myTemplate</span><span class="p">.</span><span class="nf">Execute</span><span class="p">(</span><span class="nx">httpResponseWriter</span><span class="p">,</span> <span class="nx">theLink</span><span class="p">)</span>
+</code></pre></div><p>or, for more complex cases, you can use nested templates:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="nx">outer</span> <span class="p">=</span> <span class="s">`&lt;h1&gt; This is a title &lt;h2&gt; </span><span class="cp">{{</span><span class="w"> </span><span class="k">template</span><span class="w"> </span><span class="s">&#34;inner&#34;</span><span class="w"> </span><span class="na">.URL</span><span class="w"> </span><span class="cp">}}</span><span class="s">`</span>
 <span class="kd">const</span> <span class="nx">inner</span> <span class="p">=</span> <span class="s">`&lt;a href=&#34;</span><span class="cp">{{</span><span class="na">.</span><span class="cp">}}</span><span class="s">&#34;&gt;the link&lt;/a&gt;`</span>
 <span class="nx">t</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;outer&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">outer</span><span class="p">))</span>
 <span class="nx">t</span> <span class="p">=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">Must</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;inner&#34;</span><span class="p">).</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">inner</span><span class="p">))</span>
-<span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;outer&#34;</span><span class="p">,</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;URL&#34;</span><span class="p">:</span> <span class="nx">myLink</span><span class="p">})</span></code></pre></div>
-<h3 id="constants">Constants</h3>
-
+<span class="nx">t</span><span class="p">.</span><span class="nf">ExecuteTemplate</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&#34;outer&#34;</span><span class="p">,</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;URL&#34;</span><span class="p">:</span> <span class="nx">myLink</span><span class="p">})</span>
+</code></pre></div><h3 id="constants">Constants</h3>
 <p>If you have an HTML <code>const</code> in your code, you can just use it as a template and execute it to html. This will check that all tags are balanced and other things and return an instance of the HTML type.</p>
-
 <p>So this</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">myHtml</span> <span class="nx">template</span><span class="p">.</span><span class="nx">HTML</span> <span class="o">:=</span> <span class="s">`&lt;h1&gt; This is a title &lt;/h1&gt;`</span></code></pre></div>
-<p>becomes this</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">myHtml</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">MustParseAndExecuteToHTML</span><span class="p">(</span><span class="s">`&lt;h1&gt; This is a title &lt;/h1&gt;`</span><span class="p">)</span></code></pre></div>
-<h1 id="the-checklist">The checklist</h1>
-
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">myHtml</span> <span class="nx">template</span><span class="p">.</span><span class="nx">HTML</span> <span class="o">:=</span> <span class="s">`&lt;h1&gt; This is a title &lt;/h1&gt;`</span>
+</code></pre></div><p>becomes this</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">myHtml</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nf">MustParseAndExecuteToHTML</span><span class="p">(</span><span class="s">`&lt;h1&gt; This is a title &lt;/h1&gt;`</span><span class="p">)</span>
+</code></pre></div><h1 id="the-checklist">The checklist</h1>
 <ol>
-<li>Block access to some packages:
-
+<li>Block access to some packages:</li>
+</ol>
 <ul>
 <li>Prevent packages outside of the &ldquo;safehtml&rdquo; directory from importing &ldquo;raw&rdquo;, &ldquo;uncheckedconversions&rdquo; and &ldquo;safehtmlutil&rdquo;</li>
 <li>Only allow test builds to import the &ldquo;testconversions&rdquo; package.</li>
-</ul></li>
-<li>Migrate away from &ldquo;html/template&rdquo; and replace it with &ldquo;safehtml/template&rdquo;
-
+</ul>
+<ol start="2">
+<li>Migrate away from &ldquo;html/template&rdquo; and replace it with &ldquo;safehtml/template&rdquo;</li>
+</ol>
 <ul>
 <li>For every breakage or every issue, use a &ldquo;legacyconversions&rdquo; call. Some manual refactoring might be needed, but migration should be fairly straightforward</li>
 <li>RUN ALL YOUR INTEGRATION AND E2E TESTS. This is <em>important</em>, so important I used SHIFT and not CAPS to type it</li>
 <li>Block down the list of legacy conversions: from this moment on new imports of the &ldquo;legacyconversions&rdquo; package are forbidden</li>
 <li>Ban use of &ldquo;html/template&rdquo;, so that all new code is safe</li>
-</ul></li>
-<li>Refactor legacy conversions to use safe patterns
-
+</ul>
+<ol start="3">
+<li>Refactor legacy conversions to use safe patterns</li>
+</ol>
 <ul>
 <li>Wherever possible construct HTML in a safe way and remove the legacy conversions</li>
 <li>Where it is not possible use unchecked conversions. Every new import of the &ldquo;uncheckedconversions&rdquo; package should be reviewed.</li>
-</ul></li>
-</ol>
-
+</ul>
 <h1 id="conclusions">Conclusions</h1>
-
 <p>If you want to make sure you don&rsquo;t have server-side XSS in your Go code this probably is the best way to do so. If you have any questions or need more refactoring examples please let me know, you can contact me <a href="https://twitter.com/empijei">on twitter</a> (direct messages are open) or <a href="mailto:empijei@gmail.com">via email</a>.</p>
 
     </div>

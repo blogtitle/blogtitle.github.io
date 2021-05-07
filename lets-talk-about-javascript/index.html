@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.55.0-DEV" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 
 <title>Let&#39;s talk about JavaScript - Blog Title</title>
@@ -68,34 +68,21 @@
     
 
     <div class="article-content">
-      
-
-<h1 id="short-preface">Short preface:</h1>
-
+      <h1 id="short-preface">Short preface:</h1>
 <p>The first version of JavaScript was completed in ten days in order to accommodate the Netscape Navigator 2.0 Beta release schedule.</p>
-
 <p>Keep in mind that well structured languages usually take a little bit more than that.</p>
-
 <p>What follows is a small piece of the aftermath of the rushed job.</p>
-
 <p>NOTE: There is more madness in <a href="https://www.destroyallsoftware.com/talks/wat">destroy all software&rsquo;s wat video</a>, which I suggest watching before reading this post.</p>
-
 <p>Explanations are at the end of the post.</p>
-
 <h2 id="truthy-falsy-schrödinger">Truthy? Falsy? Schrödinger!</h2>
-
 <p>Let&rsquo;s start slow, with something that you have probably already heard of: truthy and falsy.</p>
-
 <p>All ECMAScript values can be evaluated to boolean, and this is usually done in <code>if</code> statements or, when necessary, with the <code>!!</code> operator, that negates a value twice, casting it to boolean.</p>
-
 <p>As a programmer that comes from C-like languages, one would expect <code>0</code>, <code>null</code> and <code>undefined</code> to be falsy, and that assumption holds.</p>
-
 <p>The weirdness begins with empty values:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">!!</span><span class="p">[];</span> <span class="c1">// true
 </span><span class="c1"></span><span class="o">!!</span><span class="p">{};</span> <span class="c1">// true
 </span><span class="c1"></span><span class="o">!!</span><span class="s2">&#34;&#34;</span><span class="p">;</span> <span class="c1">// false
-</span></code></pre></div>
-<p>And it gets worse:</p>
+</span></code></pre></div><p>And it gets worse:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[]</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>     <span class="c1">// false
 </span><span class="c1"></span><span class="o">!!</span><span class="p">[]</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>   <span class="c1">// true
 </span><span class="c1"></span>
@@ -105,8 +92,7 @@
 </span><span class="c1"></span><span class="o">!!</span><span class="p">{}</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>   <span class="c1">// true
 </span><span class="c1"></span>
 <span class="s2">&#34;&#34;</span> <span class="o">==</span> <span class="p">[];</span>       <span class="c1">// true (please keep in mind the code block above)
-</span></code></pre></div>
-<p>Which brings us to ECMAScript infamous holy trinity. The following statements are all true:</p>
+</span></code></pre></div><p>Which brings us to ECMAScript infamous holy trinity. The following statements are all true:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
 <span class="s2">&#34;\t&#34;</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
 <span class="s2">&#34;0&#34;</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
@@ -115,25 +101,17 @@
 </span><span class="c1"></span><span class="p">[]</span> <span class="o">!=</span> <span class="s2">&#34;\t&#34;</span><span class="p">;</span>
 <span class="s2">&#34;\t&#34;</span> <span class="o">!=</span> <span class="s2">&#34;0&#34;</span><span class="p">;</span>
 <span class="s2">&#34;0&#34;</span> <span class="o">!=</span> <span class="p">[];</span>
-</code></pre></div>
-<hr />
-
-<h2 id="who-needs-int-s-anyways">Who needs <code>int</code>s anyways?</h2>
-
+</code></pre></div><hr>
+<h2 id="who-needs-ints-anyways">Who needs <code>int</code>s anyways?</h2>
 <p>When they designed ECMAScript they decided to get rid of <code>int</code>s altogether. Processors were starting to be really fast and optimizing algebra was not necessary anymore. What they forgot is that comparison is not reliable on doubles, but it is on <code>int</code>s.</p>
-
 <p>A programmer coming from old, strongly typed languages, might expect <code>a + b + c === c + b + a</code> to always be true, but it is not reliably so if you only use doubles:</p>
-<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="err">/3;</span>
-<span class="nx">b</span> <span class="o">=</span> <span class="mi">5</span><span class="err">/7;</span>
-<span class="nx">c</span> <span class="o">=</span> <span class="mi">7</span><span class="err">/13;</span>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">;</span>
+<span class="nx">b</span> <span class="o">=</span> <span class="mi">5</span><span class="o">/</span><span class="mi">7</span><span class="p">;</span>
+<span class="nx">c</span> <span class="o">=</span> <span class="mi">7</span><span class="o">/</span><span class="mi">13</span><span class="p">;</span>
 <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">c</span><span class="o">+</span><span class="nx">b</span><span class="o">+</span><span class="nx">a</span><span class="p">;</span> <span class="c1">// out: false
-</span></code></pre></div>
-<hr />
-
+</span></code></pre></div><hr>
 <h2 id="what-day-is-today">What day is today?</h2>
-
 <p>In most languages support for dates is builtin, and ECMAScript is no exception.</p>
-
 <p>Let&rsquo;s play with them a little bit, shall we?</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">==</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>      <span class="c1">// false
 </span><span class="c1"></span>
@@ -151,106 +129,75 @@
 </span><span class="c1"></span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">!=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>      <span class="c1">// true
 </span><span class="c1"></span>
 <span class="c1">// (╯°□°)╯︵ ┻━┻
-</span></code></pre></div>
-<p>Let&rsquo;s <strong>stop</strong> playing with them right now&hellip;</p>
-
-<hr />
-
+</span></code></pre></div><p>Let&rsquo;s <strong>stop</strong> playing with them right now&hellip;</p>
+<hr>
 <h2 id="parseint-flakiness"><code>parseInt</code> flakiness</h2>
-
 <p>The lack of types in ECMAScript made it necessary to make some decisions on which types would prevail when operations would happen across different ones.</p>
-
 <p>For example when you sum a string and a number, the number is cast to string and concatenated with the string:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="s2">&#34;1&#34;</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// out: &#34;11&#34;
-</span></code></pre></div>
-<p>And this is mostly fine, it makes sense to use string as the dominant type: strings can represent more things than numbers.</p>
-
+</span></code></pre></div><p>And this is mostly fine, it makes sense to use string as the dominant type: strings can represent more things than numbers.</p>
 <p>But then you find out that you can multiply a string by a number, and that it is not a shorthand for <code>String.prototype.repeat</code> as it is in python, but implicitly casts the string to a number and executes the multiplication:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="s2">&#34; 2&#34;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">;</span> <span class="c1">// out: 8     &lt;- NOTE THE LEADING SPACE
 </span><span class="c1"></span><span class="s2">&#34;a&#34;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">;</span>  <span class="c1">// out: NaN
-</span></code></pre></div>
-<p>But even this&hellip; Is mostly fine&hellip; I guess.</p>
-
+</span></code></pre></div><p>But even this&hellip; Is mostly fine&hellip; I guess.</p>
 <p>One of the consequences was the need to have explicit conversion helper functions to go back from string to number. It is true that it was possible to multiply by one to cast to number, but that made everything harder to read (more than usual) so they decided to provide two helper functions: <code>parseInt</code> and <code>parseFloat</code>.</p>
-
 <p>And they behave <strong>exactly as expected</strong>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">parseInt</span><span class="p">(</span><span class="mf">0.001</span><span class="p">);</span>        <span class="c1">// out: 0
 </span><span class="c1"></span><span class="nb">parseFloat</span><span class="p">(</span><span class="mf">0.002</span><span class="p">);</span>      <span class="c1">// out: 0.002
 </span><span class="c1"></span><span class="nb">parseInt</span><span class="p">(</span><span class="mf">0.0000003</span><span class="p">);</span>    <span class="c1">// out: 3              &lt;- ??
 </span><span class="c1"></span><span class="nb">parseFloat</span><span class="p">(</span><span class="mf">0.0000004</span><span class="p">);</span>  <span class="c1">// out: 0.0000004
-</span></code></pre></div>
-<hr />
-
-<h2 id="dys-functional-approach">(Dys)functional approach</h2>
-
+</span></code></pre></div><hr>
+<h2 id="dysfunctional-approach">(Dys)functional approach</h2>
 <p>This is just amazing. In modern ECMAScript it is strongly advised to use the functional approach instead of the old-style imperative one.</p>
-
 <p>For example, instead of doing something like a <code>for</code> loop over an array and have an accumulator for results, use <code>forEach</code> or <code>map</code> functions to closure the s<code>**</code>t out of your core logic and make it more readable.</p>
-
 <p>Why do something like</p>
-<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="p">,</span><span class="s2">&#34;6&#34;</span><span class="p">,</span><span class="s2">&#34;8&#34;</span><span class="p">,</span><span class="s2">&#34;10&#34;</span><span class="p">,</span><span class="s2">&#34;12&#34;</span><span class="p">];</span>
-<span class="k">const</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
-<span class="k">for</span><span class="p">(</span><span class="k">const</span> <span class="nx">strnum</span> <span class="k">of</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="p">,</span><span class="s2">&#34;6&#34;</span><span class="p">,</span><span class="s2">&#34;8&#34;</span><span class="p">,</span><span class="s2">&#34;10&#34;</span><span class="p">,</span><span class="s2">&#34;12&#34;</span><span class="p">];</span>
+<span class="kr">const</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span><span class="p">(</span><span class="kr">const</span> <span class="nx">strnum</span> <span class="k">of</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">strnum</span><span class="p">));</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">out</span><span class="p">);</span>
 <span class="c1">// out: [2, 4, 6, 8, 10, 12]
-</span></code></pre></div>
-<p>When you can compress it and hide the real complexity of the code, and in the meantime obtain something completely different as a result?</p>
+</span></code></pre></div><p>When you can compress it and hide the real complexity of the code, and in the meantime obtain something completely different as a result?</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="p">,</span><span class="s2">&#34;6&#34;</span><span class="p">,</span><span class="s2">&#34;8&#34;</span><span class="p">,</span><span class="s2">&#34;10&#34;</span><span class="p">,</span><span class="s2">&#34;12&#34;</span><span class="p">].</span><span class="nx">map</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">);</span>
 <span class="c1">// out: [2, NaN, NaN, NaN, 4, 7]
-</span></code></pre></div>
-<hr />
-
+</span></code></pre></div><hr>
 <h2 id="are-you-in-for-this">Are you <code>in</code> for this?</h2>
-
 <p>ECMAScript comes with a nice <code>in</code> keyword, that allows coders to check if an element is in a collection:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
 <span class="mi">2</span> <span class="k">in</span> <span class="nx">a</span><span class="p">;</span>     <span class="c1">// true
 </span><span class="c1"></span><span class="mi">4</span> <span class="k">in</span> <span class="nx">a</span><span class="p">;</span>     <span class="c1">// false
-</span></code></pre></div>
-<p>The <code>in</code> keyword also servers as an iterator over collections:</p>
+</span></code></pre></div><p>The <code>in</code> keyword also servers as an iterator over collections:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">];</span>
 <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>prints</p>
-<div class="highlight"><pre class="chroma">0
+</code></pre></div><p>prints</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">0
 1
-2</pre></div>
-<p>but also</p>
+2
+</code></pre></div><p>but also</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="p">];</span>  <span class="c1">// &lt;- Note the order
 </span><span class="c1"></span><span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>prints</p>
-<div class="highlight"><pre class="chroma">0
+</code></pre></div><p>prints</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">0
 1
-2</pre></div>
-<hr />
-
+2
+</code></pre></div><hr>
 <h2 id="collections">Collections</h2>
-
 <p>You might expect all Arrays in ECMAScript to have the <code>map</code> method. Thus you might also expect that since you can do:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">for</span> <span class="p">(</span> <span class="kd">let</span> <span class="nx">link</span> <span class="k">of</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&#34;a&#34;</span><span class="p">))</span> <span class="p">{</span>
 	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">link</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>You can also do:</p>
+</code></pre></div><p>You can also do:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&#34;a&#34;</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">link</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">link</span><span class="p">);</span> <span class="p">});</span>
-</code></pre></div>
-<p>But you can&rsquo;t, because that is not an Array, it is an <code>HTMLCollection</code>. Different Object, different collection, different rules.</p>
-
-<hr />
-
+</code></pre></div><p>But you can&rsquo;t, because that is not an Array, it is an <code>HTMLCollection</code>. Different Object, different collection, different rules.</p>
+<hr>
 <h2 id="scoping">Scoping</h2>
-
 <p>If you come from any C-like language you might be used to <a href="https://en.wikipedia.org/wiki/Variable_shadowing">variable shadowing</a>.</p>
-
 <p>Shadowing can be used to prevent accidental assignments to outer scope variables and to use less names in the code to keep it more readable.</p>
-
 <p>If this is the case, you will surely guess the output of this code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -258,19 +205,15 @@
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
-</code></pre></div>
-<p>Which, of course, is</p>
-<div class="highlight"><pre class="chroma">2
-2</pre></div>
-<p>But there is more: variable declarations in ECMAScript are hoisted, this means that this is valid code, and prints <code>1</code>:</p>
+</code></pre></div><p>Which, of course, is</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">2
+2
+</code></pre></div><p>But there is more: variable declarations in ECMAScript are hoisted, this means that this is valid code, and prints <code>1</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>            <span class="c1">// &lt;- No undeclared variable error
 </span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">x</span><span class="p">;</span>
-</code></pre></div>
-<hr />
-
+</code></pre></div><hr>
 <h2 id="dictionary-object-both">Dictionary? Object? Both!</h2>
-
 <p>Let&rsquo;s say you want to count the words in a piece of text, so you write a small function like:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">countwords</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
 	<span class="kd">let</span> <span class="nx">wordCount</span> <span class="o">=</span> <span class="p">{};</span>
@@ -285,8 +228,7 @@
 <span class="p">}</span>
 <span class="nx">countwords</span><span class="p">(</span><span class="s2">&#34;This works and works again&#34;</span><span class="p">);</span>
 <span class="c1">// out: {&#34;This&#34;: 1, &#34;works&#34;: 2, &#34;and&#34;: 1, &#34;again!&#34;: 1}
-</span></code></pre></div>
-<p>It always works, until it doesn&rsquo;t:</p>
+</span></code></pre></div><p>It always works, until it doesn&rsquo;t:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">countwords</span><span class="p">(</span><span class="s2">&#34;I never implement a constructor when I use js!&#34;</span><span class="p">);</span>
 </code></pre></div><div class="highlight"><pre class="chroma"><code class="language-JSON" data-lang="JSON"><span class="p">{</span>
 	<span class="nt">&#34;I&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
@@ -297,11 +239,9 @@
 	<span class="nt">&#34;never&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 	<span class="nt">&#34;use&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 	<span class="nt">&#34;when&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="p">}</span></code></pre></div>
-<hr />
-
+<span class="p">}</span>
+</code></pre></div><hr>
 <h2 id="try-catch-finally">Try catch finally</h2>
-
 <p>This is not different from Java, so I guess it works as intended, but still sounds wrong:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">riddle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
 	<span class="k">try</span> <span class="p">{</span>
@@ -313,23 +253,14 @@
 	<span class="p">}</span>
 <span class="p">}</span>
 <span class="nx">riddle</span><span class="p">();</span>   <span class="c1">// out: &#34;a&#34;
-</span></code></pre></div>
-<p>No Error is thrown. It is just lost in the stack. <a href="https://blogtitle.github.io/considerations-on-error-handling/">Here</a> are some explanations and considerations on error handling.</p>
-
-<hr />
-
+</span></code></pre></div><p>No Error is thrown. It is just lost in the stack. <a href="https://blogtitle.github.io/considerations-on-error-handling/">Here</a> are some explanations and considerations on error handling.</p>
+<hr>
 <h2 id="this-is-sparta"><code>this</code> is Sparta!</h2>
-
 <p>Since ECMAScript (originally JavaScript) tries to be a scripting language that looks and feels similar to java, it comes with the <code>this</code> keyword.</p>
-
 <p>Now, that keyword is so surprising and unreliable that there is a very long (741 words) stack overflow answer <a href="https://stackoverflow.com/a/3127440">here</a> that shows some issues with it. I don&rsquo;t even want to try and summarize it.</p>
-
 <p>The sole fact that there is a <a href="http://javascriptissexy.com/understand-javascripts-this-with-clarity-and-master-it/">3375 words long blog post</a> that tries to make it simpler is telling a lot.</p>
-
-<hr />
-
-<h2 id="with-s-end-of-wit">With&rsquo;s end of wit</h2>
-
+<hr>
+<h2 id="withs-end-of-wit">With&rsquo;s end of wit</h2>
 <p>To be honest, the <code>with</code> statement is now deprecated, so this is mostly here for historical reasons.</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">madness</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">with</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
@@ -340,60 +271,39 @@
 <span class="nx">madness</span><span class="p">(</span><span class="s2">&#34;this is an argument&#34;</span><span class="p">);</span>           <span class="c1">// out: param: this is an argument
 </span><span class="c1"></span><span class="nx">madness</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&#34;this is an object&#34;</span><span class="p">});</span>    <span class="c1">// out: param: [object Object]
 </span><span class="c1"></span><span class="nx">madness</span><span class="p">({</span> <span class="nx">param</span><span class="o">:</span> <span class="s2">&#34;this is a field&#34;</span> <span class="p">});</span>    <span class="c1">// out: param: this is a field
-</span></code></pre></div>
-<p>This was in the language, and still is, but is now discouraged. To put this in <a href="https://en.wikipedia.org/wiki/Brendan_Eich">Brendan Eich</a> <a href="https://twitter.com/brendaneich/status/68001466471817216">words</a>: &ldquo;with violates lexical scope, making program analysis (e.g. for security) hard to infeasible.&rdquo;</p>
-
+</span></code></pre></div><p>This was in the language, and still is, but is now discouraged. To put this in <a href="https://en.wikipedia.org/wiki/Brendan_Eich">Brendan Eich</a> <a href="https://twitter.com/brendaneich/status/68001466471817216">words</a>: &ldquo;with violates lexical scope, making program analysis (e.g. for security) hard to infeasible.&rdquo;</p>
 <p>If you don&rsquo;t know who that is, he is co-founder of Mozilla and creator of JavaScript.</p>
-
-<hr />
-
+<hr>
 <h1 id="some-explanations">Some explanations:</h1>
-
 <h3 id="the-trinity">The trinity:</h3>
-
 <p>This clearly happens for weird type casting.</p>
-
 <ul>
 <li>When casting to string an empty array it becomes empty string</li>
 <li>When casting to number all empty spaces are dropped, and all empty strings are zeroes</li>
 </ul>
-
 <h3 id="number-comparison">Number comparison:</h3>
-
 <p>Floating point sums are not commutative due to <a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic#Representable_numbers,_conversion_and_rounding">rounding</a>. The issue with ECMAScript is that it is not so simple to make sure your numbers never turn to doubles, while in all strongly typed languages you can just declare them as some kind of <code>int</code>.</p>
-
 <h3 id="what-day-is-today-1">What day is today?</h3>
-
 <p>It is very well explained on <a href="https://stackoverflow.com/a/36926905">this stack overflow comment</a></p>
-
 <h3 id="parseint-flakiness-1"><code>parseInt</code> flakiness</h3>
-
 <p>This happens because <code>parseInt</code> expects a string. If a string is not provided the argument is <em>cast to string</em> and then used. When a floating point number with more than 6 leading zeroes before the significant digits is converted to string, it is also converted to the exponential notation.</p>
-
 <p>This turns 0.0000003 into &ldquo;3e-7&rdquo;, but 0.002 into &ldquo;0.002&rdquo;. Since <code>parseint</code> stops at the first non-digit character, it only reads the &ldquo;3&rdquo;.</p>
-
-<h3 id="dys-functional-approach-1">(Dys)functional approach</h3>
-
+<h3 id="dysfunctional-approach-1">(Dys)functional approach</h3>
 <p><code>parseInt</code>, as many other functions, accepts more than one parameter, but only one is mandatory. The second parameter is intended to be <em>the base</em> the first parameter is represented in, from 2 to 36 and defaults to 10.</p>
-
 <p>When the <code>map</code> method is called, it passes three parameters (not one) the function. The tuple is: <code>(value, index, array)</code>. This means that the actual arguments passed to <code>parseInt</code> are:</p>
-<div class="highlight"><pre class="chroma">(&#34;2&#34;, 0, a)     // 2 in base 0 is 2... I guess...
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(&#34;2&#34;, 0, a)     // 2 in base 0 is 2... I guess...
 (&#34;4&#34;, 1, a)     // NaN: digit is bigger than base
 (&#34;6&#34;, 2, a)     // NaN: digit is bigger than base
 (&#34;8&#34;, 3, a)     // NaN: digit is bigger than base
 (&#34;10&#34;, 4, a)    // 4
-(&#34;12&#34;, 5, a)    // 7</pre></div>
-<p><code>parseInt</code> ignores the array as it only accepts 2 arguments.</p>
-
+(&#34;12&#34;, 5, a)    // 7
+</code></pre></div><p><code>parseInt</code> ignores the array as it only accepts 2 arguments.</p>
 <p>The correct code would be</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;4&#34;</span><span class="p">,</span><span class="s2">&#34;6&#34;</span><span class="p">,</span><span class="s2">&#34;8&#34;</span><span class="p">,</span><span class="s2">&#34;10&#34;</span><span class="p">,</span><span class="s2">&#34;12&#34;</span><span class="p">].</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="p">=&gt;</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">));</span>
-</code></pre></div>
-<h3 id="are-you-in-for-this-1">Are you <code>in</code> for this?</h3>
 
+</code></pre></div><h3 id="are-you-in-for-this-1">Are you <code>in</code> for this?</h3>
 <p>This is because <code>in</code> returns the <em>keys</em> of the given collection, while <code>of</code> returns the values.</p>
-
 <h3 id="scoping-1">Scoping</h3>
-
 <p>The explanation can be found <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var#Description">on MDN</a></p>
 
     </div>
