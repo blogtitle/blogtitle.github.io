@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Go advanced concurrency patterns: part 1 - Blog Title</title>
@@ -68,10 +68,16 @@
     
 
     <div class="article-content">
-      <p>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.</p>
+      
+
+<p>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.</p>
+
 <p>Today I decided to start sharing a couple of tricks to handle some peculiar cases.</p>
+
 <h1 id="timed-channels-operations">Timed channels operations</h1>
+
 <p>Sometimes you want to time your channels operations: keep trying to do something, and if you can&rsquo;t do it in time just drop the ball.</p>
+
 <p>To do so you can either use <code>context</code> or <code>time</code>, both are fine. Context might be more idiomatic, time is a little bit more efficient, but they are almost identical:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ToChanTimedContext</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">d</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">message</span> <span class="nx">Type</span><span class="p">,</span> <span class="nx">c</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">Type</span><span class="p">)</span> <span class="p">(</span><span class="nx">written</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
@@ -93,12 +99,17 @@
 	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
 		<span class="k">return</span> <span class="kc">false</span>
 	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>Since performance is not really relevant here (after all we are waiting) the only difference I found is that the solution using context performs more allocations(also because the one with the timer can be further optimized to recycle timers).</p>
+<span class="p">}</span></code></pre></div>
+<p>Since performance is not really relevant here (after all we are waiting) the only difference I found is that the solution using context performs more allocations(also because the one with the timer can be further optimized to recycle timers).</p>
+
 <p>Beware that re-using timers is tricky, so keep in mind that it might not be worth the risk to just save 10 allocs/op.</p>
+
 <p>In case you are interested <a href="https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers">here</a> is a post on how to juggle timers.</p>
+
 <h1 id="first-come-first-served">First come first served</h1>
+
 <p>Sometimes you want to write the same message to many channels, writing to whichever is available first, but <strong>never writing the same message twice</strong> on the same channel.</p>
+
 <p>To do this there are two ways: you can mask the channels with local variables, and disable the <code>select</code> cases accordingly, or use goroutines and waits.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">FirstComeFirstServedSelect</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Type</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">Type</span><span class="p">)</span> <span class="p">{</span>
 	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
@@ -117,12 +128,15 @@
 	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nx">a</span> <span class="o">&lt;-</span> <span class="nx">message</span><span class="p">;</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span> <span class="p">}()</span>
 	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span> <span class="nx">b</span> <span class="o">&lt;-</span> <span class="nx">message</span><span class="p">;</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span> <span class="p">}()</span>
 	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><p>Please note that in this case performance might matter, and at the time of writing the solution that spawns goroutines takes almost 4 times more than the one with <code>select</code>.</p>
+<span class="p">}</span></code></pre></div>
+<p>Please note that in this case performance might matter, and at the time of writing the solution that spawns goroutines takes almost 4 times more than the one with <code>select</code>.</p>
+
 <p>If the amount of channels is not known at compile time, the first solution becomes trickier, but it is still possible, while the second one stays basically unchanged.</p>
+
 <blockquote>
 <p>NOTE: if your program has many moving parts of unknown size, it might be worth revising your design, as it is very likely possible to simplify it.</p>
 </blockquote>
+
 <p>If your code survives you review and still has unbound moving parts, here are the two solutions to support that:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">FirstComeFirstServedGoroutinesVariadic</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Type</span><span class="p">,</span> <span class="nx">chs</span> <span class="o">...</span><span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">Type</span><span class="p">)</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
@@ -147,9 +161,11 @@
 		<span class="nx">chosen</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="nx">cases</span><span class="p">)</span>
 		<span class="nx">cases</span><span class="p">[</span><span class="nx">chosen</span><span class="p">].</span><span class="nx">Chan</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
 	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>Needless to say: the solution using reflection is almost two orders of magnitude slower than the one with goroutines and unreadable, so please don&rsquo;t use it.</p>
+<span class="p">}</span></code></pre></div>
+<p>Needless to say: the solution using reflection is almost two orders of magnitude slower than the one with goroutines and unreadable, so please don&rsquo;t use it.</p>
+
 <h1 id="put-it-together">Put it together</h1>
+
 <p>In case you want to both try a several sends for a while and abort if it&rsquo;s taking too long here are two solutions: one with <code>time</code>+<code>select</code> and one with <code>context</code>+<code>go</code>. The first one is better if the amount of channels is known at compile time, while the other one should be used when it is not.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ToChansTimedTimerSelect</span><span class="p">(</span><span class="nx">d</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">message</span> <span class="nx">Type</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kd">chan</span> <span class="nx">Type</span><span class="p">)</span> <span class="p">(</span><span class="nx">written</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span>
@@ -188,8 +204,9 @@
 	<span class="p">}</span>
 	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
 	<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nx">wr</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><p>Want more on this topic? Stay tuned!</p>
+<span class="p">}</span></code></pre></div>
+<p>Want more on this topic? Stay tuned!</p>
+
 <p>In the meantime I&rsquo;d suggest watching &ldquo;Advanced go concurrency patterns&rdquo; by Sameer Ajmani: [<a href="https://www.youtube.com/watch?v=QDDwwePbDtw">video</a>] [<a href="https://talks.golang.org/2013/advconc.slide">slides</a>].</p>
 
     </div>

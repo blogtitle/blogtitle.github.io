@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Go Generics - Blog Title</title>
@@ -68,11 +68,18 @@
     
 
     <div class="article-content">
-      <h1 id="preface">Preface</h1>
+      
+
+<h1 id="preface">Preface</h1>
+
 <p>Go doesn&rsquo;t have generics yet, but there is <a href="https://go.googlesource.com/proposal/+/refs/heads/master/design/43651-type-parameters.md">a proposal</a> that looks promising, and this post refers to that.</p>
+
 <p><a href="https://go2goplay.golang.org/">Here</a> is a version of the playground you can use to try this proposal out if you want to experiment without installing any tools.</p>
+
 <h1 id="functions">Functions</h1>
+
 <h3 id="converting-a-slice-into-a-channel">Converting a slice into a channel.</h3>
+
 <p>This is not necessarily the most useful function but it&rsquo;s a good and simple example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">chanFromSlice</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="p">[]</span><span class="nx">T</span><span class="p">)</span> <span class="kd">chan</span> <span class="nx">T</span> <span class="p">{</span>
   <span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">in</span><span class="p">))</span>
@@ -80,28 +87,33 @@
     <span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">v</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">c</span>
-<span class="p">}</span>
-</code></pre></div><p>Here you can see that this looks and feels like Go, with the only difference of the <code>[T any]</code> bit.
+<span class="p">}</span></code></pre></div>
+<p>Here you can see that this looks and feels like Go, with the only difference of the <code>[T any]</code> bit.
 This instructs the compiler to read the rest of the function in a &ldquo;generic&rdquo; way, so every time <code>T</code> appears it knows it refers to the same type.
 The built-in constraint <code>any</code> means that the type is not constrained and can be anything.</p>
+
 <p>Using this function looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">c</span> <span class="o">:=</span> <span class="nf">chanFromSlice</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">})</span>
-</code></pre></div><p>Note that we don&rsquo;t have to tell the compiler we need the <code>int</code> version of this function.
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">c</span> <span class="o">:=</span> <span class="nf">chanFromSlice</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">})</span></code></pre></div>
+<p>Note that we don&rsquo;t have to tell the compiler we need the <code>int</code> version of this function.
 When this code is compiled it will automatically realize that we are passing an <code>[]int</code>, so it will understand that it has to compile <code>chanFromSlice</code> with <code>T = int</code>.</p>
+
 <p>We will see that this inference can&rsquo;t always be applied, but in most use cases <strong>users of generics won&rsquo;t even realize they&rsquo;re using generic functions</strong>.</p>
+
 <h3 id="a-slice-allocator">A slice allocator</h3>
+
 <p>Let&rsquo;s say we want to allocate a slice that can accommodate one item for every item in another slice, but of a different type:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">allocSlice</span><span class="p">[</span><span class="nx">T</span><span class="p">,</span> <span class="nx">U</span> <span class="nx">any</span><span class="p">](</span><span class="nx">other</span> <span class="p">[]</span><span class="nx">T</span><span class="p">)</span> <span class="p">[]</span><span class="nx">U</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">U</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">other</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></div><p>If we try to use this function, the compiler will complain:</p>
+<span class="p">}</span></code></pre></div>
+<p>If we try to use this function, the compiler will complain:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">x</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
 <span class="c1">// ERROR: cannot infer U ([int &lt;nil&gt;])
-</span><span class="c1"></span><span class="nx">y</span> <span class="o">:=</span> <span class="nf">allocSlice</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
-</code></pre></div><p>So in this case we <strong>have to</strong> pass the type we want the new slice to be of:</p>
+</span><span class="c1"></span><span class="nx">y</span> <span class="o">:=</span> <span class="nf">allocSlice</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span></code></pre></div>
+<p>So in this case we <strong>have to</strong> pass the type we want the new slice to be of:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">x</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
-<span class="nx">y</span> <span class="o">:=</span> <span class="nx">allocSlice</span><span class="p">[</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">](</span><span class="nx">x</span><span class="p">)</span>
-</code></pre></div><h3 id="keys-from-a-map">Keys from a map</h3>
+<span class="nx">y</span> <span class="o">:=</span> <span class="nx">allocSlice</span><span class="p">[</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">](</span><span class="nx">x</span><span class="p">)</span></code></pre></div>
+<h3 id="keys-from-a-map">Keys from a map</h3>
+
 <p>I think we&rsquo;ve all written this kind of code at least once, so I&rsquo;m quite happy this is now possible to express:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">keys</span><span class="p">[</span><span class="nx">K</span> <span class="nx">comparable</span><span class="p">,</span> <span class="nx">V</span> <span class="nx">any</span><span class="p">](</span><span class="nx">m</span> <span class="kd">map</span><span class="p">[</span><span class="nx">K</span><span class="p">]</span><span class="nx">V</span><span class="p">)</span> <span class="p">[]</span><span class="nx">K</span> <span class="p">{</span>
   <span class="nx">keys</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">K</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">m</span><span class="p">))</span>
@@ -117,25 +129,30 @@ When this code is compiled it will automatically realize that we are passing an 
     <span class="s">&#34;bar&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
   <span class="p">}</span>
   <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">keys</span><span class="p">(</span><span class="nx">m</span><span class="p">))</span> <span class="c1">// [foo bar]
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>Here you can see I used <code>comparable</code>, another builtin constraint that encompasses all types that have the <code>==</code> operator defined on them.</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>Here you can see I used <code>comparable</code>, another builtin constraint that encompasses all types that have the <code>==</code> operator defined on them.</p>
+
 <h3 id="sorting-a-slice">Sorting a slice</h3>
+
 <p>Currently the standard library provides us with a very helpful <a href="https://golang.org/pkg/sort/#Slice"><code>sort.Slice</code></a> function.
 The minor issue with this is that it takes anything, even a <code>struct{}</code> as first argument, and this means that a mistake that could be caught at compile-time will only surface at runtime:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// This compiles but panics
-</span><span class="c1"></span><span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="s">&#34;not a slice&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span><span class="k">return</span> <span class="kc">true</span><span class="p">})</span>
-</code></pre></div><p>Let&rsquo;s make it safe:</p>
+</span><span class="c1"></span><span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="s">&#34;not a slice&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span><span class="k">return</span> <span class="kc">true</span><span class="p">})</span></code></pre></div>
+<p>Let&rsquo;s make it safe:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">sortSlice</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">x</span> <span class="p">[]</span><span class="nx">T</span><span class="p">,</span> <span class="nx">less</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">less</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><p>This can be used as simply as this:</p>
+<span class="p">}</span></code></pre></div>
+<p>This can be used as simply as this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">x</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
 <span class="nf">sortSlice</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">x</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">})</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="c1">// [1 3 6]
-</span></code></pre></div><p>Once again the compiler will detect the type, no need to pass it, and <code>sortSlice(&quot;not a slice&quot;, ...)</code> will not compile.</p>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="o">//</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">6</span><span class="p">]</span></code></pre></div>
+<p>Once again the compiler will detect the type, no need to pass it, and <code>sortSlice(&quot;not a slice&quot;, ...)</code> will not compile.</p>
+
 <h3 id="sorting-any-slice-of-comparable-types">Sorting any slice of comparable types</h3>
+
 <p>We have <code>sort.Ints</code> and <code>sort.Strings</code> in the standard library, but what if we want to sort a slice of <code>float64</code>?
 What about <code>int32</code>?</p>
+
 <p>Let&rsquo;s make a helper for this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ordered is a type constraint that matches any type that supports the &lt; operator.
 </span><span class="c1"></span><span class="kd">type</span> <span class="nx">ordered</span> <span class="kd">interface</span> <span class="p">{</span>
@@ -147,12 +164,16 @@ What about <code>int32</code>?</p>
   <span class="nx">sort</span><span class="p">.</span><span class="nf">Slice</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
   <span class="p">})</span>
-<span class="p">}</span>
-</code></pre></div><p>As you can see this time we didn&rsquo;t use a builtin constraint like <code>any</code> or <code>comparable</code> but we created our own.</p>
+<span class="p">}</span></code></pre></div>
+<p>As you can see this time we didn&rsquo;t use a builtin constraint like <code>any</code> or <code>comparable</code> but we created our own.</p>
+
 <h1 id="types">Types</h1>
+
 <h3 id="a-type-safe-pool">A type-safe pool</h3>
+
 <p>The standard library offers a <a href="https://golang.org/pkg/sync/#Pool"><code>sync.Pool</code></a> type to relieve the garbage collector from the stress of having to allocate and release the same type over and over again.
 This is normally used for buffers, for example in programs that have to copy a lot of data many times per second.</p>
+
 <p>Here is the Pool API:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
     <span class="c1">// New optionally specifies a function to generate
@@ -160,8 +181,9 @@ This is normally used for buffers, for example in programs that have to copy a l
 </span><span class="c1"></span>    <span class="nx">New</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span>
 <span class="p">}</span>
 <span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Get</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{};</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{});</span>
-</code></pre></div><p>Seemingly simple, apparently straightforward, except when you&rsquo;re using it and accidentally put a <code>*[]byte</code> in it instead of a <code>[]byte</code> and the next time you draw from the pool your program crashes.</p>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Pool</span><span class="p">)</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{});</span></code></pre></div>
+<p>Seemingly simple, apparently straightforward, except when you&rsquo;re using it and accidentally put a <code>*[]byte</code> in it instead of a <code>[]byte</code> and the next time you draw from the pool your program crashes.</p>
+
 <p>Let&rsquo;s make it safe:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Pool</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">p</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span>
@@ -183,10 +205,13 @@ This is normally used for buffers, for example in programs that have to copy a l
 
 <span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">Pool</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Put</span><span class="p">(</span><span class="nx">t</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">p</span><span class="p">.</span><span class="nx">p</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><p>Something very similar could be done with the <code>sync.Map</code> type to make sure we don&rsquo;t mistakenly pass the wrong type as key or value.</p>
+<span class="p">}</span></code></pre></div>
+<p>Something very similar could be done with the <code>sync.Map</code> type to make sure we don&rsquo;t mistakenly pass the wrong type as key or value.</p>
+
 <p>Similarly, one could implement a <code>Set[T comparable]</code> type that uses a <code>map[T]struct{}</code> underneath.</p>
+
 <h3 id="a-locked-type">A locked type</h3>
+
 <p>If we want to make a type that can protect something from concurrent access, we can create a small container:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Locked</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
@@ -207,8 +232,8 @@ This is normally used for buffers, for example in programs that have to copy a l
 <span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Locked</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nf">Release</span><span class="p">(</span><span class="nx">t</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">l</span><span class="p">.</span><span class="nx">t</span> <span class="p">=</span> <span class="nx">t</span>
   <span class="nx">l</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><p>And we can use it with deferred or sequential calls:</p>
+<span class="p">}</span></code></pre></div>
+<p>And we can use it with deferred or sequential calls:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">l</span> <span class="o">:=</span> <span class="nf">NewLocked</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
 <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
@@ -221,9 +246,11 @@ This is normally used for buffers, for example in programs that have to copy a l
 
 <span class="nx">i</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Acquire</span><span class="p">()</span>
 <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="c1">// 100
-</span><span class="c1"></span><span class="nx">l</span><span class="p">.</span><span class="nf">Release</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-</code></pre></div><h1 id="constraints">Constraints</h1>
+</span><span class="c1"></span><span class="nx">l</span><span class="p">.</span><span class="nf">Release</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span></code></pre></div>
+<h1 id="constraints">Constraints</h1>
+
 <h3 id="parametric-constraints">Parametric constraints</h3>
+
 <p>You can have a constraint take a type parameter:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">getter</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="nf">Get</span><span class="p">()</span> <span class="nx">T</span>
@@ -231,14 +258,16 @@ This is normally used for buffers, for example in programs that have to copy a l
 
 <span class="kd">func</span> <span class="nx">getInt</span><span class="p">[</span><span class="nx">G</span> <span class="nx">getter</span><span class="p">[</span><span class="kt">int</span><span class="p">]](</span><span class="nx">g</span> <span class="nx">G</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">g</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="type-lists">Type lists</h3>
+<span class="p">}</span></code></pre></div>
+<h3 id="type-lists">Type lists</h3>
+
 <p>As we already saw in the sorting example, constraints can be list of types:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ordered</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="kd">type</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int8</span><span class="p">,</span> <span class="kt">int16</span><span class="p">,</span> <span class="kt">int32</span><span class="p">,</span> <span class="kt">int64</span><span class="p">,</span> <span class="kt">uint</span><span class="p">,</span> <span class="kt">uint8</span><span class="p">,</span>
     <span class="kt">uint16</span><span class="p">,</span> <span class="kt">uint32</span><span class="p">,</span> <span class="kt">uint64</span><span class="p">,</span> <span class="kt">uintptr</span><span class="p">,</span> <span class="kt">float32</span><span class="p">,</span> <span class="kt">float64</span><span class="p">,</span> <span class="kt">string</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="mixed">Mixed</h3>
+<span class="p">}</span></code></pre></div>
+<h3 id="mixed">Mixed</h3>
+
 <p>You can define a constraints to be a type list and have methods:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">FloatSliceStringer</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="kd">type</span> <span class="p">[]</span><span class="kt">float64</span><span class="p">,</span> <span class="p">[]</span><span class="kt">float32</span>
@@ -256,25 +285,32 @@ This is normally used for buffers, for example in programs that have to copy a l
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">f</span> <span class="nx">myFloat</span>
   <span class="nf">check</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="c1">// Compiles
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><h3 id="self-referring">Self referring</h3>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<h3 id="self-referring">Self referring</h3>
+
 <p>You can even write a constraint that refers to the same type.
 This can&rsquo;t be done in a type declaration, but it can be done in a function signature.
 Let&rsquo;s say we want to write a function that accepts all types that can be cloned and clones them:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">clone</span><span class="p">[</span><span class="nx">Cloneable</span> <span class="kd">interface</span><span class="p">{</span> <span class="nf">Clone</span><span class="p">()</span> <span class="nx">Cloneable</span> <span class="p">}](</span><span class="nx">c</span> <span class="nx">Cloneable</span><span class="p">)</span> <span class="nx">Cloneable</span> <span class="p">{</span>
   <span class="c1">// The signature guarantees the type returned by Clone is the same of c
 </span><span class="c1"></span>  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Clone</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div><h3 id="type-parameters-in-type-lists">Type parameters in type lists</h3>
+<span class="p">}</span></code></pre></div>
+<h3 id="type-parameters-in-type-lists">Type parameters in type lists</h3>
+
 <p>If you want to express a constraint that accepts all slices, even named types, you can:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">SliceConstraint</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="kd">type</span> <span class="p">[]</span><span class="nx">T</span>
-<span class="p">}</span>
-</code></pre></div><p>Note that this is different from just having a function accept a <code>[]T</code> since there are types that can be defined as</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MySlice</span> <span class="p">[]</span><span class="kt">int</span>
-</code></pre></div><p>and you might want to treat them as <code>MySlice</code>, not just as <code>[]int</code>.</p>
+<span class="p">}</span></code></pre></div>
+<p>Note that this is different from just having a function accept a <code>[]T</code> since there are types that can be defined as</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MySlice</span> <span class="p">[]</span><span class="kt">int</span></code></pre></div>
+<p>and you might want to treat them as <code>MySlice</code>, not just as <code>[]int</code>.</p>
+
+<p>Alternatively you can use the approximation of the type <a href="https://github.com/golang/go/issues/45346">as proposed here</a>.</p>
+
 <h1 id="main-limitations">Main Limitations</h1>
+
 <h3 id="no-type-switch">No type switch</h3>
+
 <p>It is currently not possible to specialize code for some specific types of a constraint:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">floats</span> <span class="kd">interface</span> <span class="p">{</span>
   <span class="kd">type</span> <span class="kt">float64</span><span class="p">,</span> <span class="kt">float32</span>
@@ -286,8 +322,8 @@ Let&rsquo;s say we want to write a function that accepts all types that can be c
   <span class="k">case</span> <span class="kt">float64</span><span class="p">:</span>
   <span class="k">case</span> <span class="kt">float32</span><span class="p">:</span>
   <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>You can assign a type parametric variable to <code>interface{}</code> and then perform a type switch, but that will be executed at runtime:</p>
+<span class="p">}</span></code></pre></div>
+<p>You can assign a type parametric variable to <code>interface{}</code> and then perform a type switch, but that will be executed at runtime:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">specialized</span><span class="p">[</span><span class="nx">F</span> <span class="nx">floats</span><span class="p">](</span><span class="nx">f</span> <span class="nx">F</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">i</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">=</span> <span class="nx">f</span>
   <span class="c1">// Runtime switch
@@ -304,30 +340,37 @@ Let&rsquo;s say we want to write a function that accepts all types that can be c
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nf">specialized</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">// float64(1)
 </span><span class="c1"></span>  <span class="nf">specialized</span><span class="p">(</span><span class="nb">float32</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="c1">// float32(2)
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><h3 id="no-generic-methods">No generic methods</h3>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<h3 id="no-generic-methods">No generic methods</h3>
+
 <p>While we can have generic types, their methods can only take the type parameters and no more:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Foo</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">t</span> <span class="nx">T</span>
 <span class="p">}</span>
 
 <span class="c1">// ERROR: methods cannot have type parameters
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="nx">Foo</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nx">something</span><span class="p">[</span><span class="nx">U</span> <span class="nx">any</span><span class="p">]()</span> <span class="p">{}</span>
-</code></pre></div><p>Note that this is very unlikely to change since accepting type parameters on methods would make interface matching odd and surprising.</p>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="nx">Foo</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nx">something</span><span class="p">[</span><span class="nx">U</span> <span class="nx">any</span><span class="p">]()</span> <span class="p">{}</span></code></pre></div>
+<p>Note that this is very unlikely to change since accepting type parameters on methods would make interface matching odd and surprising.</p>
+
 <h3 id="a-type-must-always-be-the-same">A type must always be the same</h3>
+
 <p>If you have a function defined as <code>func f[T any](slice []T)</code> all elements of <code>slice</code> must be of the same type.
 If you want to express the concept of &ldquo;<em>A slice of elements, each element of an arbitrary type</em>&rdquo; you still have to use <code>func f(slice []interface{})</code>.
 This is working as intended since interfaces and generics aim to solve different problems.</p>
+
 <h3 id="no-casting">No casting</h3>
+
 <p>There is just no way to express a constraint for two types to be convertible to each other:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// This can&#39;t be expressed
 </span><span class="c1"></span><span class="kd">func</span> <span class="nx">cast</span><span class="p">[</span><span class="nx">T1</span><span class="p">,</span> <span class="nx">T2</span> <span class="nx">convertible</span><span class="p">[</span><span class="nx">T1</span><span class="p">])(</span><span class="nx">t2</span> <span class="nx">T2</span><span class="p">)</span><span class="nx">T1</span><span class="p">{</span>
   <span class="k">return</span> <span class="nf">T1</span><span class="p">(</span><span class="nx">t2</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><h1 id="opinions">Opinions</h1>
+<span class="p">}</span></code></pre></div>
+<h1 id="opinions">Opinions</h1>
+
 <p>I actually like this proposal, and I can&rsquo;t wait to use this.
 I won&rsquo;t be writing type parametric code every day, but I feel like I&rsquo;ll be using it for stuff like sorting, max and sets quite often.
 I plan to be a consumer of generic APIs, but there are very few places where I&rsquo;ll implement them.</p>
+
 <p>I can see how this new feature might be abused, but I am hopeful that the community will self-regulate and we won&rsquo;t end up with a Java-Go hybrid abomination.</p>
 
     </div>

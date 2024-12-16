@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>golang on Blog Title</title>
@@ -6,7 +6,23 @@
     <description>Recent content in golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 May 2021 05:54:36 +0200</lastBuildDate><atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 07 May 2021 09:04:30 +0200</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Let&#39;s Go to Go2</title>
+      <link>https://blogtitle.github.io/lets-go-to-go2/</link>
+      <pubDate>Fri, 07 May 2021 09:04:30 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/lets-go-to-go2/</guid>
+      <description>Preface In my previous post I summarized the latest generics proposal for Go.
+In this post I&amp;rsquo;m gonna use it a bit, and misuse it a lot.
+The problem Sometimes I find myself writing code to run the same function in parallel with itself with different inputs, for example to process a batch of data.
+This is not super complicated code, but it&amp;rsquo;s not exactly straightforward and can sometimes be tricky to get right.</description>
+    </item>
+    
     <item>
       <title>Go Generics</title>
       <link>https://blogtitle.github.io/go-generics/</link>
@@ -45,9 +61,10 @@ This is one of the reasons why Go has a race detector. You should always run you
       <pubDate>Thu, 05 Dec 2019 20:07:04 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</guid>
-      <description>Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the sync package from scratch.
-In doing so I&amp;rsquo;m just going to accept some compromises:
- This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</description>
+      <description>Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+The sync package has evolved since then and some primitives have become available.
+While all the channel and select semantics have stayed the same, please consider this as a post on how to better understand channels semantics rather than documentation or replacement for the sync package.
+Previous Post Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement.</description>
     </item>
     
     <item>
@@ -58,7 +75,7 @@ In doing so I&amp;rsquo;m just going to accept some compromises:
       <guid>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</guid>
       <description>This post is part of my developer-friendly security series. You can find all other posts here.
  XSS is a vulnerability that allows attackers to run arbitrary JavaScript code in applications they shouldn&amp;rsquo;t be able to control. This can lead to complete account compromises for every victim that follows a malicious link or visits a compromised page.
-There are two major families of XSS: server side and client side. Today we&amp;rsquo;ll discover how to better protect against server-side XSS, how to reduce the risk of client-side XSS (with some novel technologies) and how to mitigate both of them with some defense-in-depth mechanisms.</description>
+There are two major families of XSS: server side and client side.</description>
     </item>
     
     <item>
@@ -78,8 +95,9 @@ This first post is about the fundamentals: URI, HTTP, TLS, HTML, escaping and co
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</guid>
       <description>As I stated in my previous article timers are hard to use the right way so here are some handful tips.
-Preface If you don&amp;rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:
- time: Timer.Reset is not possible to use correctly #14038 time: Timer.C can still trigger even after Timer.Reset is called #11513 time: document proper usage of Timer.</description>
+Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+Many of the issues in this post have been corrected and some footguns don&amp;rsquo;t hold true anymore.
+Please consider this as a window into a &amp;ldquo;previous Go experience&amp;rdquo; and nothing more.</description>
     </item>
     
     <item>
@@ -90,8 +108,7 @@ Preface If you don&amp;rsquo;t think dealing with time and timers while also jug
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
       <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
 Today I decided to start sharing a couple of tricks to handle some peculiar cases.
-Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.
-To do so you can either use context or time, both are fine.</description>
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
     </item>
     
     <item>
@@ -102,17 +119,6 @@ To do so you can either use context or time, both are fine.</description>
       <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
       <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
 This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
-    </item>
-    
-    <item>
-      <title>Some useful patterns</title>
-      <link>https://blogtitle.github.io/some-useful-patterns/</link>
-      <pubDate>Tue, 19 Feb 2019 08:37:12 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/some-useful-patterns/</guid>
-      <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
-Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
-Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
     </item>
     
   </channel>

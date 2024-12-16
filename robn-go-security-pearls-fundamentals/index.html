@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Rob&#39;n Go security pearls: fundamentals - Blog Title</title>
@@ -68,33 +68,45 @@
     
 
     <div class="article-content">
-      <p>Welcome to this introductory series on web security. I&rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic.
+      
+
+<p>Welcome to this introductory series on web security. I&rsquo;ll use simple snippets and hands-on examples to introduce fundamentals on the topic.
 Most server-side code will be in Go but you&rsquo;ll be able to understand it if you know any C-like language.</p>
+
 <p>This first post is about the fundamentals: URI, HTTP, TLS, HTML, escaping and cookies. If you are already familiar with those concepts please feel free to skip to the next post.</p>
+
 <h1 id="it-starts-with-a-uri">It starts with a URI</h1>
-<p>Universal Resource Identifier(<a href="https://tools.ietf.org/html/rfc3986">URI</a>) is something you deal with every day, whether you know about them or not. URIs are strings that commonly look like &ldquo;<a href="https://github.com/empijei%22">https://github.com/empijei&quot;</a>. Don&rsquo;t be fooled by the apparent simplicity of these things, they are not simple and often times can trip up experts in the field.</p>
+
+<p>Universal Resource Identifier(<a href="https://tools.ietf.org/html/rfc3986">URI</a>) is something you deal with every day, whether you know about them or not. URIs are strings that commonly look like &ldquo;<a href="https://github.com/empijei&quot;">https://github.com/empijei&quot;</a>. Don&rsquo;t be fooled by the apparent simplicity of these things, they are not simple and often times can trip up experts in the field.</p>
+
 <p>URIs are composed by the following parts:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">// [block] means that `block` is optional
-[scheme:][//[userinfo@]host[:port]][/]path[?query][#fragment]
-</code></pre></div><p>The most common schemes are <code>http</code> and <code>https</code>, but <code>javascript</code> and <code>mailto</code> are also broadly used.
+<div class="highlight"><pre class="chroma">// [block] means that `block` is optional
+[scheme:][//[userinfo@]host[:port]][/]path[?query][#fragment]</pre></div>
+<p>The most common schemes are <code>http</code> and <code>https</code>, but <code>javascript</code> and <code>mailto</code> are also broadly used.
 This first part instruct the application that needs to use the URI on how to interpret the rest. It is not unusual to have custom schemes for specific applications, so that everything else in the URI is determined by that application and can use a custom format. One example for this is <code>smb</code> which allows on some operating systems to browse remote files on other machines.</p>
+
 <p>Whatever comes after the scheme depends on it, so if it is omitted the client application (the browser from now on) needs to decide a default one when the user types a URI in the address bar.
 Sometimes in web pages even the host is not specified, so the browser must provide a default host and potentially a prefix for the specified path to locate a resource.</p>
+
 <p>We will focus on the dangerous consequences of allowing <code>javascript</code> and relative URIs in the chapter on Cross-Site Scripting(XSS).</p>
+
 <h1 id="it-is-transported-over-http">It is transported over HTTP</h1>
+
 <p>When the browser needs to retrieve a resource it usually performs a TCP(not described here) connection and then, over that, an HTTP(HyperText Transfer Protocol) request to the server. Modern browsers all use HTTP 1.1 or above and the conversation usually looks like this:</p>
+
 <p>Client connects to the server, and sends:</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">/hello</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="n">Host</span><span class="o">:</span> <span class="l">localhost</span>
-
-</code></pre></div><p>Server reads the request and responds:</p>
+<span class="n">Host</span><span class="o">:</span> <span class="l">localhost</span></code></pre></div>
+<p>Server reads the request and responds:</p>
 <div class="highlight"><pre class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="n">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
 <span class="n">Content-Length</span><span class="o">:</span> <span class="l">11</span>
 
-<span class="err">hello</span> <span class="err">world</span>
-</code></pre></div><p>You can try this yourself by connecting to port 80 of any HTTP server with netcat or telnet and writing the request manually (hit return twice after done typing the host).</p>
+hello world</code></pre></div>
+<p>You can try this yourself by connecting to port 80 of any HTTP server with netcat or telnet and writing the request manually (hit return twice after done typing the host).</p>
+
 <p>Let&rsquo;s unwrap what is going on here:</p>
+
 <ul>
 <li><code>GET</code> is the HTTP <strong>method</strong> or <strong>verb</strong> we are using. There is <a href="https://annevankesteren.nl/2007/10/http-methods">a wide range of possible ones</a>, the most common being OPTIONS, GET, POST and HEAD.</li>
 <li><code>/hello</code> is the path we want. Usually this is taken from the URI as anything that comes after the host[:port] portion and before the <code>#</code> character.</li>
@@ -102,10 +114,13 @@ Sometimes in web pages even the host is not specified, so the browser must provi
 <li><code>Host: localhost</code> is a header. Headers are always in the form <code>Key: value</code>. In this case this means that on the machine we are connected to we want to talk to the host that is responding to the name &ldquo;localhost&rdquo;. This allows multiple virtual hosts to be served by the same machine. We will focus on the dangerous consequences of having the Host header specified so openly in the chapter on DNS rebinding attacks.</li>
 <li>An empty line is needed to signal that headers are finished and the request body (if any) will follow. In this case we are using &ldquo;GET&rdquo; and we didn&rsquo;t specify a &ldquo;Content-Length&rdquo; header so the server starts responding as no body is expected.</li>
 </ul>
+
 <blockquote>
 <p>Note: in HTTP lines are separated by &ldquo;\r\n&rdquo; and not just &ldquo;\n&rdquo;. While some modern servers might accept single separators it is always better to use both, so our request will end with bytes <code>[0x0d 0x0a 0x0d 0x0a]</code> in this case.</p>
 </blockquote>
+
 <p>The server then responds:</p>
+
 <ul>
 <li><code>HTTP/1.1</code> means the server agreed on the protocol, we can proceed.</li>
 <li><code>200 OK</code> is the status. This means everything went fine with our request. If we requested, for example, a resource that was not on the server we would have gotten <code>404 Not found</code>. The standard statuses are numerous and can be found <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">on Wikipedia</a>.</li>
@@ -114,37 +129,51 @@ Sometimes in web pages even the host is not specified, so the browser must provi
 <li>Empty line signals to the client that headers are over and the body will follow. We will see the harmful consequences of using such a simple separator mechanism in the chapter on http splitting.</li>
 <li><code>hello world</code> is the response body.</li>
 </ul>
+
 <p>There are also HTTP2 and QUIC in the party of protocols that are currently used, but you can assume they roughly behave like described above. The only difference is in speed and the ability for the server to push data to the client without the need for a pending request or open websocket.</p>
+
 <h1 id="it-is-optionally-hopefully-transported-securely-over-tls">It is optionally (hopefully) transported securely over TLS</h1>
+
 <p>Most modern web services support secure connections over HTTPS. HTTPS is nothing else than the HTTP protocol over TLS(Transport Layer Security) usually over TCP. This protocol secures the connection against data theft and data tampering, and authenticates the server to be the one we want to connect to. TLS can potentially provide mutual authentication, thus allowing the server to authenticate the client.</p>
+
 <p>The TLS handshake is briefly summarized below. Please note this is not an exhaustive description of TLS and it is simplified to the point it is not precise.</p>
+
 <ul>
 <li>Client: Hello server, I&rsquo;d like to connect securely, I support cipher suites A, B and C.</li>
 <li>The Server checks client suites against its own to find a common one.</li>
 <li>Server: Hello client, this is my certificate with my public key and I&rsquo;d like to use cipher suite B.</li>
 <li>Client validates the server certificate:
+
 <ul>
 <li>the current date is within the validity range (certificate is neither expired nor not yet valid);</li>
 <li>it is not revoked (this needs certificate revocation lists to be updated);</li>
 <li>the signature is valid and emitted by an authority the client recognizes(this requires the client to have some trusted root certificates);</li>
 <li>these steps can recursively climb up the certificate tree.</li>
-</ul>
-</li>
-<li>The client and the server then exchange a shared, symmetric secret based on some of these facts:</li>
+</ul></li>
+<li>The client and the server then exchange a shared, symmetric secret based on some of these facts:
+
+<ul>
 <li>the client trusts who has the private key matching the public one it has validated;</li>
 <li>only who has the private key can decipher what is encrypted with the public one;</li>
 <li>only who has the private key can sign a certificate in a way that matches the public one.</li>
+</ul></li>
 <li>The rest of the communication is encrypted with the shared secret.</li>
 </ul>
+
 <p>The cipher suite agreed in the first part determine some important algorithms, the most relevant are:</p>
+
 <ul>
 <li>how to validate the certificate</li>
 <li>how to encrypt the traffic</li>
 <li>how to check for message integrity</li>
 </ul>
-<h1 id="its-described-by-html">It&rsquo;s described by HTML</h1>
+
+<h1 id="it-s-described-by-html">It&rsquo;s described by HTML</h1>
+
 <p>HyperText Markup Language(HTML) is a twisted, fuzzy derivation of XML that describes how web pages should look and behave. Over the years HTML evolved from a markup language that allowed hyperlinks to a fully blown style-markup-code descriptor.</p>
+
 <p>Most modern web application use HTML for structuring the page, Cascading Style Sheets(CSS) to describe its styles and JavaScript(JS) to implement logic and behaviors. Those languages can be mixed together in a single HTML page. This gets to the point where also images can be transferred inline inside HTML, with Scalable Vector Graphics(SVG) and <code>data</code> URIs.</p>
+
 <p>Here is an example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
 <span class="c">&lt;!-- This is HTML --&gt;</span>
@@ -173,23 +202,37 @@ Sometimes in web pages even the host is not specified, so the browser must provi
   <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;/* This is CSS */&#34;</span><span class="p">&gt;</span>
   <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
-</code></pre></div><p>Having data mixed with code is never a good idea. We&rsquo;ll see why in the chapter on XSS.</p>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
+<p>Having data mixed with code is never a good idea. We&rsquo;ll see why in the chapter on XSS.</p>
+
 <h1 id="which-requires-escaping">Which requires escaping</h1>
+
 <p>As you probably noticed from the previous paragraph snippet, depending on the context I was writing I had to use different comments delimiters. This is due to the fact that when HTML is processed there are several parsers at play.
 For example when the HTML processor sees the <code>&lt;style&gt;</code> tag, it knows that all the content of that tag until <code>&lt;/style&gt;</code> is for the CSS parser. The same is valid for the other contexts: the HTML processor will need to call into other parsers and the JavaScript engine to correctly deal with the page.</p>
+
 <p>This fact has the interesting consequence that in JavaScript it is impossible to have the code <code>var scr = &quot;&lt;/script&gt;&quot;;</code> and it is necessary to do something like <code>var scr = &quot;&lt;/scr&quot; +&quot;ipt&gt;&quot;;</code> to prevent the HTML processor from switching context. We will see the proper way to do it in a few lines.</p>
+
 <p>The main problem is that the HTML parser has no knowledge of the internal state of the JavaScript one, so it needs to be instructed somehow to know when it is time to resume processing tags and the JavaScript block is finished.</p>
+
 <p>The right way to tackle this problem is to not use HTML special characters in non-HTML blocks. All characters that might be relevant for the HTML processor need to be &ldquo;escaped&rdquo; somehow.</p>
+
 <p>For example the symbol <code>&lt;</code> will be encoded as <code>&amp;lt;</code>. When the HTML processor sees that sequence it knows that it needs to decode it as a <code>&lt;</code> and pass the decoded string to the JavaScript interpreter. This would turn <code>var scr = &quot;&lt;/script&gt;&quot;;</code> into <code>var scr = &amp;quot;&amp;lt;/script&amp;gt;&amp;quot;</code> which is not ambiguous anymore.
 Please note that also URIs need encoding of some characters that are not allowed (e.g. spaces are translated to <code>%20</code>) or that are part of the special set (e.g. <code>/</code> becomes <code>%2f</code>) and this depends on the position of the URI those character appear. We will see something about the consequence of this in the next chapters.</p>
+
 <p>As you may imagine this requires some careful management by the programmer that is interpolating user data in a webpage, or the risk is that something that should be treated as data will be treated as code.</p>
+
 <p>Stay tuned! Next post is on Cross-Site-Scripting(XSS) and will explain what happens when developers are not careful.</p>
+
 <h1 id="and-can-be-authenticated">And can be authenticated</h1>
+
 <p>As you might have noticed, HTTP it is a stateless protocol. Roughly every time you need to fetch a resource you have to issue a new request and if you need to access some restricted endpoint you need to <strong>authenticate again</strong>. As you can imagine this would cause some degradation in user experience, so the platform provides some ways to get around the problem.</p>
+
 <p>Cookies are a built-in mechanism: whenever a server response contains a <code>Set-Cookie</code> header the browser will store the value in a so-called jar. From that moment on and until the cookie expires the browser will attach the cookie value to every request that is directed to that &ldquo;endpoint&rdquo; (more about this below).</p>
+
 <p>When a user authenticates to the server the cookie is bound to their identity and to their credentials on the server side, so that the user won&rsquo;t need to authenticate again.</p>
+
 <p>Steps of a standard authentication process:</p>
+
 <ul>
 <li>User visits the website and might be issued a unique cookie;</li>
 <li>User logs into the website with their credentials;</li>
@@ -197,9 +240,13 @@ Please note that also URIs need encoding of some characters that are not allowed
 <li>Every time the user agent(usually a browser) requests a resource in the scope of the cookie it also sends the cookie along;</li>
 <li>When the server receives a requests it will lookup the cookie in the database and respond based on the user permissions.</li>
 </ul>
+
 <p>The server might not use a database but might decide to sign the cookie somehow to recognize the user later. Moreover some applications might use Authorization tokens instead of cookies. These are carried over different headers or in the body of the request. For the purpose of most of the following posts you don&rsquo;t need to pay too much attention in the difference between the two.</p>
+
 <h1 id="recap">Recap</h1>
+
 <p>If you want to send some content to a client and display it, you will have:</p>
+
 <ul>
 <li>The content escaped as many times as many nested contexts it is sent in, no more, no less;</li>
 <li>HTML sent with HTTP;</li>

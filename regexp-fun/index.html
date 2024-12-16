@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Regexp Fun - Blog Title</title>
@@ -68,47 +68,75 @@
     
 
     <div class="article-content">
-      <h1 id="preface">Preface</h1>
+      
+
+<h1 id="preface">Preface</h1>
+
 <p>I love using regular expressions. They are such a powerful tool, they are complex, concise, complex, expressive, complex, broadly supported, complex and easy to write.</p>
+
 <p>They are the perfect tool if you want to write a simple script and you need to elaborate text. Some downsides are that they are complex, surprising, and very inefficient compared with simpler string manipulations primitives (e.g <code>contains</code>, <code>hasPrefix</code>, <code>trim</code>, <code>replace</code>,&hellip;)</p>
+
 <h1 id="regular">Regular</h1>
+
 <p>The &ldquo;reg&rdquo; in &ldquo;regexp&rdquo; stands for <a href="https://en.wikipedia.org/wiki/Regular_language">regular</a>. This is very simple and linear, problem is that most regular expression engines do not respect this definition.</p>
+
 <p>Perl-compatible regexps are a good example of non-regular language parsers, and that adds complexity.
 This makes most regexps engines unfit and too slow/surprising to be used in production code, and I would likely reject any code that uses regexps instead of string manipulation functions (unless <strong>strictly</strong> necessary).</p>
+
 <p>The following paragraphs are a brain-dump of some thoughts about regular expressions.
 Never, for any reasons, use something like this in your code. <strong>PLEASE</strong>. If you somehow ended up on this page because you wanted to see how to parse a non-regular language using regexps, please refer to <a href="https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454">this stackoverflow answer</a> instead (which is a suggested read anyways).</p>
+
 <h1 id="why-you-should-not-use-them">Why you should not use them</h1>
+
 <h2 id="complexity">Complexity</h2>
+
 <p>Most regexps engines use backtracking to match patterns. And that can lead to unpredictable behaviors.</p>
+
 <p>I think that sooner or later any developer needs to trim a string, and they might be tempted by doing that with regexps. Let&rsquo;s take a look at the potential consequences.</p>
+
 <p>A regexp that matches trailing white space in a string:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">\s+$
-</code></pre></div><p>This is so much more tempting than go to the end of the string and match backwards a set of characters and find the first non-empty space and slice the string, or something similar.</p>
+<div class="highlight"><pre class="chroma">\s+$</pre></div>
+<p>This is so much more tempting than go to the end of the string and match backwards a set of characters and find the first non-empty space and slice the string, or something similar.</p>
+
 <p>But it is also more dangerous. Let&rsquo;s say I feed the above regexp the following input:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">this is a nasty                                                         example.
-</code></pre></div><p>This string contains 57 spaces and then some letters. When the regexp engine tries to match it, these are the steps goes through:</p>
+<div class="highlight"><pre class="chroma">this is a nasty                                                         example.</pre></div>
+<p>This string contains 57 spaces and then some letters. When the regexp engine tries to match it, these are the steps goes through:</p>
+
 <ol>
 <li>save the cursor position</li>
 <li>find a white space</li>
 <li>start matching</li>
 <li>advance (loop)</li>
 <li>a non-empty space is found
+
 <ul>
-<li>if it is the end of the line</li>
+<li>if it is the end of the line
+
+<ul>
 <li>MATCH!</li>
-<li>else</li>
+</ul></li>
+<li>else
+
+<ul>
 <li>go back to the saved cursor, increment by one, repeat</li>
-</ul>
-</li>
+</ul></li>
+</ul></li>
 </ol>
+
 <p>In my example this will first match 57 characters, find that they don&rsquo;t end with a new line, but with an &ldquo;e&rdquo;, backtrack one character, match 56 characters, find the same &ldquo;e&rdquo; as before, go back&hellip;</p>
+
 <p>This will execute <code>(n * (n-1)) / 2</code> (1596) operations before giving up. As you can imagine, this is not something you want to have deployed in production. <a href="http://stackstatus.net/post/147710624694/outage-postmortem-july-20-2016">Here</a> you can read an interesting post-mortem analysis on this behavior.</p>
+
 <p>For more like this exploding behavior take a look <a href="https://vimeo.com/112065252">at this video</a>.</p>
+
 <p>The detail that should worry you the most is that the previous example is a 4 characters long regexp that is trying to match a <strong>regular language</strong>. Imagine the consequences you could get with a much longer and more complex regexp.</p>
+
 <p>NOTE: the golang builtin regexp engine does not exhibit this kind of explosive behavior, but this is not a good reason to use regexps everywhere.</p>
+
 <h2 id="surprises">Surprises</h2>
+
 <p>Consider the following expression to match some Java v1 keywords (not all are included for brevity):</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(for|
+<div class="highlight"><pre class="chroma">(for|
 boolean|
 if|
 double|
@@ -126,59 +154,80 @@ short|
 interface|
 void|
 class|
-float)
-</code></pre></div><p>If you try to use it, you will find out that the word &ldquo;interface&rdquo; is never matched by the capturing group.</p>
+float)</pre></div>
+<p>If you try to use it, you will find out that the word &ldquo;interface&rdquo; is never matched by the capturing group.</p>
+
 <p>Before continuing, please stop for a second to think how you would debug it, because this is not a trivial task to accomplish, especially in a complex piece of software that is exhibiting an unwanted behavior. The <em>last</em> thing you are going to blame is a perfectly good looking regexp.</p>
+
 <p>The bug here is that having &ldquo;int&rdquo; before &ldquo;interface&rdquo; makes most regexp engines match &ldquo;int&rdquo; and accept that as a good match, without looking further to see if &ldquo;interface&rdquo; can be recognized. This means that sets <code>(...|...)</code> should always be in <strong>reverse alphabetical order</strong> to behave as expected.</p>
+
 <p>Simple, right?</p>
-<h1 id="now-lets-have-some-fun">Now let&rsquo;s have some fun</h1>
+
+<h1 id="now-let-s-have-some-fun">Now let&rsquo;s have some fun</h1>
+
 <p>I hope I have proven my point and made you think twice before using regexps in your code the next time you think about it.</p>
+
 <p>That said, let&rsquo;s have some fun. The following regexps are the creation of an afternoon spent with <a href="/authors/anna/">Anna</a> playing a <a href="https://ctftime.org/ctf-wtf/">CTF</a> a couple of years ago.</p>
+
 <p>If anything that follows leaves you puzzled, please visit <a href="https://regex101.com/">regex101</a> that will probably explain better than me what is going on in the regexp. If the regexp doesn&rsquo;t run it&rsquo;s probably because I&rsquo;m using some arcane (perl|ruby)-specific syntax, in that case please use <a href="http://rubular.com/">rubular</a>.</p>
+
 <h2 id="fun-part-1-push-down-automata">Fun, part 1: push-down automata</h2>
+
 <p>Regular expressions, as said before, should only be able to match regular languages, but this is clearly not the case for PCRE (Perl-compatible regular expressions).</p>
+
 <p>Let&rsquo;s start small: the language <code>a^nb^n</code>.</p>
+
 <p>Some examples of strings in the language:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ab
+<div class="highlight"><pre class="chroma">ab
 
 aaabbb
-aaaabbbb
-</code></pre></div><p>This should only be matched by <a href="https://en.wikipedia.org/wiki/Pushdown_automaton">push-down automata</a>, as it requires a stack to memorize the amount of &ldquo;a&rdquo; that have been read, but we can easily write a PCRE to do so, leaving &ldquo;<a href="https://en.wikipedia.org/wiki/Finite-state_machine">regular</a>&rdquo; or &ldquo;finite state&rdquo; matchers in the dust.</p>
+aaaabbbb</pre></div>
+<p>This should only be matched by <a href="https://en.wikipedia.org/wiki/Pushdown_automaton">push-down automata</a>, as it requires a stack to memorize the amount of &ldquo;a&rdquo; that have been read, but we can easily write a PCRE to do so, leaving &ldquo;<a href="https://en.wikipedia.org/wiki/Finite-state_machine">regular</a>&rdquo; or &ldquo;finite state&rdquo; matchers in the dust.</p>
+
 <p>The regexp:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">^(a\g&lt;1&gt;?b)$
-</code></pre></div><p>This matches a group made of an &ldquo;a&rdquo;, a &ldquo;b&rdquo; and optionally itself in the middle, which could only be another &ldquo;ab&rdquo; recursive sequence or nothing, and so on.</p>
-<p><img src="/xkcd/more_power.png" alt="more power"></p>
+<div class="highlight"><pre class="chroma">^(a\g&lt;1&gt;?b)$</pre></div>
+<p>This matches a group made of an &ldquo;a&rdquo;, a &ldquo;b&rdquo; and optionally itself in the middle, which could only be another &ldquo;ab&rdquo; recursive sequence or nothing, and so on.</p>
+
+<p><img src="/xkcd/more_power.png" alt="more power" /></p>
+
 <h2 id="fun-part-11-counting">Fun, part 11: counting</h2>
+
 <p>Okay, let&rsquo;s push it further. The new language is now <code>x^p</code> where p is prime.</p>
+
 <p>Some strings in the language:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">xx
+<div class="highlight"><pre class="chroma">xx
 xxx
 xxxxx
-xxxxxxx
-</code></pre></div><p>In case you are wondering, <a href="https://en.wikipedia.org/wiki/Prime_number#Definition_and_examples">1 is not prime</a>.</p>
+xxxxxxx</pre></div>
+<p>In case you are wondering, <a href="https://en.wikipedia.org/wiki/Prime_number#Definition_and_examples">1 is not prime</a>.</p>
+
 <p>The regexp:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">^(?!(xx+)\1+$)xx+$
-</code></pre></div><p>Easy, right? We match any non-zero number of &ldquo;x&rdquo; with <code>xx+</code>, and we then assert with a negative lookahead that it is not a multiple of any number <code>(?!(xx+)\1+$)</code>. This can be put it easier in this way:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> xx+   : any number
+<div class="highlight"><pre class="chroma">^(?!(xx+)\1+$)xx+$</pre></div>
+<p>Easy, right? We match any non-zero number of &ldquo;x&rdquo; with <code>xx+</code>, and we then assert with a negative lookahead that it is not a multiple of any number <code>(?!(xx+)\1+$)</code>. This can be put it easier in this way:</p>
+<div class="highlight"><pre class="chroma"> xx+   : any number
 (xx+)  : capture any number
 (xx+)\1: capture any number, any exact number of times (m % n == 0)
-(?!...): assert the following will not match
-</code></pre></div><p><img src="/xkcd/more_power.png" alt="more power"></p>
+(?!...): assert the following will not match</pre></div>
+<p><img src="/xkcd/more_power.png" alt="more power" /></p>
+
 <h2 id="fun-part-111-the-interview-question">Fun, part 111: the interview question</h2>
+
 <p>The next time you are asked how to find if a word is palindrome, you can show off your regexp kung-fu and get a strong rejection from the company you are interviewing for, but have fun in the meantime.</p>
+
 <p>The definition: a palindrome is a string that equals the reversed version of itself.</p>
+
 <p>Some strings in the language:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
-a
+<div class="highlight"><pre class="chroma">a
 aa
 aba
 abba
-abcba
-</code></pre></div><p>The regexp:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">^((.)\g&lt;1&gt;\k&lt;2+0&gt;|.?)$
-</code></pre></div><p>This is starting to be more complex, but bear with me for a moment.</p>
+abcba</pre></div>
+<p>The regexp:</p>
+<div class="highlight"><pre class="chroma">^((.)\g&lt;1&gt;\k&lt;2+0&gt;|.?)$</pre></div>
+<p>This is starting to be more complex, but bear with me for a moment.</p>
+
 <p>Here we have a group <code>()</code> with an &ldquo;or&rdquo; <code>|</code>. The second case is an optional <code>?</code> single character, and that is the easy part. The first case, on the other hand, is kind of more complex. Let&rsquo;s break it down:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Match a character and save it. This group is automatically named with a number.
+<div class="highlight"><pre class="chroma">Match a character and save it. This group is automatically named with a number.
 (.)
 
 Matches the previous subexpression named &#34;1&#34;. This re-executes the group, rather
@@ -190,21 +239,28 @@ Match the text matched by the group named 0+2, which in this case is (.)
 
 Match a group that can be 0 or one character, or that can be generated in the
 following way: &lt;a letter&gt;another instance of the group&lt;the same letter&gt;
-((.)\g&lt;1&gt;\k&lt;2+0&gt;|.?)
-</code></pre></div><p><a href="https://ruby-doc.org/core-2.1.1/Regexp.html">Reference for ruby regexp syntax (aka madness)</a>.</p>
-<p><img src="/xkcd/more_power.png" alt="more power"></p>
+((.)\g&lt;1&gt;\k&lt;2+0&gt;|.?)</pre></div>
+<p><a href="https://ruby-doc.org/core-2.1.1/Regexp.html">Reference for ruby regexp syntax (aka madness)</a>.</p>
+
+<p><img src="/xkcd/more_power.png" alt="more power" /></p>
+
 <h2 id="fun-part-1111-context-sensitive-grammar">Fun, part 1111: context sensitive grammar</h2>
+
 <p>This is the last snippet as I can feel my sanity slipping away.</p>
+
 <p>If you got to this point, thank you, this requires an insanely long attention span, but beware: you still have to see the worst.</p>
+
 <p>Language: <code>a^nb^nc^n</code> with <code>n&gt;0</code> (let&rsquo;s get rid of the empty string for once).</p>
+
 <p>Some strings in the language:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">abc
-aaabbbccc
-</code></pre></div><p>Same number of &ldquo;a&rdquo;, &ldquo;b&rdquo; and &ldquo;c&rdquo;.</p>
+<div class="highlight"><pre class="chroma">abc
+aaabbbccc</pre></div>
+<p>Same number of &ldquo;a&rdquo;, &ldquo;b&rdquo; and &ldquo;c&rdquo;.</p>
+
 <p>The regexp:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">^(?=(a\g&lt;1&gt;?b)c)a+(b\g&lt;2&gt;?c)$
-</code></pre></div><p>Let&rsquo;s break it down:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Lookahead, what comes after it must match what is specified by &#34;...&#34;
+<div class="highlight"><pre class="chroma">^(?=(a\g&lt;1&gt;?b)c)a+(b\g&lt;2&gt;?c)$</pre></div>
+<p>Let&rsquo;s break it down:</p>
+<div class="highlight"><pre class="chroma">Lookahead, what comes after it must match what is specified by &#34;...&#34;
 (?=...)
 
 Match &#34;a&#34;&lt;optionally itself&gt;&#34;b&#34; and at least one &#34;c&#34;. For more details, see
@@ -220,8 +276,9 @@ Match &#34;b&#34;&lt;optionally itself&gt;&#34;c&#34;.
 Match any number of &#34;a&#34; followed by an amount of &#34;b&#34; equal to the same
 amount of &#34;c&#34;. The whole string must also match &#34;a&#34; followed by the same
 amount of &#34;b&#34; and at least one &#34;c&#34;.
-^(?=(a\g&lt;1&gt;?b)c)a+(b\g&lt;2&gt;?c)$
-</code></pre></div><p>That&rsquo;s it. Easy, right?</p>
+^(?=(a\g&lt;1&gt;?b)c)a+(b\g&lt;2&gt;?c)$</pre></div>
+<p>That&rsquo;s it. Easy, right?</p>
+
 <p>Thanks for reading and remember: don&rsquo;t use regexps in your code.</p>
 
     </div>

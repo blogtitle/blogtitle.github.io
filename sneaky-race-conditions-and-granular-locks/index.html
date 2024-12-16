@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Sneaky race conditions and granular locks - Blog Title</title>
@@ -68,17 +68,30 @@
     
 
     <div class="article-content">
-      <p>Race conditions are the main problem you have to care about when writing concurrent code. Go provides high level primitives that make it easier to get concurrency and parallelism right, but those are often times not enough.</p>
+      
+
+<p>Race conditions are the main problem you have to care about when writing concurrent code. Go provides high level primitives that make it easier to get concurrency and parallelism right, but those are often times not enough.</p>
+
 <p>This is one of the reasons why Go has a <a href="https://blog.golang.org/race-detector">race detector</a>. You should always run your tests and, where possible, a portion of your production fleet with <code>-race</code> enabled. Beware that this might still not be enough: the detector only triggers when a race <strong>manifests</strong> and not all races are detected by it.</p>
+
 <p>Today I&rsquo;m not just going to talk about Go, I&rsquo;m also going to compare its approach with the one that Rust uses and discuss the race conditions that both approaches fail to prevent.</p>
+
 <p>Rust approach to races is: if code contains unsynchronized access to shared data it should not compile. Beware that Rust definition of data race does not include all possible data races <a href="https://doc.rust-lang.org/nomicon/races.html">as they explicitly document</a>.</p>
+
 <p>Important note: the Rust snippets are not written by me but by a <a href="https://twitter.com/karroffel">rustacean friend of mine</a></p>
+
 <p>As part of my job I dedicate time to code reviews, and I kept tabs on the race conditions I spotted. After a while I noticed that the ones I found followed similar evolution steps and none of them would have been found or prevented by <code>go -race</code> or Rust type system.</p>
+
 <p>The catastrophe happens in three simple steps.</p>
+
 <h1 id="first-step-the-naked-mutex">First step: the naked mutex</h1>
+
 <p>The first step is to have a mutex that protects some kind of data, for this example I&rsquo;ll use integers and will call it <code>SharedInt</code> for simplicity.</p>
+
 <p>The following code defines a mutex-protected value and uses it in a function.</p>
+
 <p>Every line in a critical section of a mutex or that performs a synchronized operation is marked with a lock emoji.</p>
+
 <p>Go:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">SharedInt</span> <span class="kd">struct</span> <span class="p">{</span>
   <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
@@ -89,8 +102,8 @@
   <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
   <span class="k">defer</span> <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span> <span class="c1">// 🔒
 </span><span class="c1"></span>  <span class="nx">si</span><span class="p">.</span><span class="nx">val</span> <span class="p">=</span> <span class="mi">42</span>          <span class="c1">// 🔒
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>Rust:</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>Rust:</p>
 <div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">SharedInt</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">  </span><span class="n">value</span>: <span class="nc">Mutex</span><span class="o">&lt;</span><span class="kt">isize</span><span class="o">&gt;</span><span class="p">,</span><span class="w">
 </span><span class="w"></span><span class="p">}</span><span class="w">
@@ -98,22 +111,25 @@
 </span><span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">guard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">lock</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
 </span><span class="w">  </span><span class="o">*</span><span class="n">guard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="c1">// 🔒
 </span><span class="c1"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>Rust does not need to unlock the mutex, when the guarded value goes out of scope the lock is automatically released.
+</span></code></pre></div>
+<p>Rust does not need to unlock the mutex, when the guarded value goes out of scope the lock is automatically released.
 Moreover the <code>unwrap</code> call makes <code>answer</code> panic if the mutex is &ldquo;poisoned&rdquo;. Go mutexes do not support poisoning, but this is not relevant for this post. You can find out more <a href="https://doc.rust-lang.org/std/sync/struct.Mutex.html">here</a>.</p>
+
 <h1 id="second-step-the-encapsulation">Second step: the encapsulation</h1>
+
 <p>After a while the code clutters with calls to <code>si.mu.Lock()</code> and <code>si.value.lock().unwrap();</code> so the temptation is to create an helper method to set the value:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">si</span> <span class="o">*</span><span class="nx">SharedInt</span><span class="p">)</span> <span class="nf">SetVal</span><span class="p">(</span><span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
   <span class="k">defer</span> <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span> <span class="c1">// 🔒
 </span><span class="c1"></span>  <span class="nx">si</span><span class="p">.</span><span class="nx">val</span> <span class="p">=</span> <span class="nx">val</span>         <span class="c1">// 🔒
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>Of course that value needs to be read at some point, so a getter is also defined:</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>Of course that value needs to be read at some point, so a getter is also defined:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">si</span> <span class="o">*</span><span class="nx">SharedInt</span><span class="p">)</span> <span class="nf">Val</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
   <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
   <span class="k">defer</span> <span class="nx">si</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span> <span class="c1">// 🔒
 </span><span class="c1"></span>  <span class="k">return</span> <span class="nx">si</span><span class="p">.</span><span class="nx">val</span>        <span class="c1">// 🔒
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>The Rust equivalent would be:</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>The Rust equivalent would be:</p>
 <div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">impl</span><span class="w"> </span><span class="n">SharedInt</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">  </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">set_val</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">val</span>: <span class="kt">isize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">guard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">lock</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
@@ -125,45 +141,67 @@ Moreover the <code>unwrap</code> call makes <code>answer</code> panic if the mut
 </span><span class="w">    </span><span class="o">*</span><span class="n">guard</span><span class="w"> </span><span class="c1">// 🔒
 </span><span class="c1"></span><span class="w">  </span><span class="p">}</span><span class="w">
 </span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>This code works fine: there are writers that write values and readers that read them, we have no race condition.</p>
+</span></code></pre></div>
+<p>This code works fine: there are writers that write values and readers that read them, we have no race condition.</p>
+
 <p>After this step usually some time passes and this API is depended on by many packages and used by many programmers.</p>
+
 <h1 id="third-step-the-misuse">Third step: the misuse</h1>
+
 <p>When some programmers new to the project look at the public API of the <code>SharedInt</code> type they see this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">SharedInt
+<div class="highlight"><pre class="chroma">SharedInt
   SetVal(int)
-  Val() int
-</code></pre></div><p>And so they write the following code:</p>
+  Val() int</pre></div>
+<p>And so they write the following code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Increment</span><span class="p">(</span><span class="nx">si</span> <span class="o">*</span><span class="nx">SharedInt</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">si</span><span class="p">.</span><span class="nf">SetVal</span><span class="p">(</span><span class="nx">si</span><span class="p">.</span><span class="nf">Val</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">increment</span><span class="p">(</span><span class="n">si</span>: <span class="kp">&amp;</span><span class="nc">SharedInt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">increment</span><span class="p">(</span><span class="n">si</span>: <span class="kp">&amp;</span><span class="nc">SharedInt</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="n">si</span><span class="p">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">si</span><span class="p">.</span><span class="n">val</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
 </span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div><p>Please take a little bit of time to look at the code above. Try to wear the shoes of the code reviewer for a minute and think if you would spot the problem in a ~400 lines long review.</p>
+</span></code></pre></div>
+<p>Please take a little bit of time to look at the code above. Try to wear the shoes of the code reviewer for a minute and think if you would spot the problem in a ~400 lines long review.</p>
+
 <h1 id="explanation">Explanation</h1>
+
 <p>The race condition manifests between the call to <code>Val</code> and the one to <code>SetVal</code>.</p>
+
 <p>The code above can be seen as:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Increment</span><span class="p">(</span><span class="nx">si</span> <span class="o">*</span><span class="nx">SharedInt</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">v</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Val</span><span class="p">()</span> <span class="c1">// 🔒
 </span><span class="c1"></span>  <span class="nx">v</span><span class="o">++</span>           <span class="c1">// 😱😱😱😱😱😱
 </span><span class="c1"></span>  <span class="nx">si</span><span class="p">.</span><span class="nf">SetVal</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>  <span class="c1">// 🔒
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>When we call the setter we pass a value based on the value we read. That value is stale at this point: we updated it without holding its lock, so the setter will overwrite any update that happened in the meantime.</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>When we call the setter we pass a value based on the value we read. That value is stale at this point: we updated it without holding its lock, so the setter will overwrite any update that happened in the meantime.</p>
+
 <p>The access to memory is still synchronized so this code is &ldquo;correct&rdquo; for the race detector and for Rust type system but it is not <strong>logically</strong> correct. I would say that you almost never want code like this to be seen as correct. Granular locks, like atomic operations, should be handled with extreme care or not at all.</p>
+
 <p>What makes it even worse is <strong>how hard it is to spot</strong>, especially for people that, like me, come from Object Oriented Programming. The pattern &ldquo;get -&gt; update -&gt; set&rdquo; is extremely common and endorsed in the OOP paradigm. In Java <a href="https://www.w3schools.com/java/java_encapsulation.asp">you always have getters and setters</a> for everything and in C# <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/using-properties">you don&rsquo;t even know if you are accessing a field or you&rsquo;re calling a function</a>.</p>
+
 <h1 id="conclusion">Conclusion</h1>
+
 <p>Resist the temptation of hiding away your synchronization primitives as much as possible.</p>
+
 <p>If you <strong>have to encapsulate</strong> make sure to provide at least one Read-Modify-Write primitive like <code>Add</code> or <code>CompareAndSwap</code>. You should do this <strong>as soon as you encapsulate</strong>, not when needed.
 The sole presence of those methods will tip off your users that your type must be used as an atomic one.</p>
+
 <p>Finally: <strong>document how your code should be used and under which assumptions it works</strong>. Do not make  your users read the code to see if you getter is doing something they should know about.</p>
+
 <h3 id="can-we-make-better-tools">Can we make better tools?</h3>
+
 <p>I think so, especially at runtime (the Go approach): when running code with <code>go test -race</code> the compiler could change the behavior of the code to <strong>force rescheduling points on synchronization calls</strong>. As far as I know Rust does not currently have this level of control on threads or a builtin race detector.</p>
+
 <p>One example of this would be that every time a mutex is released during testing a call into the scheduler would be performed. This would make the races described in this post much more likely to happen and would not affect correct code.</p>
+
 <p>As <a href="https://twitter.com/dvyukov/status/1205382645405954048?s=20">Dmitry Vyukov points out</a>, go already does <a href="https://github.com/golang/go/blob/0497f911acbb33efbeac7271dc46e920fe26f4b8/src/runtime/proc.go#L4932-L4941">something similar</a> but this is not enough as it doesn&rsquo;t influence where scheduling points are emitted by the compiler, only the scheduler order.</p>
+
 <p>Adding such a change would make incorrect code much more likely to not pass tests, which would at least be a good starting point.</p>
+
 <h1 id="want-to-know-more">Want to know more?</h1>
+
 <p><a href="https://blog.golang.org/race-detector">Here</a> is an official post on the race detector.</p>
+
 <p><a href="https://doc.rust-lang.org/nomicon/races.html">Here</a> is documentation on what is a race condition for Rust safety model.</p>
+
 <p><a href="http://www.1024cores.net/">Here</a> is a blog on lock-free programming: the most extreme form of granular synchronization.</p>
 
     </div>

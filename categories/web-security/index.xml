@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Web security on Blog Title</title>
@@ -6,7 +6,11 @@
     <description>Recent content in Web security on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Sep 2019 23:23:40 +0200</lastBuildDate><atom:link href="https://blogtitle.github.io/categories/web-security/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 Sep 2019 23:23:40 +0200</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/categories/web-security/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Rob&#39;n Go security pearls: Cross Site Scripting (XSS)</title>
       <link>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</link>
@@ -15,7 +19,7 @@
       <guid>https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/</guid>
       <description>This post is part of my developer-friendly security series. You can find all other posts here.
  XSS is a vulnerability that allows attackers to run arbitrary JavaScript code in applications they shouldn&amp;rsquo;t be able to control. This can lead to complete account compromises for every victim that follows a malicious link or visits a compromised page.
-There are two major families of XSS: server side and client side. Today we&amp;rsquo;ll discover how to better protect against server-side XSS, how to reduce the risk of client-side XSS (with some novel technologies) and how to mitigate both of them with some defense-in-depth mechanisms.</description>
+There are two major families of XSS: server side and client side.</description>
     </item>
     
     <item>

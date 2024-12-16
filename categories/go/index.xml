@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Go on Blog Title</title>
@@ -6,7 +6,23 @@
     <description>Recent content in Go on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 May 2021 05:54:36 +0200</lastBuildDate><atom:link href="https://blogtitle.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 07 May 2021 09:04:30 +0200</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Let&#39;s Go to Go2</title>
+      <link>https://blogtitle.github.io/lets-go-to-go2/</link>
+      <pubDate>Fri, 07 May 2021 09:04:30 +0200</pubDate>
+      
+      <guid>https://blogtitle.github.io/lets-go-to-go2/</guid>
+      <description>Preface In my previous post I summarized the latest generics proposal for Go.
+In this post I&amp;rsquo;m gonna use it a bit, and misuse it a lot.
+The problem Sometimes I find myself writing code to run the same function in parallel with itself with different inputs, for example to process a batch of data.
+This is not super complicated code, but it&amp;rsquo;s not exactly straightforward and can sometimes be tricky to get right.</description>
+    </item>
+    
     <item>
       <title>Go Generics</title>
       <link>https://blogtitle.github.io/go-generics/</link>
@@ -45,9 +61,10 @@ This is one of the reasons why Go has a race detector. You should always run you
       <pubDate>Thu, 05 Dec 2019 20:07:04 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</guid>
-      <description>Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the sync package from scratch.
-In doing so I&amp;rsquo;m just going to accept some compromises:
- This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</description>
+      <description>Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+The sync package has evolved since then and some primitives have become available.
+While all the channel and select semantics have stayed the same, please consider this as a post on how to better understand channels semantics rather than documentation or replacement for the sync package.
+Previous Post Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement.</description>
     </item>
     
     <item>
@@ -57,8 +74,9 @@ In doing so I&amp;rsquo;m just going to accept some compromises:
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</guid>
       <description>As I stated in my previous article timers are hard to use the right way so here are some handful tips.
-Preface If you don&amp;rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:
- time: Timer.Reset is not possible to use correctly #14038 time: Timer.C can still trigger even after Timer.Reset is called #11513 time: document proper usage of Timer.</description>
+Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+Many of the issues in this post have been corrected and some footguns don&amp;rsquo;t hold true anymore.
+Please consider this as a window into a &amp;ldquo;previous Go experience&amp;rdquo; and nothing more.</description>
     </item>
     
     <item>
@@ -69,8 +87,7 @@ Preface If you don&amp;rsquo;t think dealing with time and timers while also jug
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
       <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
 Today I decided to start sharing a couple of tricks to handle some peculiar cases.
-Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.
-To do so you can either use context or time, both are fine.</description>
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
     </item>
     
     <item>
@@ -103,16 +120,6 @@ Decorators This feature is extensively used in most object oriented languages, a
       <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
 One example I faced was to analyse some data flowing in some connections that I was proxying.
 There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
-    </item>
-    
-    <item>
-      <title>Considerations on error handling</title>
-      <link>https://blogtitle.github.io/considerations-on-error-handling/</link>
-      <pubDate>Fri, 10 Aug 2018 12:34:41 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/considerations-on-error-handling/</guid>
-      <description>The impact The first language I used to build something more than just school exercises was VisualBasic.Net. There are some good things and bad things in it, but I don&amp;rsquo;t want to discuss that today. I switched to C# after that and Java and Python after it.
-This is to say that basically up until three years ago I knew one and only one way to handle errors which is expressed in the following pseudocode:</description>
     </item>
     
   </channel>

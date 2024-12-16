@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on Blog Title</title>
@@ -6,7 +6,11 @@
     <description>Recent content in Pages on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 May 2018 17:33:02 -0700</lastBuildDate><atom:link href="https://blogtitle.github.io/page/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 03 May 2018 17:33:02 -0700</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/page/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>About</title>
       <link>https://blogtitle.github.io/about/</link>
@@ -14,7 +18,7 @@
       
       <guid>https://blogtitle.github.io/about/</guid>
       <description>The blog This blog is about everything that the authors want to talk about!
-The authors [Anna] (https://blogtitle.github.io/authors/anna/) Anna is a traveler, yogi, scuba diver and many other things. Between her adventures she enjoys writing Go code. She is now based in San Francisco working with Stripe&amp;rsquo;s security team.
+The authors Anna Anna is a traveler, yogi, scuba diver and many other things. Between her adventures she enjoys writing Go code. She is now based in San Francisco working with Stripe&amp;rsquo;s security team.
 Opinions are her own.
 Rob Rob is a coder, science lover and glitch magnet. He likes to find weird and unexpected behaviors in anything related to technology.</description>
     </item>

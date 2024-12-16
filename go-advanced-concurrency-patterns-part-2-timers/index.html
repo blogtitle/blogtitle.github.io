@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.80.0" />
+<meta name="generator" content="Hugo 0.56.0" />
 
 
 <title>Go advanced concurrency patterns: part 2 (timers) - Blog Title</title>
@@ -68,22 +68,38 @@
     
 
     <div class="article-content">
-      <p>As I stated <a href="https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/">in my previous article</a> timers are hard to use the right way so here are some handful tips.</p>
+      
+
+<p>As I stated <a href="https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/">in my previous article</a> timers are hard to use the right way so here are some handful tips.</p>
+
+<h1 id="edit-16-dec-2024">Edit (16 Dec 2024)</h1>
+
+<p>This post is still here for historical reasons, but it&rsquo;s now quite old.</p>
+
+<p>Many of the issues in this post have been corrected and some footguns don&rsquo;t hold true anymore.</p>
+
+<p>Please consider this as a window into a &ldquo;previous Go experience&rdquo; and nothing more.</p>
+
+<p>As a general approach always refer to <a href="https://pkg.go.dev/time#Timer">upstream documentation</a> when looking for insights on Go.</p>
+
 <h1 id="preface">Preface</h1>
+
 <p>If you don&rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:</p>
+
 <ul>
 <li><a href="https://github.com/golang/go/issues/14038">time: Timer.Reset is not possible to use correctly #14038</a></li>
 <li><a href="https://github.com/golang/go/issues/11513">time: Timer.C can still trigger even after Timer.Reset is called #11513</a></li>
 <li><a href="https://github.com/golang/go/issues/14383">time: document proper usage of Timer.Stop #14383</a></li>
 </ul>
+
 <p>If you are not satisfied, in the following code there are a deadlock and a race condition:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">tm</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="nx">tm</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
 	<span class="o">&lt;-</span><span class="nx">tm</span><span class="p">.</span><span class="nx">C</span>
 	<span class="k">if</span> <span class="p">!</span><span class="nx">tm</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 		<span class="o">&lt;-</span><span class="nx">tm</span><span class="p">.</span><span class="nx">C</span>
-	<span class="p">}</span>
-</code></pre></div><p>This just has a deadlock:</p>
+	<span class="p">}</span></code></pre></div>
+<p>This just has a deadlock:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">toChanTimed</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Timer</span><span class="p">,</span> <span class="nx">ch</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
 	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
@@ -95,32 +111,46 @@
 	<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">42</span><span class="p">:</span>
 	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
 	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>That said, let&rsquo;s get to the tips.</p>
-<h1 id="timeticker">time.Ticker</h1>
+<span class="p">}</span></code></pre></div>
+<p>That said, let&rsquo;s get to the tips.</p>
+
+<h1 id="time-ticker">time.Ticker</h1>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Ticker</span> <span class="kd">struct</span> <span class="p">{</span>
         <span class="nx">C</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">Time</span> <span class="c1">// The channel on which the ticks are delivered.
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>Ticker is quite easy to use, with some minor caveats:</p>
+</span><span class="c1"></span><span class="p">}</span></code></pre></div>
+<p>Ticker is quite easy to use, with some minor caveats:</p>
+
 <ul>
 <li>Sends will drop all unread values if <code>C</code> already has one message in it.</li>
 <li>It must be stopped: the GC will not collect it otherwise.</li>
 <li>Setting <code>C</code> is useless: messages will still be sent on the original channel.</li>
 </ul>
-<h1 id="timetick">time.Tick</h1>
+
+<h1 id="time-tick">time.Tick</h1>
+
 <p>This is just something you should never use unless you plan to carry the returned <code>chan</code> around and keep using it for the entire lifetime of the program.</p>
+
 <p>As the documentation states:</p>
+
 <blockquote>
 <p>the underlying Ticker cannot be recovered by the garbage collector; it &ldquo;leaks&rdquo;.</p>
 </blockquote>
+
 <p>Please use this with caution and in case of doubt use <code>Ticker</code> instead.</p>
-<h1 id="timeafter">time.After</h1>
+
+<h1 id="time-after">time.After</h1>
+
 <p>This is basically the same concept of <code>Tick</code> but instead of hiding a <code>Ticker</code>, hides a <code>Timer</code>. This is slightly better because once the timer will fire, it will be collected. Please note that timers use 1-buffered channels, so they can fire even if no one is receiving.</p>
+
 <p>As above, if you care about performance and you want to be able to cancel the call, you should not use <code>After</code>.</p>
-<h1 id="timetimer-also-known-as-timewhatthefork">time.Timer (also known as time.WhatTheFork?!)</h1>
+
+<h1 id="time-timer-also-known-as-time-whatthefork">time.Timer (also known as time.WhatTheFork?!)</h1>
+
 <p>I find this to be quite an odd and unusual API for Go: <code>NewTicker(Duration)</code> returns a <code>*Timer</code>, which has an <strong>exported</strong> <code>chan</code> field called <code>C</code> that is the interesting value for the caller.This is odd in <code>Ticker</code>, but <strong>very odd</strong> in <code>Timer</code>.</p>
+
 <p>Usually in Go exported fields mean that the user can both get and <strong>set</strong> them, while here setting <code>C</code> doesn&rsquo;t mean anything. It&rsquo;s quite the opposite: setting <code>C</code> and resetting the <code>Timer</code> will still make the runtime send messages in the channel that was previously in <code>C</code>.
 This is even worsened by the fact that the <code>Timer</code> returned by <code>AfterFunc</code> does not use <code>C</code> at all.</p>
+
 <p>That said, <code>Timer</code> has a lot more interesting oddities. Here is an overview on the API:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Timer</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">C</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">Time</span>
@@ -129,12 +159,15 @@ This is even worsened by the fact that the <code>Timer</code> returned by <code>
 <span class="kd">func</span> <span class="nf">AfterFunc</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Duration</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="o">*</span><span class="nx">Timer</span>
 <span class="kd">func</span> <span class="nf">NewTimer</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Duration</span><span class="p">)</span> <span class="o">*</span><span class="nx">Timer</span>
 <span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Timer</span><span class="p">)</span> <span class="nf">Stop</span><span class="p">(</span><span class="kt">bool</span><span class="p">)</span>
-<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Timer</span><span class="p">)</span> <span class="nf">Reset</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Duration</span><span class="p">)</span> <span class="kt">bool</span>
-</code></pre></div><p>Four very simple functions, two of which are constructors, <strong>what could possibly go wrong?</strong></p>
-<h4 id="timeafterfunc">time.AfterFunc</h4>
+<span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">Timer</span><span class="p">)</span> <span class="nf">Reset</span><span class="p">(</span><span class="nx">d</span> <span class="nx">Duration</span><span class="p">)</span> <span class="kt">bool</span></code></pre></div>
+<p>Four very simple functions, two of which are constructors, <strong>what could possibly go wrong?</strong></p>
+
+<h4 id="time-afterfunc">time.AfterFunc</h4>
+
 <blockquote>
 <p>Official doc: AfterFunc waits for the duration to elapse and then calls f in its own goroutine. It returns a Timer that can be used to cancel the call using its Stop method.</p>
 </blockquote>
+
 <p>While this is correct, be careful: when calling <code>Stop</code>, if <code>false</code> is returned, it means that stopping failed and the function was already started. This does not say anything about that function having returned, for that you need to add some manual coordination:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
 <span class="nx">f</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
@@ -144,61 +177,81 @@ This is even worsened by the fact that the <code>Timer</code> returned by <code>
 <span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">AfterFunc</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
 <span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 	<span class="o">&lt;-</span><span class="nx">done</span>
-<span class="p">}</span>
-</code></pre></div><p>This is stated in <code>Stop</code> documentation.</p>
+<span class="p">}</span></code></pre></div>
+<p>This is stated in <code>Stop</code> documentation.</p>
+
 <p>In addition to that, the returned timer <strong>will not fire</strong>. It is only usable to call <code>Stop</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">AfterFunc</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Time has passed!&#34;</span><span class="p">)</span>
 <span class="p">})</span>
 <span class="c1">// This will deadlock.
-</span><span class="c1"></span><span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span>
-</code></pre></div><p>Also, at the moment of writing, resetting the timer makes the runtime call <code>f</code> again after the passed duration, but it is not documented so it might change in the future.</p>
-<h4 id="timenewtimer">time.NewTimer</h4>
+</span><span class="c1"></span><span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span></code></pre></div>
+<p>Also, at the moment of writing, resetting the timer makes the runtime call <code>f</code> again after the passed duration, but it is not documented so it might change in the future.</p>
+
+<h4 id="time-newtimer">time.NewTimer</h4>
+
 <blockquote>
 <p>Official doc: NewTimer creates a new Timer that will send the current time on its channel after at least duration d.</p>
 </blockquote>
+
 <p>This means that there is no way to construct a valid <code>Timer</code> without starting it. If you need to construct one for future re-use, you either do it lazily or you have to create and stop it, which can be done with this code:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 	<span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span>
-<span class="p">}</span>
-</code></pre></div><p>You <strong>have to</strong> read from the channel. If the timer fired between the <code>New</code> and the <code>Stop</code> calls and the channels is not drained there will be a value in <code>C</code>, so all future reads will be wrong.</p>
-<h4 id="timetimerstop">(*time.Timer).Stop</h4>
+<span class="p">}</span></code></pre></div>
+<p>You <strong>have to</strong> read from the channel. If the timer fired between the <code>New</code> and the <code>Stop</code> calls and the channels is not drained there will be a value in <code>C</code>, so all future reads will be wrong.</p>
+
+<h4 id="time-timer-stop">(*time.Timer).Stop</h4>
+
 <blockquote>
 <p>Stop prevents the Timer from firing. It returns true if the call stops the timer, false if the timer has already expired <strong>or</strong> been stopped.</p>
 </blockquote>
+
 <p>The &ldquo;<strong>or</strong>&rdquo; in the sentence above is very important. All examples for <code>Stop</code> in the doc show this snippet:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 	<span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span>
-<span class="p">}</span>
-</code></pre></div><p>The problem is that &ldquo;<strong>or</strong>&rdquo; means that this pattern is valid 0 or 1 times. It is not valid if someone else already drained the channel, and it is not valid to do this multiple times without calling <code>Reset</code> in between. This summarized means that <code>Stop</code>+drain is safe to do if and only if no reads from the channel have been performed, including ones caused by other drains.</p>
+<span class="p">}</span></code></pre></div>
+<p>The problem is that &ldquo;<strong>or</strong>&rdquo; means that this pattern is valid 0 or 1 times. It is not valid if someone else already drained the channel, and it is not valid to do this multiple times without calling <code>Reset</code> in between. This summarized means that <code>Stop</code>+drain is safe to do if and only if no reads from the channel have been performed, including ones caused by other drains.</p>
+
 <p>All this is stated in the doc by the sentence below:</p>
+
 <blockquote>
 <p>For example, assuming the program has not received from t.C <strong>already</strong>:</p>
 </blockquote>
+
 <p>Moreover, the pattern above is not thread safe, as the value returned by <code>Stop</code> might already be stale when draining the channel is attempted, and this would cause a deadlock as two goroutines would try to drain <code>C</code>.</p>
-<h4 id="timetimerreset">(*time.Timer).Reset</h4>
+
+<h4 id="time-timer-reset">(*time.Timer).Reset</h4>
+
 <p>This is even more interesting. The documentation is quite long, and you can find it <a href="https://golang.org/pkg/time/#Timer.Reset">here</a>.</p>
+
 <p>One funny extract is:</p>
+
 <blockquote>
 <p>Note that it is not possible to use Reset&rsquo;s return value correctly, as there is a race condition between draining the channel and the new timer expiring. <strong>Reset should always be invoked on stopped or expired channels</strong></p>
 </blockquote>
+
 <p>The doc says the right way to use <code>Reset</code> is the following one:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 	<span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span>
 <span class="p">}</span>
-<span class="nx">t</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span>
-</code></pre></div><p>You cannot use <code>Stop</code> nor <code>Reset</code> concurrently with other receives from the channel, and in order for the value sent on <code>C</code> to be valid, <code>C</code> should be drained exactly once before each <code>Reset</code>.</p>
+<span class="nx">t</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span></code></pre></div>
+<p>You cannot use <code>Stop</code> nor <code>Reset</code> concurrently with other receives from the channel, and in order for the value sent on <code>C</code> to be valid, <code>C</code> should be drained exactly once before each <code>Reset</code>.</p>
+
 <p>Resetting a timer without draining it will make the runtime drop the value, as <code>C</code> is of size 1 and the runtime performs <a href="https://golang.org/src/time/sleep.go?s=#L134">a lossy send on it</a>.</p>
-<h4 id="timetimer-putting-it-together">time.Timer: putting it together</h4>
+
+<h4 id="time-timer-putting-it-together">time.Timer: putting it together</h4>
+
 <ul>
 <li><code>Stop</code> is safe only after <code>New</code> and <code>Reset</code>.</li>
 <li><code>Reset</code> is only valid after <code>Stop</code>.</li>
 <li>Received value is valid only if channel is drained after each <code>Stop</code>.</li>
 <li>The channel should be drained if and only if the channel has not been read yet.</li>
 </ul>
+
 <p>Here is a flowchart of the allowed transitions, uses and calls on a timer:
-<img src="/concurrency/timer.png" alt="Allowed transitions"></p>
+<img src="/concurrency/timer.png" alt="Allowed transitions" /></p>
+
 <p>An example of a correct re-usage for a timer, which fixes one of the trivia at the beginning of this post:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">toChanTimed</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Timer</span><span class="p">,</span> <span class="nx">ch</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">t</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
@@ -218,45 +271,53 @@ This is even worsened by the fact that the <code>Timer</code> returned by <code>
 </span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span> <span class="p">{</span>
 		<span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span>
 	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>This ensures the timer is ready to be re-used after <code>toChanTimed</code> returns.</p>
+<span class="p">}</span></code></pre></div>
+<p>This ensures the timer is ready to be re-used after <code>toChanTimed</code> returns.</p>
+
 <h1 id="want-to-know-more">Want to know more?</h1>
+
 <p>All types and functions described in this post rely on runtime timers, they just use it differently. <a href="https://golang.org/src/time/sleep.go">time/sleep.go</a> contains most of the code using them.</p>
+
 <p>Here is a table with fields of <code>runtimeTimer</code> set by the <code>time</code> package:</p>
+
 <table>
 <thead>
 <tr>
 <th>Constructor</th>
-<th style="text-align:center"><code>when</code></th>
-<th style="text-align:center"><code>period</code></th>
-<th style="text-align:center"><code>f</code></th>
-<th style="text-align:center"><code>arg</code></th>
+<th align="center"><code>when</code></th>
+<th align="center"><code>period</code></th>
+<th align="center"><code>f</code></th>
+<th align="center"><code>arg</code></th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td>NewTicker(d)</td>
-<td style="text-align:center"><code>d</code></td>
-<td style="text-align:center">set to <code>d</code></td>
-<td style="text-align:center"><code>sendTime</code></td>
-<td style="text-align:center"><code>C</code></td>
+<td align="center"><code>d</code></td>
+<td align="center">set to <code>d</code></td>
+<td align="center"><code>sendTime</code></td>
+<td align="center"><code>C</code></td>
 </tr>
+
 <tr>
 <td>NewTimer(d)</td>
-<td style="text-align:center"><code>d</code></td>
-<td style="text-align:center">not set</td>
-<td style="text-align:center"><code>sendTime</code></td>
-<td style="text-align:center"><code>C</code></td>
+<td align="center"><code>d</code></td>
+<td align="center">not set</td>
+<td align="center"><code>sendTime</code></td>
+<td align="center"><code>C</code></td>
 </tr>
+
 <tr>
 <td>AfterFunc(d,f)</td>
-<td style="text-align:center"><code>d</code></td>
-<td style="text-align:center">not set</td>
-<td style="text-align:center"><code>goFunc</code></td>
-<td style="text-align:center"><code>f</code></td>
+<td align="center"><code>d</code></td>
+<td align="center">not set</td>
+<td align="center"><code>goFunc</code></td>
+<td align="center"><code>f</code></td>
 </tr>
 </tbody>
 </table>
+
 <p>Runtime timers do not rely on goroutines and are bucketed together to fire in an efficient and precise manner. In <a href="https://golang.org/src/runtime/time.go">runtime/time.go</a> you can start digging into the actual implementation. Have fun!</p>
 
     </div>

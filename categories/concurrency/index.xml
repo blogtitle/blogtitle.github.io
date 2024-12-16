@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Concurrency on Blog Title</title>
@@ -6,7 +6,11 @@
     <description>Recent content in Concurrency on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate><atom:link href="https://blogtitle.github.io/categories/concurrency/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate>
+    
+	<atom:link href="https://blogtitle.github.io/categories/concurrency/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Sneaky race conditions and granular locks</title>
       <link>https://blogtitle.github.io/sneaky-race-conditions-and-granular-locks/</link>
@@ -23,9 +27,10 @@ This is one of the reasons why Go has a race detector. You should always run you
       <pubDate>Thu, 05 Dec 2019 20:07:04 +0100</pubDate>
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-3-channels/</guid>
-      <description>Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement. To demonstrate how much can be implemented with just those two primitives I will rewrite the sync package from scratch.
-In doing so I&amp;rsquo;m just going to accept some compromises:
- This post is about expressive power, not speed. The examples will correctly express the primitives but might not be as fast as the real ones.</description>
+      <description>Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+The sync package has evolved since then and some primitives have become available.
+While all the channel and select semantics have stayed the same, please consider this as a post on how to better understand channels semantics rather than documentation or replacement for the sync package.
+Previous Post Today I&amp;rsquo;m going to dive into the expressive power of Go channels and the select statement.</description>
     </item>
     
     <item>
@@ -46,8 +51,9 @@ Modern devices are going in the direction of having a lot of FPS and web develop
       
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-2-timers/</guid>
       <description>As I stated in my previous article timers are hard to use the right way so here are some handful tips.
-Preface If you don&amp;rsquo;t think dealing with time and timers while also juggling goroutines is hard, here are some juicy bugs related to time.Timer:
- time: Timer.Reset is not possible to use correctly #14038 time: Timer.C can still trigger even after Timer.Reset is called #11513 time: document proper usage of Timer.</description>
+Edit (16 Dec 2024) This post is still here for historical reasons, but it&amp;rsquo;s now quite old.
+Many of the issues in this post have been corrected and some footguns don&amp;rsquo;t hold true anymore.
+Please consider this as a window into a &amp;ldquo;previous Go experience&amp;rdquo; and nothing more.</description>
     </item>
     
     <item>
@@ -58,8 +64,7 @@ Preface If you don&amp;rsquo;t think dealing with time and timers while also jug
       <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-1/</guid>
       <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
 Today I decided to start sharing a couple of tricks to handle some peculiar cases.
-Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.
-To do so you can either use context or time, both are fine.</description>
+Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
     </item>
     
   </channel>

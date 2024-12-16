@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.56.0" />
+
+
+<title>Let&#39;s Go to Go2 - Blog Title</title>
+<meta property="og:title" content="Let&#39;s Go to Go2 - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/dotstar.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Let&#39;s Go to Go2</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2021-05-07</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/rob">Rob
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      
+
+<h1 id="preface">Preface</h1>
+
+<p>In <a href="blogtitle.github.io/go-generics/">my previous post</a> I summarized the <a href="https://go.googlesource.com/proposal/+/refs/heads/master/design/43651-type-parameters.md">latest generics proposal for Go</a>.</p>
+
+<p>In this post I&rsquo;m gonna use it a bit, and misuse it a lot.</p>
+
+<h1 id="the-problem">The problem</h1>
+
+<p>Sometimes I find myself writing code to run the same function in parallel with itself with different inputs, for example to process a batch of data.</p>
+
+<p>This is not super complicated code, but it&rsquo;s not exactly straightforward and can sometimes be tricky to get right.</p>
+
+<p>There are many ways to implement this, but they all look more or less like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">work</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="c1">// Heavy computation.
+</span><span class="c1"></span>	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="nx">n</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">parallelWork</span><span class="p">(</span><span class="nx">out</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">nWorkers</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">nWorkers</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">nWorkers</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">in</span> <span class="p">{</span>
+				<span class="nx">out</span> <span class="o">&lt;-</span> <span class="nf">work</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}()</span>
+	<span class="p">}</span>
+
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">out</span><span class="p">,</span> <span class="nx">in</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">),</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+	<span class="nx">input</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">input</span> <span class="p">{</span>
+			<span class="nx">in</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+		<span class="p">}</span>
+		<span class="nb">close</span><span class="p">(</span><span class="nx">in</span><span class="p">)</span>
+	<span class="p">}()</span>
+	<span class="k">go</span> <span class="nf">parallelWork</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span> <span class="nx">in</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="nx">res</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="k">for</span> <span class="nx">o</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">out</span> <span class="p">{</span>
+		<span class="nx">res</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div>
+<p>Note that the bit I usually want to write and that I want the reader and code reviewer to focus on is <code>work</code> and the amount of parallelism the rest is more or less boilerplate or noise.</p>
+
+<p>If we remove the noise from above, we are left with something like this:</p>
+<div class="highlight"><pre class="chroma">input := []int{3, 4, 1, 5, 5, 7, 9}
+func work(n int) int {
+  // Heavy computation.
+  time.Sleep(10 * time.Millisecond)
+  return n * n
+}
+res := parallel(4, work, input)
+fmt.Println(res)</pre></div>
+<p>The problem is that without generics it is hard to abstract this kind of pattern and create a reusable function for it.</p>
+
+<h1 id="the-solution">The solution</h1>
+
+<p>Let&rsquo;s try to build a more generic and readable helper for this.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">parallel1</span><span class="p">[</span><span class="nx">IN</span><span class="p">,</span> <span class="nx">OUT</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">IN</span><span class="p">,</span> <span class="nx">work</span> <span class="kd">func</span><span class="p">(</span><span class="nx">IN</span><span class="p">)</span><span class="nx">OUT</span><span class="p">,</span> <span class="nx">parallelism</span> <span class="kt">int</span><span class="p">)(</span><span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">OUT</span><span class="p">){</span>
+  <span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">OUT</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">parallelism</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">parallelism</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">in</span> <span class="p">{</span>
+				<span class="nx">out</span> <span class="o">&lt;-</span> <span class="nf">work</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}()</span>
+	<span class="p">}</span>
+  <span class="k">go</span> <span class="kd">func</span><span class="p">(){</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+  <span class="p">}()</span>
+<span class="p">}</span></code></pre></div>
+<p>With this, our code will become a bit less noisy:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">in</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+<span class="nx">input</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">input</span> <span class="p">{</span>
+		<span class="nx">in</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+	<span class="p">}</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">in</span><span class="p">)</span>
+<span class="p">}()</span>
+<span class="nx">out</span> <span class="o">:=</span> <span class="nf">parallel1</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">res</span> <span class="p">[]</span><span class="kt">int</span>
+<span class="k">for</span> <span class="nx">o</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">out</span> <span class="p">{</span>
+	<span class="nx">res</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span></code></pre></div>
+<p>Most of the time in a real program the input won&rsquo;t come from a slice and the outputs will also very likely not go into a slice, it will likely be files or sockets.
+Moreover most of these functions won&rsquo;t be generic as they&rsquo;ll likely have to deal with real data.</p>
+
+<p>Anyways, to simulate what would be in a real program we can build helpers.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">fromSlice</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">s</span> <span class="p">[]</span><span class="nx">T</span><span class="p">)(</span><span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">){</span>
+  <span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">{</span>
+			<span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+		<span class="p">}</span>
+		<span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+	<span class="p">}()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">toSlice</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">c</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)[]</span><span class="nx">T</span><span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">s</span> <span class="p">[]</span><span class="nx">T</span>
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">c</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">s</span>
+<span class="p">}</span></code></pre></div>
+<p>Thanks to these now our program looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">in</span> <span class="o">:=</span> <span class="nf">fromSlice</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">})</span>
+<span class="nx">out</span> <span class="o">:=</span> <span class="nf">parallel1</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nx">work</span><span class="p">)</span>
+<span class="nx">res</span> <span class="o">:=</span> <span class="nf">toSlice</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span></code></pre></div>
+<p>At this point I think we moved away most of the noise without losing in readability.</p>
+
+<p>And this is where we should stop. The only things we could add are a context argument to all functions that spawn goroutines, and maybe an error channel just in case we have to parallelize operations that might fail.</p>
+
+<p>But that&rsquo;s it.</p>
+
+<p>That said, I&rsquo;m not gonna stop here today because this is not production code, but it&rsquo;s a post on my personal blog.</p>
+
+<h1 id="let-the-abuse-begin">Let the abuse begin</h1>
+
+<p><strong>Please do not use this code anywhere</strong>.</p>
+
+<p>Let&rsquo;s start by saying that we should add support for errors and context, but in a standardized and modular way.</p>
+
+<p>To do this we define a few simple helpers that we will use from now on:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Sink is where data and errors go to.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Sink</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Vals</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="nx">T</span>
+	<span class="nx">Errs</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="kt">error</span>
+<span class="p">}</span>
+
+<span class="c1">// Source is where data and previous errors come from.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Vals</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span>
+	<span class="nx">Errs</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kt">error</span>
+<span class="p">}</span>
+
+<span class="c1">// NewBufferedPipe creates a pipe connecting a Sink and a Source, with a buffer.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">NewBufferedPipe</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">bufSize</span><span class="p">,</span> <span class="nx">errBufSize</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">Sink</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="p">{</span>
+	<span class="nx">v</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">bufSize</span><span class="p">)</span>
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">error</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">Sink</span><span class="p">[</span><span class="nx">T</span><span class="p">]{</span><span class="nx">v</span><span class="p">,</span> <span class="nx">e</span><span class="p">},</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]{</span><span class="nx">v</span><span class="p">,</span> <span class="nx">e</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// NewPipe creates an unbuffered pipe.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">NewPipe</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]()</span> <span class="p">(</span><span class="nx">Sink</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">NewBufferedPipe</span><span class="p">[</span><span class="nx">T</span><span class="p">](</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// RunPipeCtx runs a pipeline in a child of the provided context.
+</span><span class="c1">// When run returns the context is cancelled.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">RunPipeCtx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">max</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">run</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">abort</span> <span class="kd">func</span><span class="p">()))</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">innerCtx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span>
+	<span class="kd">var</span> <span class="nx">cancel</span> <span class="kd">func</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">max</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">innerCtx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="p">=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithCancel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">innerCtx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="p">=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="nf">cancel</span><span class="p">()</span>
+	<span class="nf">run</span><span class="p">(</span><span class="nx">innerCtx</span><span class="p">,</span> <span class="nx">cancel</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// RunPipe is a helper to run a pipe in the background context.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">RunPipe</span><span class="p">(</span><span class="nx">max</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">run</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">abort</span> <span class="kd">func</span><span class="p">()))</span> <span class="p">{</span>
+	<span class="nf">RunPipeCtx</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">max</span><span class="p">,</span> <span class="nx">run</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div>
+<p>With these, we can start working on building blocks to create arbitrarily complicated pipelines with just a few lines of code and an immense cognitive overhead for the reader.</p>
+
+<p>Let&rsquo;s see some examples with the potential data sources:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">FromChan</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">c</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]{</span><span class="nx">c</span><span class="p">,</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">error</span><span class="p">)}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">FromVars</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">vs</span> <span class="o">...</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nf">FromSlice</span><span class="p">(</span><span class="nx">vs</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">FromShortSlice</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">slice</span> <span class="p">[]</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+	<span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">))</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">slice</span> <span class="p">{</span>
+		<span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">v</span>
+	<span class="p">}</span>
+	<span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nf">FromChan</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div>
+<p>We can do something similar for <code>io.Reader</code> if we are, for example, reading lines from a file:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">FromReader</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">split</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">SplitFunc</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span> <span class="p">{</span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewScanner</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">split</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">s</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">split</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">snk</span><span class="p">,</span> <span class="nx">src</span> <span class="o">:=</span> <span class="nx">NewPipe</span><span class="p">[</span><span class="kt">string</span><span class="p">]()</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">snk</span><span class="p">.</span><span class="nx">Vals</span><span class="p">)</span>
+		<span class="k">for</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Scan</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">():</span>
+				<span class="k">return</span>
+			<span class="k">case</span> <span class="nx">snk</span><span class="p">.</span><span class="nx">Vals</span> <span class="o">&lt;-</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Text</span><span class="p">():</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Err</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nf">send</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">snk</span><span class="p">.</span><span class="nx">Errs</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="k">return</span> <span class="nx">src</span>
+<span class="p">}</span></code></pre></div>
+<p>The possibilities for creation operators are unlimited, we could also take a generator function, but let&rsquo;s stop here and take a look at the actual fun stuff: modifying operators.</p>
+
+<p>These are the signatures of the stuff that will manipulate our pipes:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">Map</span><span class="p">[</span><span class="nx">In</span><span class="p">,</span> <span class="nx">Out</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">In</span><span class="p">],</span>
+    <span class="nx">transform</span> <span class="kd">func</span><span class="p">(</span><span class="nx">In</span><span class="p">)</span> <span class="p">(</span><span class="nx">Out</span><span class="p">,</span> <span class="kt">error</span><span class="p">))</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">Out</span><span class="p">]{</span>
+
+<span class="kd">func</span> <span class="nx">Parallel</span><span class="p">[</span><span class="nx">In</span><span class="p">,</span> <span class="nx">Out</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">In</span><span class="p">],</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">,</span>
+    <span class="nx">transform</span> <span class="nx">Transformation</span><span class="p">[</span><span class="nx">In</span><span class="p">,</span> <span class="nx">Out</span><span class="p">])</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">Out</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Filter</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span>
+    <span class="nx">filter</span> <span class="kd">func</span><span class="p">(</span><span class="nx">T</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Concat</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">ins</span> <span class="o">...</span><span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Merge</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">ins</span> <span class="o">...</span><span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Partition</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span>
+    <span class="nx">matcher</span> <span class="kd">func</span><span class="p">(</span><span class="nx">T</span><span class="p">)</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">(</span><span class="nx">matches</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span> <span class="nx">nonMatches</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Tap</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span>
+    <span class="nx">tapVals</span> <span class="kd">func</span><span class="p">(</span><span class="nx">T</span><span class="p">),</span> <span class="nx">tapErrs</span> <span class="kd">func</span><span class="p">(</span><span class="kt">error</span><span class="p">))</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">BufferCount</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">],</span> <span class="nx">bufSize</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">Source</span><span class="p">[[]</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span>
+
+<span class="kd">func</span> <span class="nx">Pairwise</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">in</span> <span class="nx">Source</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="nx">Source</span><span class="p">[[</span><span class="mi">2</span><span class="p">]</span><span class="nx">T</span><span class="p">]</span> <span class="p">{</span></code></pre></div>
+<p>Think about it for a second.
+One day Go code might look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nf">RunPipe</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">_</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nx">urls</span> <span class="o">:=</span> <span class="nf">FromFile</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="s">&#34;user_urls.txt&#34;</span><span class="p">)</span>
+  <span class="nx">bodies</span> <span class="o">:=</span> <span class="nf">Parallel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">urls</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span>
+  <span class="nx">parsed</span> <span class="o">:=</span> <span class="nf">Parallel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">bodies</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">parseJSON</span><span class="p">)</span>
+  <span class="nx">admins</span> <span class="o">:=</span> <span class="nf">Filter</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">parsed</span><span class="p">,</span> <span class="nx">isAdmin</span><span class="p">)</span>
+  <span class="nx">entries</span> <span class="o">:=</span> <span class="nf">Map</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">admins</span><span class="p">,</span> <span class="nx">toJSON</span><span class="p">)</span>
+  <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ToFile</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">entries</span><span class="p">,</span> <span class="s">&#34;admins.txt&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="c1">// TODO check this err instead.
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+<span class="p">})</span></code></pre></div>
+<p>Wouldn&rsquo;t that just be the dream?</p>
+
+<p>Short answer: no.</p>
+
+<p>The operators variety would get so broad reading any code would require an immense amount of knowledge.
+ This kind of stuff reminds me of the difficulty of reading complex pipes in rxjs: I have no doubt those make your code compact, but that isn&rsquo;t always the objective.</p>
+
+<p>When the go2go tool came out I wrote more than a thousand lines of code just of operators, and I was barely getting started.
+ I&rsquo;m not sure that&rsquo;s what our community should go for. If you want to read the code I&rsquo;ll publish it. Please let me know <a href="TODO">in this survey</a> but promise you&rsquo;ll never use that code.</p>
+
+<h1 id="the-challenge">The challenge</h1>
+
+<p>The challenge will be to provide <strong>some</strong> helpers, so that it doesn&rsquo;t happen that everyone has to re-implement a threadpool every time they need some parallelism, but at the same time it should keep the code easy to read for newcomers.</p>
+
+<p>This is, I think, the biggest challenge we are going to face in the coming years.
+As soon as we get generics I&rsquo;m sure we&rsquo;ll get a plethora of libraries that do exactly what I talked about in this post, and we&rsquo;ll have to carefully decide how hard we want to make our language to read for the sake of sparing a few keystrokes every now and then.</p>
+
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/go">Go</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/golang">golang</a><a href="/tags/generics">generics</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-119970190-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+  </body>
+</html>
+
