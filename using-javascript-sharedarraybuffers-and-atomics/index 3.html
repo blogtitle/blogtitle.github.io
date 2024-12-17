@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.56.0" />
+
+
+<title>Using JavaScript SharedArrayBuffers and Atomics - Blog Title</title>
+<meta property="og:title" content="Using JavaScript SharedArrayBuffers and Atomics - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/dotstar.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Using JavaScript SharedArrayBuffers and Atomics</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2019-03-22</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/rob">Rob
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      
+
+<p>I&rsquo;m not a <a href="https://blogtitle.github.io/lets-talk-about-javascript/">big fan of JavaScript</a> but <a href="https://blogtitle.github.io/categories/concurrency/">I like parallel programming</a> and JS has some interesting concepts of it.</p>
+
+<p>In addition to <a href="https://www.youtube.com/watch?v=cCOL7MC4Pl0">the event loop</a> I&rsquo;ve recently got to know the concept of <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web Workers</a>. They are real threads that execute in parallel with the main thread, and are allowed to wait and block as much as they want.</p>
+
+<p>Modern devices are going in the direction of having <a href="https://support.techsmith.com/hc/en-us/articles/212255437-Apple-Device-Frame-Per-Second-Recording-Capability">a lot of FPS</a> and web developers want to maintain the user experience smooth. A good way to address it is to handle animations and UI-related tasks on the main thread and everything else in a worker.</p>
+
+<p>This creates several issues of synchronization and communication: workers are only allowed to post messages to communicate, making coordination very burdensome and slow.</p>
+
+<h1 id="a-potential-solution">A potential solution</h1>
+
+<p>Currently Chrome 67+ implements <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer"><code>SharedArrayBuffer</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics"><code>Atomics</code></a>.</p>
+
+<p>The concept of a Shared Array Buffer is that you post a message to a worker, but instead of copying the content of the array you send <strong>a reference to it</strong>, so that multiple workers have visibility on a shared chunk of memory.</p>
+
+<p>The concept of Atomics is that they provide operations that can happen &ldquo;at once&rdquo;.</p>
+
+<p>Here is an example of why atomics are important: when you perform an addition you issue several operations.</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">a</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span>
+<span class="c1">// ↑ is equivalent to the following:
+</span><span class="c1"></span><span class="kd">let</span> <span class="nx">reg</span> <span class="o">=</span> <span class="nx">a</span><span class="p">;</span>
+<span class="nx">reg</span> <span class="o">+=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="nx">a</span> <span class="o">=</span> <span class="nx">reg</span><span class="p">;</span>
+</code></pre></div>
+<p>This is not an issue in normal JS because you are granted that <strong>only one function executes at every given time</strong>.</p>
+
+<p>Introducing Workers and shared memory breaks this assumption, so someone might change the value of <code>a</code> while you are incrementing <code>reg</code>, and you end up overwriting their value. To address this you can use <code>Atomic.add</code>.</p>
+
+<h1 id="a-step-forward-nan-backwards">A step forward, NaN backwards</h1>
+
+<p>While atomics give a great benefit, they are never easy to use. Moreover atomics are very low-level APIs and to express high-level behaviors it&rsquo;s usually needed to have multiple atomic operations interact with each other.</p>
+
+<p>One common pattern in parallel programming is to have the concept of <a href="https://en.wikipedia.org/wiki/Critical_section">critical sections</a> and <a href="https://en.wikipedia.org/wiki/Barrier_(computer_science)">barriers</a>. If you write Go you are probably familiar with <code>sync.Mutex</code> and <code>sync.WaitGroup</code> which implement those concepts.
+The problem in JS is that Atomics are very low level and give the basic APIs, not the high level ones developers need.</p>
+
+<p>Since I spent some time on those subjects I thought I might share some code and thoughts on how to leverage atomics to implement mutexes and wait groups.</p>
+
+<h1 id="mutexes">Mutexes</h1>
+
+<p>Mutexes are primitives that grant that only one thread can enter a critical section at the same time. A critical section is the portion of the code between a <code>lock</code> and an <code>unlock</code> call.</p>
+
+<p>In details:</p>
+
+<ul>
+<li>Mutexes have 2 states: unlocked and locked.</li>
+<li>Calling <code>lock()</code> on a mutex should transition it in the locked state.</li>
+<li>Calling <code>lock()</code> on a mutex should block and wait if the mutex is locked by someone else.</li>
+<li>Calling <code>unlock()</code> on a mutex should transition it to the unlocked state.</li>
+<li>Calling <code>unlock()</code> on an unlocked mutex is not a valid operation.</li>
+</ul>
+
+<p>For this we need the following atomic primitives:</p>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/compareExchange"><code>Atomics.compareExchange</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait"><code>Atomics.wait</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/notify"><code>Atomics.notify</code></a></li>
+</ul>
+
+<p>Let&rsquo;s take a look at the code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">locked</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">const</span> <span class="nx">unlocked</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nx">Mutex</span> <span class="p">{</span>
+  <span class="cm">/**
+</span><span class="cm">   * Instantiate Mutex.
+</span><span class="cm">   * If opt_sab is provided, the mutex will use it as a backing array.
+</span><span class="cm">   * @param {SharedArrayBuffer} opt_sab Optional SharedArrayBuffer.
+</span><span class="cm">   */</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">opt_sab</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_sab</span> <span class="o">=</span> <span class="nx">opt_sab</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SharedArrayBuffer</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_mu</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_sab</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Instantiate a Mutex connected to the given one.
+</span><span class="cm">   * @param {Mutex} mu the other Mutex.
+</span><span class="cm">   */</span>
+  <span class="kr">static</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mu</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Mutex</span><span class="p">(</span><span class="nx">mu</span><span class="p">.</span><span class="nx">_sab</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">lock</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(;;)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">Atomics</span><span class="p">.</span><span class="nx">compareExchange</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_mu</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">unlocked</span><span class="p">,</span> <span class="nx">locked</span><span class="p">)</span> <span class="o">==</span> <span class="nx">unlocked</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">Atomics</span><span class="p">.</span><span class="nx">wait</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_mu</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">locked</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">unlock</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Atomics</span><span class="p">.</span><span class="nx">compareExchange</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_mu</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">locked</span><span class="p">,</span> <span class="nx">unlocked</span><span class="p">)</span> <span class="o">!=</span> <span class="nx">locked</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&#34;Mutex is in inconsistent state: unlock on unlocked Mutex.&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">Atomics</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_mu</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This code works with just a backing shared <code>Int32</code> which is <code>this_mu[0]</code>. I&rsquo;m not using an <code>Int8</code> because some atomic operations (like <code>wait</code>) only work on <code>Int32</code>.</p>
+
+<p>When <code>lock</code> is called it tries to transition the mutex to the <code>locked</code> state and checks for success.
+This is done via <code>compareExchange</code>, which means: &ldquo;load the value and swap it with <code>locked</code> if and only if it is <code>unlocked</code>&rdquo;. <code>compareExchange</code> returns the old value of the variable which we can use to check if we managed to acquire the mutex or not. If we didn&rsquo;t, we go to sleep until someone calls <code>unlock</code>.</p>
+
+<p>The sleep is implemented with a <code>wait</code>: we pass it a location to wait on and <strong>the expected value</strong>(locked). This bit is very important because if someone unlocked the mutex between our <code>compareExchange</code> and our <code>wait</code> we would end up sleeping forever.
+Instead, if <code>wait</code> detects that the value is different from the one you expect, it will not suspend execution.</p>
+
+<p>The <code>unlock</code> is fairly simple: we <code>compareExchange</code> a <code>locked</code> state with an <code>unlocked</code> state. If the mutex is in inconsistent state we throw, otherwise we notify one waiting thread that they can resume execution from a <code>lock</code> call. Note that if no one is waiting, the notify will be ignored.</p>
+
+<h1 id="waitgroup">WaitGroup</h1>
+
+<p>WaitGroup is normally used to wait until all workers are done with their job and then read the cumulative output.</p>
+
+<ul>
+<li>Calling <code>add(n)</code> on a WaitGroup should change the counter by adding the given value</li>
+<li>Calling <code>done</code> on a WaitGroup is equivalent to calling <code>add(-1)</code></li>
+<li>Calling <code>wait</code> on a WaitGroup should suspend execution until the counter is equal to <code>0</code></li>
+</ul>
+
+<p>Beware that <code>add</code> should always be called <strong>before the work is started</strong>, and this is why I added an initial value in the constructor. Calling <code>add</code> in the worker that calls <code>done</code> causes race conditions and might result in undesired early returns from <code>wait</code>.</p>
+
+<p>To implement it I used the following primitives:</p>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/add"><code>Atomics.add</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load"><code>Atomics.load</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait"><code>Atomics.wait</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/notify"><code>Atomics.notify</code></a></li>
+</ul>
+
+<p>And here is the code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">class</span> <span class="nx">WaitGroup</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">initial</span><span class="p">,</span> <span class="nx">opt_sab</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_sab</span> <span class="o">=</span> <span class="nx">opt_sab</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SharedArrayBuffer</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_wg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_sab</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">initial</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kr">static</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">wg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">WaitGroup</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">wg</span><span class="p">.</span><span class="nx">_sab</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">add</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">Atomics</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_wg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">n</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">current</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;WaitGroup is in inconsistent state: negative count.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">current</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">Atomics</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_wg</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">done</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">wait</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">Atomics</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_wg</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">Atomics</span><span class="p">.</span><span class="nx">wait</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_wg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>As first thing the <code>add</code> implementation increments the counter with the given value. Since <code>add</code> returns the old value, we increment it with <code>n</code> and then reason on it as if it was frozen in time. We load the counter only once, and that grants coherence of this call.</p>
+
+<p>The <code>notify</code> is called with the default amount of waiters, which is infinity.</p>
+
+<p>The reason we are not checking if the counter is <code>0</code> in a wakeup from a wait is that a notify is called only in the event the counter reaches 0 during an add.</p>
+
+<h1 id="put-it-together">Put it together</h1>
+
+<p>Here is a simple example of how to use those primitives:</p>
+
+<p><code>index.html</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/javascript&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;sync.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/javascript&#34;</span><span class="p">&gt;</span>
+  <span class="k">const</span> <span class="nx">workers</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">const</span> <span class="nx">sab</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SharedArrayBuffer</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+  <span class="k">const</span> <span class="nx">mu</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Mutex</span><span class="p">();</span>
+  <span class="k">const</span> <span class="nx">wg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WaitGroup</span><span class="p">(</span><span class="nx">size</span><span class="p">);</span>
+  <span class="c1">// Warning: using a number that is too high might crash your browser.
+</span><span class="c1"></span>  <span class="k">const</span> <span class="nx">size</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+
+  <span class="c1">// Spawn a group of workers.
+</span><span class="c1"></span>  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">workers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Start the waiter
+</span><span class="c1"></span>  <span class="k">const</span> <span class="nx">waiter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;waiter.js&#39;</span><span class="p">);</span>
+  <span class="nx">waiter</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span><span class="nx">swg</span><span class="o">:</span><span class="nx">wg</span><span class="p">,</span> <span class="nx">sc</span><span class="o">:</span><span class="nx">sab</span><span class="p">});</span>
+
+  <span class="c1">// Start the work.
+</span><span class="c1"></span>  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">w</span> <span class="k">of</span> <span class="nx">workers</span><span class="p">){</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span><span class="nx">swg</span><span class="o">:</span><span class="nx">wg</span><span class="p">,</span> <span class="nx">smu</span><span class="o">:</span><span class="nx">mu</span><span class="p">,</span> <span class="nx">sc</span><span class="o">:</span><span class="nx">sab</span><span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
+<p><code>waiter.js</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">importScripts</span><span class="p">(</span><span class="s1">&#39;sync.js&#39;</span><span class="p">);</span>
+
+<span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;waiter started&#39;</span><span class="p">);</span>
+  <span class="c1">// Deserialize data.
+</span><span class="c1"></span>  <span class="k">const</span> <span class="p">{</span><span class="nx">swg</span><span class="p">,</span> <span class="nx">sc</span><span class="p">}</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+  <span class="k">const</span> <span class="nx">wg</span> <span class="o">=</span> <span class="nx">WaitGroup</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">swg</span><span class="p">);</span>
+  <span class="k">const</span> <span class="nx">count</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="nx">sc</span><span class="p">);</span>
+
+  <span class="c1">// Wait for workers to terminate.
+</span><span class="c1"></span>  <span class="nx">wg</span><span class="p">.</span><span class="nx">wait</span><span class="p">();</span>
+
+  <span class="c1">// The following lines will always execute last.
+</span><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;final value:&#34;</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;waiter done&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</code></pre></div>
+<p><code>worker.js</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">importScripts</span><span class="p">(</span><span class="s1">&#39;sync.js&#39;</span><span class="p">);</span>
+
+<span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;worker started&#39;</span><span class="p">);</span>
+  <span class="c1">// Deserialize data.
+</span><span class="c1"></span>  <span class="k">const</span> <span class="p">{</span><span class="nx">swg</span><span class="p">,</span> <span class="nx">smu</span><span class="p">,</span> <span class="nx">sc</span><span class="p">}</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+  <span class="k">const</span> <span class="nx">wg</span> <span class="o">=</span> <span class="nx">WaitGroup</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">swg</span><span class="p">);</span>
+  <span class="k">const</span> <span class="nx">mu</span> <span class="o">=</span> <span class="nx">Mutex</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">smu</span><span class="p">);</span>
+  <span class="k">const</span> <span class="nx">count</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Int32Array</span><span class="p">(</span><span class="nx">sc</span><span class="p">);</span>
+
+  <span class="c1">// Do some stuff.
+</span><span class="c1"></span>  <span class="k">const</span> <span class="nx">rnd</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="o">|</span><span class="mi">0</span><span class="p">;</span>
+
+  <span class="nx">mu</span><span class="p">.</span><span class="nx">lock</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;start of critical section&#34;</span><span class="p">);</span>
+  <span class="c1">// This section does not require atomic operations, the mutex takes care of it.
+</span><span class="c1"></span>  <span class="c1">// This allows to do complex operations with the guarantee that no other worker
+</span><span class="c1"></span>  <span class="c1">// is in it. For example we could modify multiple sections of the array without
+</span><span class="c1"></span>  <span class="c1">// worrying that some might have changed before we are done.
+</span><span class="c1"></span>
+  <span class="c1">// This is a very simple example.
+</span><span class="c1"></span>  <span class="nx">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">rnd</span><span class="p">;</span>
+  <span class="c1">// Load count[0] again, which won&#39;t have changed.
+</span><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`worker: </span><span class="si">${</span><span class="nx">rnd</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;end of critical section&#34;</span><span class="p">);</span>
+  <span class="nx">mu</span><span class="p">.</span><span class="nx">unlock</span><span class="p">();</span>
+
+  <span class="c1">// Simulate intensive computation.
+</span><span class="c1"></span>  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="mi">100000</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">);</span>
+
+  <span class="c1">// Signal termination.
+</span><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;worker done&#39;</span><span class="p">);</span>
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</code></pre></div>
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/concurrency">Concurrency</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/javascript">javascript</a><a href="/tags/concurrency">concurrency</a><a href="/tags/patterns">patterns</a><a href="/tags/engineering">engineering</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-119970190-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+  </body>
+</html>
+

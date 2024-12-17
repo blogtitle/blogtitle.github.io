@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.56.0" />
+
+
+<title>Splitting Pipelines - Blog Title</title>
+<meta property="og:title" content="Splitting Pipelines - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/dotstar.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Splitting Pipelines</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2018-07-13</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/rob">Rob
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      
+
+<h1 id="the-problem">The problem</h1>
+
+<p>Some days ago I was looking at some configuration files that were presented in this form:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ini" data-lang="ini"><span class="c1">#</span>
+<span class="c1"># This is a section</span>
+<span class="c1">#</span>
+<span class="na">VALUE_ENABLED</span><span class="o">=</span><span class="s">y</span>
+<span class="c1"># VALUE_DISABLED </span></code></pre></div>
+<p>The problem in reading this stuff is that both comments and non-comments are relevant and none should be ignored since a disabled feature could cause as much trouble as an enabled one.</p>
+
+<p>I would have liked to see comments in a different file than the rest, so I thought: &ldquo;Well, this is an easy job for grep&rdquo;.</p>
+
+<h1 id="the-approach">The approach</h1>
+
+<p>Since I hate to waste processes while I use bash, regardless the significance in term of performance, my first idea was to write something like this:</p>
+
+<p><img src="/pipelines/process-sub-first.png" alt="information flow" /></p>
+
+<p>The problem in this approach is that with tee it is not easy to just split a pipeline unless you know the <code>&gt;(command)</code> trick (aka process substitution).</p>
+
+<p>This is the bash version of the above graph:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1">#Take away empty lines and lines only containing white space</span>
+grep -Ev <span class="s2">&#34;^(|[[:space:]])</span>$<span class="s2">&#34;</span> configfile <span class="p">|</span> 
+<span class="c1">#In a subshell Grep for lines beginning with &#39;#&#39;</span>
+tee &gt;<span class="o">(</span>grep -E <span class="s2">&#34;^#&#34;</span> &gt;                    
+	<span class="c1">#Write result to file and resume the main shell</span> 
+	comments.conf<span class="o">)</span> <span class="p">|</span>                    
+	<span class="c1">#Grep for non-comment lines</span>
+	grep -Ev <span class="s2">&#34;^#&#34;</span> &gt;                     
+	<span class="c1">#Write them to file</span>
+	non-comments.conf                   </code></pre></div>
+<p>In bash <code>&gt;(command)</code> creates a file descriptor to which other commands <strong>can write</strong> and <code>&lt;(command)</code> takes the output of a command and creates a file descriptor from which other commands <strong>can read</strong>.</p>
+
+<p>What is being written to the file descriptor is instead redirected to <code>stdin</code> of <code>command</code> as if it came from a pipeline.</p>
+
+<p>Since tee accepts files as parameters and not commands, this trick is needed if you want to avoid useless creation of FIFOs.</p>
+
+<h2 id="complication">Complication</h2>
+
+<p>This solution is mostly fine, it does what it is supposed to do, but doesn&rsquo;t do something that I realized later being useful: <strong>keeping sections titles</strong> even in the non-comment file.</p>
+
+<p>This:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ini" data-lang="ini"><span class="c1">#</span>
+<span class="c1"># This is a section</span>
+<span class="c1">#</span>
+<span class="na">VALUE_ENABLED</span><span class="o">=</span><span class="s">y</span>
+<span class="c1"># VALUE_DISABLED </span></code></pre></div>
+<p>Should&rsquo;ve become this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ini" data-lang="ini"><span class="c1"># This is a section</span>
+<span class="na">VALUE_ENABLED</span><span class="o">=</span><span class="s">y</span></code></pre></div>
+<p>Since all variables are composed only by upper-case text I changed the solution to be:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">grep -Ev <span class="s2">&#34;^(|[[:space:]])</span>$<span class="s2">&#34;</span> configfile <span class="p">|</span> 
+tee &gt;<span class="o">(</span>grep -E <span class="s2">&#34;^#&#34;</span> &gt; comments.conf<span class="o">)</span> <span class="p">|</span> 
+grep -E <span class="s2">&#34;(^[^#]|^# [A-Z][a-z])&#34;</span> &gt; non-comments.conf </code></pre></div>
+<h1 id="conclusion-tl-dr">Conclusion (TL;DR)</h1>
+
+<p>If you want to split a pipeline or generally write to the stdin of a command as if it was a file use <code>&gt;(command)</code> i.e.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># all 3 commands receive the output of somecommand</span>
+somecommand <span class="p">|</span> tee &gt;<span class="o">(</span>command1<span class="o">)</span> &gt;<span class="o">(</span>command2<span class="o">)</span> <span class="p">|</span> command3</code></pre></div>
+<p>Even the reverse can be useful:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># Obtain differences between the outputs of two commands</span>
+diff &lt;<span class="o">(</span>command1<span class="o">)</span> &lt;<span class="o">(</span>command2<span class="o">)</span></code></pre></div>
+<p>This process is called process substitution and it is almost never useful, but when it is it can save up a great amount of time.</p>
+
+<p>If you are intrestes in some advanced features of bash redirections you can go to the <a href="https://www.gnu.org/software/bash/manual/html_node/Redirections.html">REDIRECTION</a> section of <code>man bash</code>.</p>
+
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/software-engineering">Software engineering</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/bash">bash</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-119970190-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+  </body>
+</html>
+
