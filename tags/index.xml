@@ -6,10 +6,46 @@
     <description>Recent content in Tags on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 May 2021 09:04:30 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 16 Dec 2024 22:19:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>concurrency</title>
+      <link>https://blogtitle.github.io/tags/concurrency/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/concurrency/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>engineering</title>
+      <link>https://blogtitle.github.io/tags/engineering/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/engineering/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://blogtitle.github.io/tags/golang/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>patterns</title>
+      <link>https://blogtitle.github.io/tags/patterns/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/tags/patterns/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>generics</title>
@@ -17,15 +53,6 @@
       <pubDate>Fri, 07 May 2021 09:04:30 +0200</pubDate>
       
       <guid>https://blogtitle.github.io/tags/generics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>golang</title>
-      <link>https://blogtitle.github.io/tags/golang/</link>
-      <pubDate>Fri, 07 May 2021 09:04:30 +0200</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/golang/</guid>
       <description></description>
     </item>
     
@@ -53,33 +80,6 @@
       <pubDate>Wed, 01 Apr 2020 00:00:00 +0300</pubDate>
       
       <guid>https://blogtitle.github.io/tags/funny/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>concurrency</title>
-      <link>https://blogtitle.github.io/tags/concurrency/</link>
-      <pubDate>Wed, 11 Dec 2019 09:33:58 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/concurrency/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>engineering</title>
-      <link>https://blogtitle.github.io/tags/engineering/</link>
-      <pubDate>Wed, 11 Dec 2019 09:33:58 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/engineering/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>patterns</title>
-      <link>https://blogtitle.github.io/tags/patterns/</link>
-      <pubDate>Wed, 11 Dec 2019 09:33:58 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/tags/patterns/</guid>
       <description></description>
     </item>
     

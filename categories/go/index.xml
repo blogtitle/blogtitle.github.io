@@ -6,10 +6,21 @@
     <description>Recent content in Go on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 May 2021 09:04:30 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 16 Dec 2024 22:19:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 4 (unlimited buffer channels)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</guid>
+      <description>Preface It&amp;rsquo;s been almost 6 years since I added to this series, but I thought it was time to resume working on it.
+Since &amp;ldquo;perfect is the opposite of done&amp;rdquo; I thought I would talk about a simple pattern that I haven&amp;rsquo;t covered yet.
+A couple of years ago I worked on a toy library to see if the new-ish generics proposal would finally allow to express some of the most common channel patterns in Go.</description>
+    </item>
     
     <item>
       <title>Let&#39;s Go to Go2</title>
@@ -109,17 +120,6 @@ This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; featur
       <description>Coming from a VB.Net, Java, C# and Python background, when I first started using Go I was very annoyed by the lack of some patterns on a language level. It took me a while using the language to find out those patterns can be easily expressed.
 Here is a collection of some common patterns and the best way I&amp;rsquo;ve found to express them.
 Decorators This feature is extensively used in most object oriented languages, and consists in somehow taking a function or method and enrich it with other effects or properties.</description>
-    </item>
-    
-    <item>
-      <title>Go advanced benchmarking</title>
-      <link>https://blogtitle.github.io/go-advanced-benchmarking/</link>
-      <pubDate>Fri, 11 Jan 2019 22:15:43 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/go-advanced-benchmarking/</guid>
-      <description>The story Sometimes you have to solve a problem that comes in several flavours. Usually complicated problems do not offer a single solution, but there are several solutions that are optimal or terrible depending on which subset of that problem the program will have to solve at runtime.
-One example I faced was to analyse some data flowing in some connections that I was proxying.
-There are two main ways to extract some information from traffic: you can either record the entire traffic to analyse it as soon as it is done, or you can analyse it while it flows(with a buffer window) at the cost of slowing it down.</description>
     </item>
     
   </channel>

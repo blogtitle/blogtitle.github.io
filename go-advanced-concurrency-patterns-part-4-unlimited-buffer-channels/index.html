@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.56.0" />
+
+
+<title>Go advanced concurrency patterns: part 4 (unlimited buffer channels) - Blog Title</title>
+<meta property="og:title" content="Go advanced concurrency patterns: part 4 (unlimited buffer channels) - Blog Title">
+
+
+
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="https://blogtitle.github.io/css/main.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/syntax.css" media="all">
+<link rel="stylesheet" href="https://blogtitle.github.io/css/fonts.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://blogtitle.github.io/" class="nav-logo">
+    <img src="https://blogtitle.github.io/images/dotstar.png" 
+         width="50" 
+         height="50" 
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/authors">Authors</a></li>
+    
+    <li><a href="/categories">Categories</a></li>
+    
+    <li><a href="/tags">Tags</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+  <article class="article">
+    <h1 class="article-title">Go advanced concurrency patterns: part 4 (unlimited buffer channels)</h1>
+    
+				<div class="article-header">
+    <span class="article-header">2024-12-16</span>
+						
+						  - 
+								
+								
+								<a class="article-header" href="/authors/rob">Rob
+								</a>
+								
+						
+				</div>
+    
+
+    <div class="article-content">
+      
+
+<h1 id="preface">Preface</h1>
+
+<p>It&rsquo;s been almost 6 years since I added to this series, but I thought it was time
+to resume working on it.</p>
+
+<p>Since &ldquo;perfect is the opposite of done&rdquo; I thought I would talk about a simple pattern
+that I haven&rsquo;t covered yet.</p>
+
+<p>A couple of years ago I worked on <a href="https://pkg.go.dev/github.com/empijei/channels">a toy library</a>
+to see if the new-ish generics proposal would finally allow to express some of the
+most common channel patterns in Go.</p>
+
+<p>Turns out it did, so I stopped working on it and decided to wait for the community
+or the standard library to actually come up with something better.</p>
+
+<p>I&rsquo;m still not convinced by anything that came out since, so here I am: sharing some
+of the learnings from my experiments so that you can write your own.</p>
+
+<h1 id="disclaimer">Disclaimer</h1>
+
+<p>Probably one of the most common requests that I get from new gophers is &ldquo;how do I
+create a channel with unlimited buffer?&ldquo;. The answer to that is &ldquo;you don&rsquo;t&rdquo;.</p>
+
+<p>The main reason for this is that unlimited channels make code a lot harder to debug
+and issues that would otherwise be symptomatic become silent until a whole system
+comes down.</p>
+
+<p>You can find more <a href="https://github.com/golang/go/issues/20352">in this conversation</a>.</p>
+
+<p>That said, there are some rare cases in which such a feature would allow a system
+to absorb bursty traffic without blocking, or where quickly deallocating or reusing
+producers is much more efficient than just keeping a buffer of what they produced.</p>
+
+<p>For those rare situations the following code can be used.</p>
+
+<h1 id="solutions">Solutions</h1>
+
+<p>The nicest API I could think of is in the form of:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">BufferChan</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span> <span class="p">(</span><span class="nx">out</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span></code></pre></div>
+<p>This allows us to still deal with channels without introducing iterators or things
+that don&rsquo;t work well with built in statements like <code>select</code> or that can&rsquo;t easily
+be cancelled with <code>context</code>.</p>
+
+<p>The semantics would be:</p>
+
+<ul>
+<li>guarantee that all values received on <code>in</code> will be emitted on <code>out</code></li>
+<li>when <code>in</code> is closed and all potentially buffered values have been emitted <code>out</code>
+will be closed.</li>
+</ul>
+
+<p>If you are unfamiliar with the <code>&lt;-chan</code> type declaration, in this case it means
+that this function guarantees to never <em>send</em> on <code>in</code> and prevents its callers
+to ever <em>send</em> on <code>out</code> (closing a channel is a <em>send</em> operation).</p>
+
+<h2 id="when-order-doesn-t-matter-and-the-operation-is-short-lived">When order doesn&rsquo;t matter and the operation is short-lived</h2>
+
+<p>If producers are much faster than consumers and so <code>send</code> operations outnumber
+<code>receive</code> operations, order rarely matters.</p>
+
+<p>For all of those cases where operations are short lived we can use this simple solution:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">BufShortLived</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span> <span class="p">{</span>
+ <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[]</span><span class="nx">T</span>
+ <span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span>
+ <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>         <span class="c1">// Close once we are done
+</span><span class="c1"></span>  <span class="k">for</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">in</span> <span class="p">{</span>      <span class="c1">// Process all input
+</span><span class="c1"></span>   <span class="k">select</span> <span class="p">{</span>
+   <span class="k">case</span> <span class="nx">out</span> <span class="o">&lt;-</span> <span class="nx">v</span><span class="p">:</span>          <span class="c1">// Try to send
+</span><span class="c1"></span>   <span class="k">default</span><span class="p">:</span>                <span class="c1">// If we fail
+</span><span class="c1"></span>    <span class="nx">buf</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>   <span class="c1">// Add to buffer
+</span><span class="c1"></span>   <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">buf</span> <span class="p">{</span>  <span class="c1">// Input has been closed, emit buffered values.
+</span><span class="c1"></span>   <span class="nx">out</span> <span class="o">&lt;-</span> <span class="nx">v</span>
+  <span class="p">}</span>
+ <span class="p">}()</span>
+ <span class="k">return</span> <span class="nx">out</span>
+<span class="p">}</span></code></pre></div>
+<p>This buffers all values that were produced and that the consumers weren&rsquo;t fast enough
+to consume, and emits them back once the channel is closed.</p>
+
+<p>Since the buffer is only ever released at the end of operations, this solution might not be for you.</p>
+
+<p>Please still consider it as it is very simple to read and test.</p>
+
+<h1 id="when-order-does-matter-and-the-operation-lasts-a-while">When order does matter, and the operation lasts a while</h1>
+
+<p>I still have to see a reasonable use case for ordered unlimited channels,
+but since there are some people, especially from other languages communities,
+that insist this is a fundamental feature to have, we might as well talk about it.</p>
+
+<p><em>I cannot stress enough how much harder this will make your life if you use this in production code</em>,
+but this is a blogpost, not a cop, so you do you.</p>
+
+<p>When reading this code consider that operations on <code>nil</code> channels block forever.
+A <code>select</code> case with a <code>nil</code> channel is, therefore, never selected.</p>
+
+<p>Here <code>nout</code> will be <code>nil</code> <em>if and only if</em> there are no buffered values to send,
+otherwise it will be equal to <code>out</code>. We use it to switch on and off its <code>case</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">BufLongLivedOrdered</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span> <span class="p">{</span>
+ <span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span>
+ <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="p">(</span>
+   <span class="nx">queue</span> <span class="p">[]</span><span class="nx">T</span>     <span class="c1">// This is our buffer
+</span><span class="c1"></span>   <span class="nx">next</span>  <span class="nx">T</span>       <span class="c1">// This is the next value to be sent
+</span><span class="c1"></span>   <span class="nx">nout</span>  <span class="kd">chan</span> <span class="nx">T</span>  <span class="c1">// This is a nil-lable reference to &#34;out&#34;
+</span><span class="c1"></span>  <span class="p">)</span>
+  <span class="k">for</span> <span class="nx">in</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">nout</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span> <span class="c1">// Until both &#34;in&#34; and &#34;out&#34; have been disabled.
+</span><span class="c1"></span>   <span class="k">select</span> <span class="p">{</span>
+   <span class="k">case</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">in</span><span class="p">:</span> <span class="c1">// If we receive
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>           <span class="c1">// and &#34;in&#34; has been closed
+</span><span class="c1"></span>     <span class="nx">in</span> <span class="p">=</span> <span class="kc">nil</span>          <span class="c1">// disable this case.
+</span><span class="c1"></span>     <span class="k">continue</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nx">nout</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span> <span class="c1">// If &#34;out&#34; is disabled
+</span><span class="c1"></span>     <span class="nx">nout</span> <span class="p">=</span> <span class="nx">out</span>      <span class="c1">// enable it
+</span><span class="c1"></span>     <span class="nx">next</span> <span class="p">=</span> <span class="nx">v</span>        <span class="c1">// and prepare the value to send.
+</span><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+     <span class="nx">queue</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">queue</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="c1">// otherwise we have already stuff queued, append
+</span><span class="c1"></span>    <span class="p">}</span>
+   <span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>    <span class="c1">// If we send a value
+</span><span class="c1"></span>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">// and ran out of buffer
+</span><span class="c1"></span>     <span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>          <span class="c1">// disable this case
+</span><span class="c1"></span>     <span class="k">continue</span>
+    <span class="p">}</span>
+    <span class="nx">next</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">// otherwise prepare next value to send.
+</span><span class="c1"></span>    <span class="nx">queue</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1">// Consume the buffer.
+</span><span class="c1"></span>   <span class="p">}</span>
+  <span class="p">}</span>
+ <span class="p">}()</span>
+ <span class="k">return</span> <span class="nx">out</span>
+<span class="p">}</span></code></pre></div>
+<p>What I like about this solution is that it doesn&rsquo;t make use of mutexes or conditions
+to protect the buffer or wake up waiters, but solely relies on channel semantics.</p>
+
+<p>Since only one goroutine is ever going to touch <code>in</code> and <code>out</code> we don&rsquo;t need to guard
+against potential race conditions.</p>
+
+<h2 id="improving-on-it">Improving on it</h2>
+
+<p>One minor issue with the solution above is that we give equal priority to sending
+buffered values and receiving new values.</p>
+
+<p>This might, in turn, cause buffers to grow more than necessary. To avoid this, a
+preamble that is a copy of the second <code>case</code> can be added at the beginning of the for,
+just with a <code>default</code> to not block on it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">  <span class="k">for</span> <span class="nx">in</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">nout</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span> <span class="c1">// Same as before
+</span><span class="c1"></span>   <span class="k">select</span> <span class="p">{</span> <span class="c1">// Added block
+</span><span class="c1"></span>   <span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+     <span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
+     <span class="k">continue</span> <span class="c1">// This cannot be a break statement, we need to check the exit condition
+</span><span class="c1"></span>    <span class="p">}</span>
+    <span class="nx">next</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nx">queue</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">continue</span>
+   <span class="k">default</span><span class="p">:</span>
+      <span class="c1">// If we get here no consumers were ready, or no value was buffered,
+</span><span class="c1"></span>      <span class="c1">// just continue.
+</span><span class="c1"></span>   <span class="p">}</span>
+   <span class="c1">// Same select as above
+</span><span class="c1"></span>   <span class="k">select</span> <span class="p">{</span></code></pre></div>
+<p>This will make the code above always try to send before it tries to both send
+and receive at once. In some rare cases this might actually reduce the buffer size.</p>
+
+<h2 id="full-code">Full code</h2>
+
+<p>If you just came here for the code, here it is:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">BufLongLived</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span> <span class="p">{</span>
+	<span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+		<span class="kd">var</span> <span class="p">(</span>
+			<span class="nx">queue</span> <span class="p">[]</span><span class="nx">T</span>
+			<span class="nx">next</span>  <span class="nx">T</span>
+			<span class="nx">nout</span>  <span class="kd">chan</span> <span class="nx">T</span>
+		<span class="p">)</span>
+		<span class="k">for</span> <span class="nx">in</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">nout</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
+                    <span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="nx">next</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="nx">queue</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+				<span class="k">continue</span>
+			<span class="k">default</span><span class="p">:</span>
+			<span class="p">}</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">in</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+					<span class="nx">in</span> <span class="p">=</span> <span class="kc">nil</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="k">if</span> <span class="nx">nout</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="nx">out</span>
+					<span class="nx">next</span> <span class="p">=</span> <span class="nx">v</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+					<span class="nx">queue</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">queue</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+				<span class="p">}</span>
+			<span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="nx">next</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="nx">queue</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="k">return</span> <span class="nx">out</span>
+<span class="p">}</span></code></pre></div>
+<h1 id="conclusions">Conclusions</h1>
+
+<p>In 31 lines of code we implemented a channel operator that gives us a new ordered,
+unlimited buffer channel from an existing one.</p>
+
+<p>I found this quite tricky to get right and I still think that there are rare use
+cases for this, in fact, in my career I have yet to find one. I think you&rsquo;re better
+off trying to find a good size for your buffers or reconsider your architecture
+before you resort to this.</p>
+
+<p>That said, I hope it was useful, happy hacking!</p>
+
+    </div>
+ 
+    <ul class="article-taxonomy">
+                  
+      <hr>
+      <li>
+        <i class="fa fa-category"></i><a href="/categories/go">Go</a><a href="/categories/concurrency">Concurrency</a>
+      </li>
+      
+    
+      
+      <li>
+        <i class="fa fa-tags"></i><a href="/tags/golang">golang</a><a href="/tags/concurrency">concurrency</a><a href="/tags/patterns">patterns</a><a href="/tags/engineering">engineering</a>
+      </li>
+      
+  </article>
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://blogtitle.github.io/index.xml" type="application/rss+xml" target="_blank"><i class="fa fa-rss"></i> RSS feed</a>
+          </li>
+          <li>
+            <a href="https://github.com/AnnaOpss/hugo-chlorine-theme"><i class="fa fa-github"></i> Code</a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-119970190-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+  </body>
+</html>
+

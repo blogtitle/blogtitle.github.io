@@ -6,10 +6,21 @@
     <description>Recent content in golang on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 May 2021 09:04:30 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 16 Dec 2024 22:19:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 4 (unlimited buffer channels)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</guid>
+      <description>Preface It&amp;rsquo;s been almost 6 years since I added to this series, but I thought it was time to resume working on it.
+Since &amp;ldquo;perfect is the opposite of done&amp;rdquo; I thought I would talk about a simple pattern that I haven&amp;rsquo;t covered yet.
+A couple of years ago I worked on a toy library to see if the new-ish generics proposal would finally allow to express some of the most common channel patterns in Go.</description>
+    </item>
     
     <item>
       <title>Let&#39;s Go to Go2</title>
@@ -109,16 +120,6 @@ Please consider this as a window into a &amp;ldquo;previous Go experience&amp;rd
       <description>Writing code is hard. Writing code that has to deal with parallelism and concurrency is harder. Doing all of that an keeping it efficient is challenging.
 Today I decided to start sharing a couple of tricks to handle some peculiar cases.
 Timed channels operations Sometimes you want to time your channels operations: keep trying to do something, and if you can&amp;rsquo;t do it in time just drop the ball.</description>
-    </item>
-    
-    <item>
-      <title>Go: slices gotchas</title>
-      <link>https://blogtitle.github.io/go-slices-gotchas/</link>
-      <pubDate>Fri, 22 Feb 2019 21:12:56 +0100</pubDate>
-      
-      <guid>https://blogtitle.github.io/go-slices-gotchas/</guid>
-      <description>Preface One of the features that I love the most about Go is the fact that it is unsurprising. One could even say that it is boring in some sense. This is a good trait of a programming language. When you code you should focus on the problem at hand, and not on what your language is doing that you don&amp;rsquo;t want.
-This article talks about one of the most &amp;ldquo;surprising&amp;rdquo; features of Go for newcomers: slices.</description>
     </item>
     
   </channel>

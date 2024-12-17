@@ -6,10 +6,21 @@
     <description>Recent content in engineering on Blog Title</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Dec 2019 09:33:58 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 16 Dec 2024 22:19:23 +0100</lastBuildDate>
     
 	<atom:link href="https://blogtitle.github.io/tags/engineering/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go advanced concurrency patterns: part 4 (unlimited buffer channels)</title>
+      <link>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</link>
+      <pubDate>Mon, 16 Dec 2024 22:19:23 +0100</pubDate>
+      
+      <guid>https://blogtitle.github.io/go-advanced-concurrency-patterns-part-4-unlimited-buffer-channels/</guid>
+      <description>Preface It&amp;rsquo;s been almost 6 years since I added to this series, but I thought it was time to resume working on it.
+Since &amp;ldquo;perfect is the opposite of done&amp;rdquo; I thought I would talk about a simple pattern that I haven&amp;rsquo;t covered yet.
+A couple of years ago I worked on a toy library to see if the new-ish generics proposal would finally allow to express some of the most common channel patterns in Go.</description>
+    </item>
     
     <item>
       <title>Sneaky race conditions and granular locks</title>
