@@ -254,7 +254,7 @@ and receive at once. In some rare cases this might actually reduce the buffer si
 			<span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
 				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
 					<span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
-                    <span class="k">continue</span>
+				  <span class="k">continue</span>
 				<span class="p">}</span>
 				<span class="nx">next</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 				<span class="nx">queue</span> <span class="p">=</span> <span class="nx">queue</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -285,6 +285,61 @@ and receive at once. In some rare cases this might actually reduce the buffer si
 	<span class="p">}()</span>
 	<span class="k">return</span> <span class="nx">out</span>
 <span class="p">}</span></code></pre></div>
+<h1 id="edit-20-dec-2024-one-minor-difference">Edit(20 Dec 2024) One minor difference</h1>
+
+<p>As <a href="https://www.reddit.com/r/golang/comments/1hifpsl/comment/m2yug67/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">someone on reddit pointed out</a>,
+there is a minor but important difference between my implementation and a &ldquo;real&rdquo;
+infinite buffer channel: when a value is received from the source channel it&rsquo;s not
+immediately sent on the out one.</p>
+
+<p>This means that it is possible to observe a situation in which a sender has successfully
+sent a value on <code>in</code> but the receiver fails to receive it without waiting
+(e.g. with a <code>select</code> with a <code>default</code> case), which would be impossible to reproduce
+with a &ldquo;real&rdquo; channel.</p>
+
+<p>Example test to reproduce the issue:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Real Go channel
+</span><span class="c1"></span><span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="nx">mu</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span><span class="p">{}</span>
+<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+
+<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+	<span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+<span class="p">}()</span>
+
+<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+<span class="c1">// We now know for sure the value 1 is in the buffer
+</span><span class="c1"></span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+<span class="k">select</span> <span class="p">{</span>
+<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ch</span><span class="p">:</span>
+<span class="c1">// This will always be selected
+</span><span class="c1"></span><span class="k">default</span><span class="p">:</span>
+	<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;unreachable with real Go channels&#34;</span><span class="p">)</span>
+<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">src</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+<span class="c1">// A channel built with my solution
+</span><span class="c1"></span><span class="nx">ch</span> <span class="o">:=</span> <span class="nf">BufLongLived</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span>
+
+<span class="nx">mu</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span><span class="p">{}</span>
+<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+
+<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">src</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+	<span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+<span class="p">}()</span>
+
+<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+<span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+
+<span class="c1">// We don&#39;t know which branch we&#39;ll pick
+</span><span class="c1"></span><span class="k">select</span> <span class="p">{</span>
+<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ch</span><span class="p">:</span>
+<span class="k">default</span><span class="p">:</span>
+<span class="p">}</span></code></pre></div>
+<p>If your code relies on this channel guarantee, please consider using a real channel instead.</p>
+
 <h1 id="conclusions">Conclusions</h1>
 
 <p>In 31 lines of code we implemented a channel operator that gives us a new ordered,
