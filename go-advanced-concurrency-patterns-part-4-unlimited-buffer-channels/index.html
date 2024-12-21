@@ -285,6 +285,18 @@ and receive at once. In some rare cases this might actually reduce the buffer si
 	<span class="p">}()</span>
 	<span class="k">return</span> <span class="nx">out</span>
 <span class="p">}</span></code></pre></div>
+<h1 id="conclusions">Conclusions</h1>
+
+<p>In 31 lines of code we implemented a channel operator that gives us a new ordered,
+unlimited buffer channel from an existing one.</p>
+
+<p>I found this quite tricky to get right and I still think that there are rare use
+cases for this, in fact, in my career I have yet to find one. I think you&rsquo;re better
+off trying to find a good size for your buffers or reconsider your architecture
+before you resort to this.</p>
+
+<p>That said, I hope it was useful!</p>
+
 <h1 id="edit-20-dec-2024-one-minor-difference">Edit(20 Dec 2024) One minor difference</h1>
 
 <p>As <a href="https://www.reddit.com/r/golang/comments/1hifpsl/comment/m2yug67/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">someone on reddit pointed out</a>,
@@ -340,17 +352,83 @@ with a &ldquo;real&rdquo; channel.</p>
 <span class="p">}</span></code></pre></div>
 <p>If your code relies on this channel guarantee, please consider using a real channel instead.</p>
 
-<h1 id="conclusions">Conclusions</h1>
+<h1 id="edit-21-dec-2024">Edit (21 Dec 2024)</h1>
 
-<p>In 31 lines of code we implemented a channel operator that gives us a new ordered,
-unlimited buffer channel from an existing one.</p>
+<p>As my friend <a href="https://bsky.app/profile/rog.bsky.social">Roger Peppe</a>
+rightfully pointed out, using a sliding window on a slice
+as a queue implementation might lead to some suboptimal performance, especially if
+several million values need to pass through this channel (causing more allocations
+than necessary). This is mostly due to the capacity at the beginning of the slice
+being lost once we advance.</p>
 
-<p>I found this quite tricky to get right and I still think that there are rare use
-cases for this, in fact, in my career I have yet to find one. I think you&rsquo;re better
-off trying to find a good size for your buffers or reconsider your architecture
-before you resort to this.</p>
+<p>I still insist that no one should rely on this implementation for anything that big
+for the aforementioned reasons, but I got this far, so might as well try to be precise.</p>
 
-<p>That said, I hope it was useful, happy hacking!</p>
+<p>I, thus, propose the following implementation that takes a queue as an argument:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Queue</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">]</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span>
+
+	<span class="c1">// If your implementation is self-shrinking
+</span><span class="c1"></span>	<span class="c1">// these two methods are not necessary.
+</span><span class="c1"></span>	<span class="nf">Cap</span><span class="p">()</span> <span class="kt">int</span>
+	<span class="nf">SetCap</span><span class="p">(</span><span class="nx">v</span> <span class="kt">int</span><span class="p">)</span>
+
+	<span class="nf">Dequeue</span><span class="p">()</span> <span class="p">(</span><span class="nx">t</span> <span class="nx">T</span><span class="p">)</span>
+	<span class="nf">Enqueue</span><span class="p">(</span><span class="nx">t</span> <span class="nx">T</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">BufLongLivedCustomQueue</span><span class="p">[</span><span class="nx">T</span> <span class="nx">any</span><span class="p">](</span><span class="nx">in</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">q</span> <span class="nx">Queue</span><span class="p">[</span><span class="nx">T</span><span class="p">])</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="nx">T</span> <span class="p">{</span>
+	<span class="nx">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">T</span><span class="p">)</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="nx">out</span><span class="p">)</span>
+		<span class="kd">var</span> <span class="p">(</span>
+			<span class="nx">next</span> <span class="nx">T</span>
+			<span class="nx">nout</span> <span class="kd">chan</span> <span class="nx">T</span>
+		<span class="p">)</span>
+		<span class="k">for</span> <span class="nx">in</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">nout</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="p">&lt;</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Cap</span><span class="p">()</span><span class="o">/</span><span class="mi">4</span> <span class="p">{</span>
+				<span class="c1">// Shrink if the number of elements has reduced a lot.
+</span><span class="c1"></span>				<span class="c1">// You might want to do rely on the underlying implementation to
+</span><span class="c1"></span>				<span class="c1">// resize instead of adding custom code here.
+</span><span class="c1"></span>				<span class="nx">q</span><span class="p">.</span><span class="nf">SetCap</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="nx">next</span> <span class="p">=</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Dequeue</span><span class="p">()</span>
+				<span class="k">continue</span>
+			<span class="k">default</span><span class="p">:</span>
+			<span class="p">}</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">in</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+					<span class="nx">in</span> <span class="p">=</span> <span class="kc">nil</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="k">if</span> <span class="nx">nout</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="nx">out</span>
+					<span class="nx">next</span> <span class="p">=</span> <span class="nx">v</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+					<span class="nx">q</span><span class="p">.</span><span class="nf">Enqueue</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+				<span class="p">}</span>
+			<span class="k">case</span> <span class="nx">nout</span> <span class="o">&lt;-</span> <span class="nx">next</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+					<span class="nx">nout</span> <span class="p">=</span> <span class="kc">nil</span>
+					<span class="k">continue</span>
+				<span class="p">}</span>
+				<span class="nx">next</span> <span class="p">=</span> <span class="nx">q</span><span class="p">.</span><span class="nf">Dequeue</span><span class="p">()</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="k">return</span> <span class="nx">out</span>
+<span class="p">}</span></code></pre></div>
+<p>Again, many thanks to Roger that not only proofread this post, but also helped me
+figure out what was wrong with my benchmarks (copy-pasta is gonna kill me one day).</p>
+
+<p>Happy hacking!</p>
 
     </div>
  
